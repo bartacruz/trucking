@@ -34,12 +34,9 @@
 
             </xpath>
 
-            <!-- 1. Forzamos el foco del notebook a nuestra nueva pestaña -->
-            <xpath expr="//notebook" position="attributes">
-                <attribute name="default_focus_page">trucking</attribute>
-            </xpath>
-
-            <!-- 2. Insertamos la pestaña con visibilidad condicional -->
+             <xpath expr="//page[@name='contact_addresses']" position="attributes">
+                <attribute name="autofocus" position="replace/"/>
+             </xpath>
             <xpath expr="//page[@name='contact_addresses']" position="before">
                 <page name="trucking" string="Trucking" invisible="not truck_driver">
                     <group>
