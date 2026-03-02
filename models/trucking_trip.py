@@ -2,13 +2,17 @@ from datetime import datetime, timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from markupsafe import Markup
+
 import logging
 
 _logger = logging.getLogger(__name__)
 
 class TruckingTrip(models.Model):
     _name = 'trucking.trip'
+    _description = 'Trucking Trip'
     _inherit = ["mail.thread", "mail.activity.mixin"]
+    
     state = fields.Selection([
         ('draft','Draft'),
         ('assigned','Assigned'),
@@ -17,8 +21,16 @@ class TruckingTrip(models.Model):
         ('arrived','Arrived'),
         ('completed','Completed'),
         ('cancelled','Cancelled',)
-    ])
+        
+        ],
+        compute='_compute_state',
+        readonly=True,
+        store=True,
+        tracking=True
+    )
+    
     is_active = fields.Boolean(compute='_compute_is_active', store=True)
+    cancelled = fields.Boolean()
     
     name = fields.Char(
         required=True,
@@ -37,12 +49,12 @@ class TruckingTrip(models.Model):
         help="Company related to this order",
     )
     sequence = fields.Integer(default=10)
-    
-    customer_id = fields.Many2one("res.partner", _("Customer"), related="sale_order_id.partner_shipping_id", store=True, tracking=True)
+    partner_id = fields.Many2one("res.partner", _("Partner"), related="sale_id.partner_id", store=True, tracking=True)
+    customer_id = fields.Many2one("res.partner", _("Customer"), related="sale_id.partner_shipping_id", store=True, tracking=True)
     
     driver_id = fields.Many2one(
         'res.partner', string="Conductor",
-        compute="_compute_driver_id", store=True, readonly=False, tracking=True, domain=[('trucking_driver','=',True)]
+        compute="_compute_driver_id", store=True, readonly=False, tracking=True, domain=[('truck_driver','=',True)]
     )
     
     vehicle_id = fields.Many2one(
@@ -52,12 +64,13 @@ class TruckingTrip(models.Model):
     )
 
     trailer_id = fields.Many2one(
-        related='vehicle_id.trailer_id', string="Trailer Relacionado",
+        related='vehicle_id.trailer_id', string="Trailer",
         store=True, readonly=True
     )
 
     contact_phone = fields.Char(compute = '_compute_contact_phone')
     driver_phone =  fields.Char(compute='_compute_driver_phone')
+    
     
     origin_locality_id = fields.Many2one('afip.locality',tracking=True)
     origin_state_id = fields.Many2one('res.country.state', related="origin_locality_id.state_id")
@@ -74,13 +87,41 @@ class TruckingTrip(models.Model):
     delivered_total = fields.Integer(compute='_compute_delivered', readonly=True, tracking=True)
 
     
-    sale_order_line_id = fields.Many2one('sale.order.line',tracking = True)
-    sale_order_id = fields.Many2one('sale.order', related='sale_order_line_id.order_id',readonly=True)
+    sale_line_id = fields.Many2one(
+        'sale.order.line',
+        string="Línea de Pedido",
+        compute="_compute_sale_line_id",
+        inverse="_inverse_sale_line_id",
+        store=True,
+        tracking=True
+    )
+
+    sale_id = fields.Many2one('sale.order', related='sale_line_id.order_id',readonly=True,store=True)
     
     cpe_id = fields.Many2one("afip.cpe","Carta de Porte",ondelete="set null")
     cpe_mismatch = fields.Boolean()
     
-
+    driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ])
+    
+    ### Compute methods
+    
+    @api.depends('cancelled','end_date','start_date','driver_id','driver_response')
+    def _compute_state(self):
+        # TODO: revisar estados de CPE
+        for record in self:
+            if record.cancelled:
+                record.state='cancelled'
+            elif record.end_date and record.driver_id:
+                record.state = 'completed'
+            elif record.start_date:
+                record.state = 'started'
+            elif record.driver_id and record.driver_response=='confirmed':
+                record.state = 'confirmed'
+            elif record.driver_id:
+                record.state = 'assigned'
+            else:
+                record.state = 'draft'
+            
     @api.depends('vehicle_id')
     def _compute_driver_id(self):
         for record in self:
@@ -115,6 +156,29 @@ class TruckingTrip(models.Model):
         for record in self:
             record.is_active = record.state not in ['draft','completed','cancelled']
     
+    @api.depends('delivered','delivered_extra','cpe_id')
+    def _compute_delivered(self):
+        for record in self:
+            record.delivered_total = record.delivered + record.delivered_extra
+    
+    @api.depends('sale_line_id')
+    def _compute_sale_line_id(self):
+        for record in self:
+            # Buscamos la línea que apunta a este registro específico
+            line = self.env['sale.order.line'].search([('trucking_trip_id', '=', record.id)], limit=1)
+            record.sale_line_id = line if line else False
+
+    def _inverse_sale_line_id(self):
+        for record in self:
+            # 1. Liberamos cualquier línea que tuviera este viaje asignado previamente
+            old_lines = self.env['sale.order.line'].search([('trucking_trip_id', '=', record.id)])
+            if old_lines:
+                old_lines.write({'trucking_trip_id': False})
+            
+            # 2. Escribimos el ID del viaje en la nueva línea seleccionada
+            if record.sale_line_id:
+                record.sale_line_id.trucking_trip_id = record.id
+            
     @api.onchange('vehicle_id', 'driver_id', 'is_active')
     def _onchange_check_availability(self):
         if not self.is_active:
@@ -147,7 +211,60 @@ class TruckingTrip(models.Model):
                                _("\nPuedes continuar si esta es una asignación futura."),
                 }
             }
+            
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("name", _("New")) == _("New"):
+                vals["name"] = self.env["ir.sequence"].next_by_code("trucking.trip")
+        return super(TruckingTrip, self).create(vals_list)
     
+    def _convert_from_tms(self):
+        for record in self:
+
+            if not record.sale_line_id.cloned_line_id:
+                print(record,": no tengo cloned line!")
+                return
+            
+            tms_order = record.sale_line_id.cloned_line_id.tms_order_ids[0]
+            
+            if not tms_order:
+                print(record,":",record.sale_line_id.cloned_line_id,"no tiene tms_order!")
+                return
+            
+            driver_id = tms_order.driver_id and tms_order.driver_id.partner_id or False
+            if driver_id:
+                driver_id.truck_driver = True
+                tms_order.driver_id.vehicle_id.driver_id = driver_id
+            record.driver_id = driver_id
+            record.cpe_id = tms_order.cpe_id
+            
+            record.commitment_date = tms_order.scheduled_date_start or record.commitment_date
+            record.start_date = tms_order.date_start
+            record.end_date = tms_order.date_end
+            record.distance = tms_order.distance
+            record.delivered = tms_order.delivered
+            record.delivered_extra = tms_order.delivered_extra
+            message = _(
+                "Trip cloned from: %s", 
+                Markup(
+                    f"""<a href=# data-oe-model=tms.order data-oe-id={tms_order.id}"""
+                    f""">{tms_order.name}</a>"""
+                )
+            )
+            record.message_post(body=message)
+            if tms_order.stage_id == self.env.ref("tms.tms_stage_order_cancelled"):
+                record.cancelled = True
+    
+    def unlink(self):
+        for record in self:
+            if not record.state == 'draft':
+                raise UserError(_(
+                    "No se puede eliminar el viaje '%s' porque contiene datos. "
+                    "Primero debe desactivarlo."
+                ) % record.display_name)
+        return super(TruckingTrip, self).unlink()
+
     ### Whatsapp Integration ###
         
     def _whatsapp_get_partner(self):
@@ -174,3 +291,5 @@ class TruckingTrip(models.Model):
         partner = self.driver_id
         #partner = self.env['res.partner'].browse(4185) # YO
         self._send_whatsapp(partner,template_id=12)
+
+    

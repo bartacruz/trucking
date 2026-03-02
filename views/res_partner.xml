@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.trucking</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <!-- <field name="priority">1000</field> -->
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="truck_driver" invisible="not active_model == 'res.partner'" />
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_trucking_trips"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-truck"
+                    invisible="trucking_trip_count == 0">
+                    <div class="o_field_widget o_stat_info">
+                        <!-- CASO 1: Con Viaje Activo (Verde) -->
+                        <div invisible="not active_trucking_trip_id" class="text-success font-weight-bold">
+                            <field name="trucking_trip_count" class="o_stat_value" />
+                            <span class="o_stat_text">Viajes</span>
+                        </div>
+
+                        <!-- CASO 2: Sin Viaje Activo (Estándar) -->
+                        <div invisible="active_trucking_trip_id">
+                            <field name="trucking_trip_count" class="o_stat_value" />
+                            <span class="o_stat_text">Viajes</span>
+                        </div>
+                    </div>
+                </button>
+
+
+            </xpath>
+
+            <!-- 1. Forzamos el foco del notebook a nuestra nueva pestaña -->
+            <xpath expr="//notebook" position="attributes">
+                <attribute name="default_focus_page">trucking</attribute>
+            </xpath>
+
+            <!-- 2. Insertamos la pestaña con visibilidad condicional -->
+            <xpath expr="//page[@name='contact_addresses']" position="before">
+                <page name="trucking" string="Trucking" invisible="not truck_driver">
+                    <group>
+                        <group>
+                            <field name="vehicle_id" />
+                            <field name="trailer_id" />
+                        </group>
+                        <group>
+                            <field name="active_trucking_trip_id" readonly="1" />
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <record id="action_truck_driver" model="ir.actions.act_window">
+        <field name="name">Drivers</field>
+        <field name="res_model">res.partner</field>
+        <field name="domain">[('truck_driver','=',True)]</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <menuitem
+        id="menu_trucking_data_driver"
+        name="Drivers"
+        action="action_truck_driver"
+        parent="trucking.data"
+        sequence="10"
+    />
+</odoo>

@@ -31,7 +31,8 @@ class FleetVehicle(models.Model):
     )
 
     _sql_constraints = [
-        ('trailer_unique', 'unique(trailer_id)', '¡Este trailer ya está asignado a otro camión!')
+        ('trailer_unique', 'unique(trailer_id)', '¡Este trailer ya está asignado a otro camión!'),
+        ('driver_unique', 'unique(driver_id)', '¡Este conductor ya tiene un vehículo asignado!')
     ]
 
     @api.depends('trailer_id')

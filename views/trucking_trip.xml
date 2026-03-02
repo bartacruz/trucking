@@ -4,10 +4,12 @@
         <field name="name">trucking.trip.view.tree</field>
         <field name="model">trucking.trip</field>
         <field name="arch" type="xml">
-            <tree string="">
+            <tree string="" decoration-danger="is_active == True" decoration-success="state == 'completed'" decoration-muted="state=='cancelled'">
                 <field name="name" />
+                <field name="is_active" optional="hide" />
+                <field name="cancelled" optional="hide" />
                 <field name="commitment_date" />
-                <field name="sale_order_id" optional="hide" />
+                <field name="sale_id" optional="hide" />
                 <field name="customer_id" optional="hide" />
                 <field name="origin_locality_id" optional="show" />
                 <field name="destination_locality_id" optional="show" />
@@ -68,7 +70,7 @@
                                 <field name="vehicle_id" readonly="cpe_id" />
                                 <field name="trailer_id" />
                             </div>
-                            
+
                         </group>
                         <group>
                             <field name="commitment_date" />
@@ -109,9 +111,70 @@
             </form>
         </field>
     </record>
+    <record id="view_trucking_trip_search" model="ir.ui.view">
+        <field name="name">trucking.trip.search</field>
+        <field name="model">trucking.trip</field>
+        <field name="arch" type="xml">
+            <search string="Búsqueda de Viajes">
+                <!-- 1. Campos Buscables (Orden solicitado) -->
+                <field name="partner_id" string="Cliente" />
+                <field name="customer_id" string="Sub-Cliente/Destino" />
+                <field name="driver_id" string="Conductor" />
+                <field name="sale_id" string="Orden de Venta" />
+                <field name="vehicle_id" string="Vehículo" />
+                <field name="name" string="Número de Viaje" />
+                <separator />
+
+                <!-- 2. Filtros de Estado -->
+                <filter string="Viajes Activos" name="active" domain="[('is_active', '=', True)]" />
+                <separator />
+                <filter string="Borrador" name="state_draft" domain="[('state', '=', 'draft')]" />
+                <filter string="Asignado" name="state_assigned" domain="[('state', '=', 'assigned')]" />
+                <filter string="Confirmado" name="state_confirmed" domain="[('state', '=', 'confirmed')]" />
+                <filter string="Iniciado" name="state_started" domain="[('state', '=', 'started')]" />
+                <filter string="Arribado" name="state_arrived" domain="[('state', '=', 'arrived')]" />
+                <filter string="Completado" name="state_completed" domain="[('state', '=', 'completed')]" />
+                <filter string="Cancelado" name="state_cancelled" domain="[('state', '=', 'cancelled')]" />
+
+                <separator />
+
+                <!-- 3. Filtros por Fecha (Asumiendo campo start_date) -->
+                <!-- En Odoo 17, 'date_filter' permite selectores rápidos de hoy, semana, mes, etc. -->
+                <filter string="Fecha de la orden" name="commitment_filter" date="commitment_date" />
+                <filter string="Fecha de Inicio" name="start_date_filter" date="start_date" />
+                <!-- Filtros manuales de conveniencia -->
+                <filter string="Hoy" name="today"
+                    domain="[('commitment_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('commitment_date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]" />
+
+                <separator />
+
+                <!-- 4. Agrupaciones -->
+                <group expand="0" string="Agrupar por...">
+                    <filter string="Orden" name="group_sale" context="{'group_by': 'sale_id'}" />
+                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}" />
+                    <filter string="Conductor" name="group_driver" context="{'group_by': 'driver_id'}" />
+                    <filter string="Vehículo" name="group_vehicle" context="{'group_by': 'vehicle_id'}" />
+                    <filter string="Cliente" name="group_partner" context="{'group_by': 'partner_id'}" />
+                    <filter string="Fecha" name="group_date" context="{'group_by': 'commitment_date:month'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_trucking_trips" model="ir.actions.act_window">
-        <field name="name">Trips</field>
+        <field name="name">Viajes de Transporte</field>
         <field name="res_model">trucking.trip</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="search_view_id" ref="view_trucking_trip_search" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tu primer viaje de transporte
+            </p>
+        </field>
+        <!-- Filtros por defecto: Referenciamos los 'name' de los filtros en la Search View -->
+        <field name="context">{
+            'search_default_active': 1,
+            'search_default_today': 1
+            }</field>
     </record>
 </odoo>

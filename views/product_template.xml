@@ -1,0 +1,35 @@
+<odoo>
+
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.trucking</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='options']" position="inside">
+                <span class="d-inline-block" invisible="not detailed_type == 'service'">
+                    <field name="trucking_trip" />
+                    <label for="trucking_trip" />
+                </span>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_trucking_data_product" model="ir.actions.act_window">
+        <field name="name">Trip Products</field>
+        <field name="res_model">product.template</field>
+        <field name="context">{
+            'default_detailed_type':'service',
+            'default_trucking_trip':1,
+        }
+        </field>
+        <field name="domain">[('trucking_trip','=',True)]</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <menuitem
+        id="menu_trucking_data_product"
+        name="Trip Products"
+        action="action_trucking_data_product"
+        parent="trucking.data"
+        sequence="10"
+    />
+
+</odoo>
