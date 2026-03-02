@@ -12,7 +12,7 @@
                 group_edit="false"
                 group_delete="false"
                 records_draggable="true">
-                <field name="trucking_sequence" widget="handle"/>
+                <field name="trucking_sequence" widget="handle" />
                 <field name="trucking_state" />
                 <field name="active_trucking_trip_id" />
                 <field name="active_trucking_trip_state" invisible="1" />
@@ -21,39 +21,49 @@
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click p-2">
                             <div class="oe_kanban_details">
-                                <!-- Nombre: Muteado si está unavailable -->
+                                <!-- 1ra Línea: Nombre (Protagonista) -->
                                 <div
-                                    t-attf-class="o_kanban_record_title #{record.trucking_state.raw_value == 'unavailable' ? 'text-muted' : 'fw-bold'}">
+                                    t-attf-class="o_kanban_record_title #{record.trucking_state.raw_value == 'unavailable' ? 'text-muted' : 'fw-bold fs-5'}">
                                     <field name="name" />
                                 </div>
 
-                                <!-- Vehículo y Trailer -->
-                                <div class="o_kanban_record_subtitle mt-1">
-                                    <field name="vehicle_id" />
-                                    <t t-if="record.trailer_id.raw_value">
-                                        <span class="ms-2"> </span>
-                                        <field name="trailer_id" />
-                                    </t>
-                                </div>
+                                <!-- 2da Línea: Contenedor Flex -->
+                                <div class="d-flex justify-content-between align-items-center mt-1">
 
-                                <!-- Badge del Viaje Activo -->
-                                <div class="mt-2" t-if="record.active_trucking_trip_id.raw_value">
-                                    <t t-set="badge_class" t-value="'bg-secondary'" />
-                                    <t t-if="record.active_trucking_trip_state.raw_value == 'assigned'" t-set="badge_class"
-                                        t-value="'bg-info text-white'" />
-                                    <t t-if="record.active_trucking_trip_state.raw_value == 'started'" t-set="badge_class"
-                                        t-value="'bg-warning text-dark'" />
-                                    <t t-if="record.active_trucking_trip_state.raw_value == 'arrived'" t-set="badge_class"
-                                        t-value="'bg-success text-white'" />
+                                    <!-- Izquierda: Vehículo y Trailer (Muteados para jerarquía visual) -->
+                                    <div class="o_kanban_record_subtitle text-muted text-truncate pe-2">
+                                        <i class="fa fa-truck me-1 opacity-75" />
+                                        <field name="vehicle_id" />
+                                        <t t-if="record.trailer_id.raw_value">
+                                            <span class="ms-1">/</span>
+                                            <span class="ms-1">
+                                                <field name="trailer_id" />
+                                            </span>
+                                        </t>
+                                    </div>
 
-                                    <span t-attf-class="badge rounded-pill #{badge_class} p-2">
-                                        <i class="fa fa-road me-1" />
-                                        <field name="active_trucking_trip_id" />
-                                    </span>
+                                    <!-- Derecha: Badge del Viaje (Compacto y más liviano) -->
+                                    <div t-if="record.active_trucking_trip_id.raw_value">
+                                        <t t-set="badge_class" t-value="'bg-secondary opacity-75'" />
+                                        <t t-if="record.active_trucking_trip_state.raw_value == 'assigned'" t-set="badge_class"
+                                            t-value="'bg-info text-white'" />
+                                        <t t-if="record.active_trucking_trip_state.raw_value == 'started'" t-set="badge_class"
+                                            t-value="'bg-warning text-dark'" />
+                                        <t t-if="record.active_trucking_trip_state.raw_value == 'arrived'" t-set="badge_class"
+                                            t-value="'bg-success text-white'" />
+
+                                        <!-- Ajustamos padding (py-0 px-2) y peso de fuente (fw-normal) -->
+                                        <span t-attf-class="badge rounded-pill #{badge_class} py-0 px-2 fw-normal"
+                                            style="font-size: 0.75rem; line-height: 1.4;">
+                                            <i class="fa fa-road me-1 small" />
+                                            <field name="active_trucking_trip_id" />
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </t>
+
                 </templates>
             </kanban>
         </field>

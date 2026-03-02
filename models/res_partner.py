@@ -1,4 +1,5 @@
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -23,7 +24,10 @@ class ResPartner(models.Model):
         ('available','Available'),
         ('assigned','Assigned'),
         ('unavailable','Unavailable'),
-    ], group_expand="_read_group_trucking_states")
+        ],
+        group_expand="_read_group_trucking_states",
+        tracking=True
+    )
     
     # Relación inversa necesaria para el cómputo
     trucking_trip_ids = fields.One2many(
@@ -52,7 +56,7 @@ class ResPartner(models.Model):
         string="Estado del Viaje Activo",
         store=False
     )
-    trucking_sequence = fields.Integer(string="Secuencia", default=10)
+    trucking_sequence = fields.Integer(string="Secuencia", default=10, copy=False)
 
     @api.depends('trucking_trip_ids')
     def _compute_trucking_trip_count(self):
@@ -96,7 +100,24 @@ class ResPartner(models.Model):
         # Retornamos la lista de claves del Selection
         return [key for key, val in self._fields['trucking_state'].selection]
 
+    def write(self, vals):
+        # Lógica de Lista de Espera: Si pasa a 'available', va al final
+        if vals.get('trucking_state') == 'available':
+            for record in self:
+                last_available = self.env['res.partner'].search([
+                    ('trucking_state', '=', 'available'),
+                    ('truck_driver', '=', True),
+                    ('id', '!=', record.id)
+                ], order='trucking_sequence desc', limit=1)
+                vals['trucking_sequence'] = (last_available.trucking_sequence + 1) if last_available else 10
 
+        if vals.get('trucking_state') == 'assigned':
+            for record in self:
+                if not record.active_trucking_trip_id:
+                    raise UserError("No podés asignar un conductor sin un viaje activo. "
+                                    "Por favor, usá el botón de 'Asignar Viaje' en la tarjeta.")
+
+        return super(ResPartner, self).write(vals)
 
     def action_view_trucking_trips(self):
         self.ensure_one()

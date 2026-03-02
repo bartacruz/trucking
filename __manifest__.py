@@ -18,23 +18,6 @@
     "assets": {
         "web.assets_backend": [
             'trucking/static/src/components/*',
-            
-        #     "tms_shipment/static/src/js/driver_list.js",
-        #     "tms_shipment/static/src/js/driver_list.scss",
-        #     "tms_shipment/static/src/js/driver_list.xml",
-        #     "tms_shipment/static/src/js/kanban_controller.js",
-        #     "tms_shipment/static/src/js/kanban_controller.scss",
-        #     "tms_shipment/static/src/js/kanban_controller.xml",
-        #     "tms_shipment/static/src/js/tms_kanban.js",
-        #     "tms_shipment/static/src/views/fields/many2many_trip_field.js",
-        #     "tms_shipment/static/src/views/fields/many2many_trip_field.scss",
-        #     "tms_shipment/static/src/views/fields/many2many_trip_field.xml",
-        #     "tms_shipment/static/src/views/fields/tms_service.js",
-        #     "tms_shipment/static/src/views/fields/trips_field.js",
-        #     "tms_shipment/static/src/views/fields/trips_field.xml",
-        #     "tms_shipment/static/src/js/dynamic_m2o_field.js",
-        #     # "tms_shipment/static/src/xml/dynamic_m2o_field.xml",
-            
         ],
     },
     'data': [
