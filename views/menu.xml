@@ -1,0 +1,25 @@
+<odoo>
+
+    <!-- Main Menu -->
+    <menuitem
+        id="root"
+        name="Trucking"
+        sequence="10"
+        web_icon="trucking,static/description/icon.png"
+    />
+
+    <!-- Menus -->
+    <menuitem id="dashboard" name="Dashboard" parent="root" />
+    <menuitem id="trips" name="Trips" parent="root" />
+    <menuitem id="data" name="Data" parent="root" />
+    <menuitem id="settings" name="Settings" parent="root" />
+    <menuitem
+        id="menu_trucking_all_trips"
+        name="All Trips"
+        action="action_trucking_trips"
+        parent="trips"
+        sequence="10"
+    />
+
+
+</odoo>

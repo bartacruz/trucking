@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="trucking_trip_view_tree" model="ir.ui.view">
+        <field name="name">trucking.trip.view.tree</field>
+        <field name="model">trucking.trip</field>
+        <field name="arch" type="xml">
+            <tree string="">
+                <field name="name" />
+                <field name="commitment_date" />
+                <field name="sale_order_id" optional="hide" />
+                <field name="customer_id" optional="hide" />
+                <field name="origin_locality_id" optional="show" />
+                <field name="destination_locality_id" optional="show" />
+                <field name="driver_id" />
+                <field name="vehicle_id" optional="show" />
+                <field name="trailer_id" optional="show" />
+                <field name="start_date" optional="hide" />
+                <field name="end_date" optional="hide" />
+                <field name="cpe_id" optional="show" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+    <record id="trucking_trip_view_form" model="ir.ui.view">
+        <field name="name">trucking.trip.view.form</field>
+        <field name="model">trucking.trip</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <field name="is_active" invisible="1" />
+                <header>
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        options="{'clickable':False}"
+                    />
+                </header>
+                <sheet>
+                    <!-- Smart Buttons -->
+                    <div class="oe_button_box" name="button_box">
+                    </div>
+                    <div class="oe_title">
+                        <label for="customer_id" class="oe_edit_only" string="Customer" />
+                        <h1>
+                            <field name="customer_id" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="contact_phone" widget="phone" />
+                            <field name="origin_locality_id" />
+                            <field name="destination_locality_id" />
+                            <label for="driver_id" />
+                            <div class="mb-1">
+                                <field name="driver_id" />
+                                <field name="driver_phone" widget="phone" />
+                                <button
+                                    type="object"
+                                    name="action_send_whatsapp_request"
+                                    class="btn btn-sm btn-warning text-nowrap mx-auto"
+                                    icon="fa-whatsapp"
+                                    invisible="not driver_phone or not is_active">
+                                    Pedir Confirmación
+                                </button>
+                            </div>
+
+                            <label for="vehicle_id" string="Vehicle" />
+                            <div class="d-flex w-75">
+                                <field name="vehicle_id" readonly="cpe_id" />
+                                <field name="trailer_id" />
+                            </div>
+                            
+                        </group>
+                        <group>
+                            <field name="commitment_date" />
+                            <field name="start_date" />
+                            <field name="end_date" />
+
+                            <label for="distance" />
+                            <div name="distance-val" class="d-flex w-25">
+                                <field name="distance" class="text-end" />
+                                <span class="ms-1">Kms</span>
+                            </div>
+                            <label for="delivered" />
+                            <div name="delivered-val" class="d-flex w-25">
+                                <field name="delivered" class="text-end" />
+                                <span class="ms-1">Kg</span>
+                            </div>
+                            <label for="delivered_extra" />
+                            <div name="delivered_extra-val" class="d-flex w-25">
+                                <field name="delivered_extra" class="text-end" />
+                                <span class="ms-1">Kg</span>
+                            </div>
+                            <label for="delivered_total" />
+                            <div name="delivered_total-val" class="d-flex w-25">
+                                <field name="delivered_total" class="text-end" />
+                                <span class="ms-1">Kg</span>
+                            </div>
+                            <field name="cpe_id" />
+                        </group>
+
+                    </group>
+                </sheet>
+                <!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" />
+                    <field name="activity_ids" widget="mail_activity" />
+                    <field name="message_ids" widget="mail_thread" />
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="action_trucking_trips" model="ir.actions.act_window">
+        <field name="name">Trips</field>
+        <field name="res_model">trucking.trip</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

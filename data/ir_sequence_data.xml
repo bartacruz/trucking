@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_trucking_order" model="ir.sequence">
+        <field name="name">Trucking Order</field>
+        <field name="code">trucking.trip</field>
+        <field name="prefix">TO/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False" />
+    </record>
+</odoo>

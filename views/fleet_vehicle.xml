@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_fleet_vehicle_form_inherit_truck" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.inherit.truck</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <group string="Vinculación de Equipo" name="trailer_rel_group">
+                    <!-- Se muestra solo si el modelo es tipo Camión -->
+                    <field name="trailer_id"
+                        invisible="vehicle_type != 'truck'" />
+
+                    <!-- Se muestra solo si el modelo es tipo Trailer -->
+                    <field name="truck_id"
+                        invisible="vehicle_type != 'trailer'"
+                        readonly="1" />
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='tms_driver_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='driver_id']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

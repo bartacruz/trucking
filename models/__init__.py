@@ -1,0 +1,1 @@
+from . import fleet_vehicle,trucking_trip,product_template, res_partner
