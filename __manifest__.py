@@ -16,7 +16,11 @@
 
     'depends': ['base','fleet', 'sale','l10n_ar_afip_cpe','mail_gateway_whatsapp'],
     "assets": {
-        # "web.assets_backend": [
+        "web.assets_backend": [
+            'trucking/static/src/components/trucking_trips.js',
+            'trucking/static/src/components/trucking_trips.xml',
+            
+            
         #     "tms_shipment/static/src/js/driver_list.js",
         #     "tms_shipment/static/src/js/driver_list.scss",
         #     "tms_shipment/static/src/js/driver_list.xml",
@@ -33,7 +37,7 @@
         #     "tms_shipment/static/src/js/dynamic_m2o_field.js",
         #     # "tms_shipment/static/src/xml/dynamic_m2o_field.xml",
             
-        # ],
+        ],
     },
     'data': [
         'data/ir_sequence_data.xml',

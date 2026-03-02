@@ -103,6 +103,8 @@ class TruckingTrip(models.Model):
     
     driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ])
     
+    warnings = fields.Char()
+    
     ### Compute methods
     
     @api.depends('cancelled','end_date','start_date','driver_id','driver_response')
@@ -122,21 +124,24 @@ class TruckingTrip(models.Model):
             else:
                 record.state = 'draft'
             
-    @api.depends('vehicle_id')
+    @api.depends('vehicle_id.driver_id')
     def _compute_driver_id(self):
         for record in self:
-            if record.vehicle_id and record.vehicle_id.driver_id:
-                record.driver_id = record.vehicle_id.driver_id
+            record.driver_id = record.vehicle_id.driver_id
+            print(record,"setting driver",record.driver_id)
 
-    @api.depends('driver_id')
+    @api.depends('driver_id.vehicle_id')
     def _compute_vehicle_id(self):
         for record in self:
-            vehicle = self.env['fleet.vehicle'].search([
-                ('driver_id', '=', record.driver_id.id),
-                ('vehicle_type', '=', 'truck')
-            ], limit=1)
-            if vehicle:
-                record.vehicle_id = vehicle
+            record.vehicle_id = record.driver_id.vehicle_id
+            print(record,"setting vehicle",record.vehicle_id)
+            #if record.driver_id:
+            # vehicle = self.env['fleet.vehicle'].search([
+            #     ('driver_id', '=', record.driver_id.id),
+            #     ('vehicle_type', '=', 'truck')
+            # ], limit=1)
+            # if vehicle:
+            #     record.vehicle_id = vehicle
 
 
     @api.depends('customer_id')

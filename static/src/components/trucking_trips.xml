@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="trucking.TruckingTripsField" >
+        <div
+            role="search"
+            class="o_field_trips w-100"
+            t-ref="truckingTripsField"
+            t-on-dragover.prevent="()=>{}"
+            t-on-dragenter.prevent="onDragEnter"
+            t-on-dragleave.prevent="onDragLeave"
+            t-on-drop.prevent="onDrop">
+            
+        <t t-foreach="trips" t-as="trip" t-key="trip.id">
+            <div t-attf-class="o_trip mt-1 p-1 rounded border o_row {{trip.driver ? 'text-bg-secondary':'border'}}" t-att-data-id="trip.resId" t-on-click="onClick">
+                <div class="mb-1 d-flex justify-content-between" >
+                    <div>
+                        <span t-out="trip.driver" t-if="trip.driver"/>
+                        <span t-out="trip.text" t-if="trip.driver == false"/>
+                    </div>
+                    <div>
+                        <i t-if="trip.warnings" t-att-title="trip.warnings" class="ms-1 fa fa-warning text-warning" />
+                        <i t-if="trip.state == 'started'" title="En curso" class="ms-1 fa fa-truck text-primary"/>
+                        <i t-if="trip.cpe" t-attf-title="CPE: {{trip.cpe}}" class="ms-1 fa fa-file-text-o text-primary"/>
+                    </div>
+                </div>   
+                <div class="d-flex justify-content-between">
+                    <div class="text-muted">
+                        <span t-if="trip.driver == false">(Asignar)</span>
+                        <span t-out="trip.vehicle" t-if="trip.vehicle"/>
+                        <span class="ms-1" t-out="trip.trailer" t-if="trip.trailer"/>
+                    </div>
+                    <div>
+                        <span 
+                            t-attf-class = "
+                            badge rounded-pill
+                            {{trip.state == 'cancelled' ? 'text-bg-danger':''}}
+                            {{trip.state == 'completed' ? 'text-bg-success':''}}
+                            {{trip.is_active? 'text-bg-primary':''}}
+                            "
+                            t-out="trip.state" 
+                            t-if="trip.state"
+                        />
+                    </div>
+                </div>                
+            </div>
+        </t>
+        </div>
+    </t>
+</templates>
