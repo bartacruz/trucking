@@ -17,9 +17,7 @@
     'depends': ['base','fleet', 'sale','l10n_ar_afip_cpe','mail_gateway_whatsapp'],
     "assets": {
         "web.assets_backend": [
-            'trucking/static/src/components/trucking_trips.js',
-            'trucking/static/src/components/trucking_trips.xml',
-            
+            'trucking/static/src/components/*',
             
         #     "tms_shipment/static/src/js/driver_list.js",
         #     "tms_shipment/static/src/js/driver_list.scss",

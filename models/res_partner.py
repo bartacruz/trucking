@@ -19,7 +19,12 @@ class ResPartner(models.Model):
         'fleet.vehicle',
         related='vehicle_id.trailer_id'
     )
-
+    trucking_state = fields.Selection([
+        ('available','Available'),
+        ('assigned','Assigned'),
+        ('unavailable','Unavailable'),
+    ], group_expand="_read_group_trucking_states")
+    
     # Relación inversa necesaria para el cómputo
     trucking_trip_ids = fields.One2many(
         'trucking.trip', 
@@ -41,6 +46,13 @@ class ResPartner(models.Model):
         store=True,
         index=True
     )
+    
+    active_trucking_trip_state = fields.Selection(
+        related='active_trucking_trip_id.state',
+        string="Estado del Viaje Activo",
+        store=False
+    )
+    trucking_sequence = fields.Integer(string="Secuencia", default=10)
 
     @api.depends('trucking_trip_ids')
     def _compute_trucking_trip_count(self):
@@ -54,7 +66,6 @@ class ResPartner(models.Model):
             active_trip = record.trucking_trip_ids.filtered(lambda t: t.is_active)
             # Tomamos el primero si existe, de lo contrario False
             record.active_trucking_trip_id = active_trip[0] if active_trip else False
-
 
     @api.depends('vehicle_id')
     def _compute_vehicle_id(self):
@@ -75,6 +86,17 @@ class ResPartner(models.Model):
             # le asignamos este partner como su conductor oficial
             if record.vehicle_id:
                 record.vehicle_id.driver_id = record.id
+
+    @api.model
+    def _read_group_trucking_states(self, stages, domain, order):
+        """
+        Este método devuelve todas las opciones del Selection para que 
+        aparezcan como columnas en el Kanban, incluso si están vacías.
+        """
+        # Retornamos la lista de claves del Selection
+        return [key for key, val in self._fields['trucking_state'].selection]
+
+
 
     def action_view_trucking_trips(self):
         self.ensure_one()

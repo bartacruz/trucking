@@ -9,6 +9,7 @@
                 group_create="False"
                 group_edit="False"
                 create="0"
+                js_class="trucking_kanban"
             >
                 <field name="partner_id" />
                 <field name="partner_invoice_id" />
@@ -82,8 +83,8 @@
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="commitment_date"/>
             </xpath>
-            <xpath expr="//page[@name='order_lines']" position="after">
-                <page string="Viajes" name="trucking_trips">
+            <xpath expr="//page[@name='order_lines']" position="before">
+                <page string="Viajes" name="trucking_trips" invisible='not trucking_trip_ids' icon="fa-truck">
                     <group>
                         <group>
                             

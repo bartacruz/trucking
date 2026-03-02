@@ -269,6 +269,24 @@ class TruckingTrip(models.Model):
                     "Primero debe desactivarlo."
                 ) % record.display_name)
         return super(TruckingTrip, self).unlink()
+    
+    @api.model
+    def assign_driver(self,trip_id,driver_id):
+        trip = self.browse(trip_id)
+        
+        trip.driver_id = int(driver_id)
+        print("Assigned driver %s to trip %s" % (driver_id,trip_id))
+        message = _(
+            "Driver assigned: %s",
+            Markup(
+                f"""<a href=# data-oe-model=res.partner data-oe-id={driver_id}"""
+                f""">{trip.driver_id.name}</a>"""
+            ),
+        )
+        trip.message_post(body=message)
+        trip.driver_response = False
+        return trip.id
+    
 
     ### Whatsapp Integration ###
         

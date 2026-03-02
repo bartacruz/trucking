@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_res_partner_kanban_trucking" model="ir.ui.view">
+        <field name="name">res.partner.kanban.trucking</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <!-- 'group_create="false"' evita que el usuario cree nuevos estados manualmente -->
+            <!-- 'group_edit="false"' y 'group_delete="false"' mantienen la estructura fija -->
+            <kanban default_group_by="trucking_state"
+                class="o_res_partner_kanban"
+                group_create="false"
+                group_edit="false"
+                group_delete="false"
+                records_draggable="true">
+                <field name="trucking_sequence" widget="handle"/>
+                <field name="trucking_state" />
+                <field name="active_trucking_trip_id" />
+                <field name="active_trucking_trip_state" invisible="1" />
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click p-2">
+                            <div class="oe_kanban_details">
+                                <!-- Nombre: Muteado si está unavailable -->
+                                <div
+                                    t-attf-class="o_kanban_record_title #{record.trucking_state.raw_value == 'unavailable' ? 'text-muted' : 'fw-bold'}">
+                                    <field name="name" />
+                                </div>
+
+                                <!-- Vehículo y Trailer -->
+                                <div class="o_kanban_record_subtitle mt-1">
+                                    <field name="vehicle_id" />
+                                    <t t-if="record.trailer_id.raw_value">
+                                        <span class="ms-2"> </span>
+                                        <field name="trailer_id" />
+                                    </t>
+                                </div>
+
+                                <!-- Badge del Viaje Activo -->
+                                <div class="mt-2" t-if="record.active_trucking_trip_id.raw_value">
+                                    <t t-set="badge_class" t-value="'bg-secondary'" />
+                                    <t t-if="record.active_trucking_trip_state.raw_value == 'assigned'" t-set="badge_class"
+                                        t-value="'bg-info text-white'" />
+                                    <t t-if="record.active_trucking_trip_state.raw_value == 'started'" t-set="badge_class"
+                                        t-value="'bg-warning text-dark'" />
+                                    <t t-if="record.active_trucking_trip_state.raw_value == 'arrived'" t-set="badge_class"
+                                        t-value="'bg-success text-white'" />
+
+                                    <span t-attf-class="badge rounded-pill #{badge_class} p-2">
+                                        <i class="fa fa-road me-1" />
+                                        <field name="active_trucking_trip_id" />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
 
     <record id="view_partner_form_inherit" model="ir.ui.view">
         <field name="name">res.partner.form.trucking</field>
@@ -34,9 +93,9 @@
 
             </xpath>
 
-             <xpath expr="//page[@name='contact_addresses']" position="attributes">
-                <attribute name="autofocus" position="replace/"/>
-             </xpath>
+            <xpath expr="//page[@name='contact_addresses']" position="attributes">
+                <attribute name="autofocus" position="replace/" />
+            </xpath>
             <xpath expr="//page[@name='contact_addresses']" position="before">
                 <page name="trucking" string="Trucking" invisible="not truck_driver">
                     <group>
@@ -53,18 +112,54 @@
 
         </field>
     </record>
+    <record id="view_res_partner_search_trucking" model="ir.ui.view">
+        <field name="name">res.partner.search.trucking</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Conductor" />
+                <field name="vehicle_id" />
+                <field name="active_trucking_trip_id" />
 
+                <filter string="Disponibles" name="available" domain="[('trucking_state', '=', 'available')]" />
+                <filter string="Asignados" name="assigned" domain="[('trucking_state', '=', 'assigned')]" />
 
-    <record id="action_truck_driver" model="ir.actions.act_window">
-        <field name="name">Drivers</field>
-        <field name="res_model">res.partner</field>
-        <field name="domain">[('truck_driver','=',True)]</field>
-        <field name="view_mode">kanban,tree,form</field>
+                <group expand="0" string="Agrupar por...">
+                    <filter string="Estado del Conductor" name="group_trucking_state" context="{'group_by': 'trucking_state'}" />
+                </group>
+            </search>
+        </field>
     </record>
+
+
+    <record id="action_truck_drivers_kanban" model="ir.actions.act_window">
+        <field name="name">Tablero de Conductores</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_res_partner_search_trucking" />
+        <field name="domain">[('truck_driver', '=', True)]</field>
+        <field name="context">{
+            'default_truck_driver': True,
+            'search_default_group_trucking_state': 1
+            }</field>
+        <field name="view_ids"
+            eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_res_partner_kanban_trucking')}),
+                (0, 0, {'view_mode': 'tree'}),
+                (0, 0, {'view_mode': 'form'})
+             ]" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Organiza tu flota de conductores.
+            </p>
+        </field>
+    </record>
+
     <menuitem
         id="menu_trucking_data_driver"
         name="Drivers"
-        action="action_truck_driver"
+        action="action_truck_drivers_kanban"
         parent="trucking.data"
         sequence="10"
     />
