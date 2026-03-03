@@ -7,16 +7,34 @@ class SaleOrderLine(models.Model):
 
     trucking_trip_id = fields.Many2one(
         'trucking.trip', 
-        string="Viaje de Transporte",
+        string="Viaje",
         ondelete='cascade',
-        help="Viaje vinculado a esta línea de pedido."
+        help="Viaje vinculado a esta línea de pedido.",
     )
 
     cloned_line_id = fields.Many2one('sale.order.line')
+    distance = fields.Float(string="Distancia (km)")
+
     
     _sql_constraints = [
         ('trucking_trip_unique', 'unique(trucking_trip_id)', '¡Este viaje ya está asignado a otra línea de pedido!')
     ]
+    
+    def write(self, vals):
+        # 1. El super() procesa el cambio de producto o datos
+        res = super(SaleOrderLine, self).write(vals)
+
+        # 2. Lógica reactiva al cambio de producto
+        if 'product_id' in vals:
+            for line in self:
+                # Si el nuevo producto NO es de transporte, el viaje debe morir
+                if not line.product_id.trucking_trip and line.trucking_trip_id:
+                    line.trucking_trip_id.unlink()
+                
+                # Si es de transporte y estaba vacío, nace el viaje
+                elif line.product_id.trucking_trip and not line.trucking_trip_id:
+                    line._create_associated_trip()
+        return res
     
     def _prepare_trucking_values(self, **kwargs):
         """

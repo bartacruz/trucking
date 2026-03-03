@@ -136,6 +136,4 @@ class SaleOrder(models.Model):
             action['domain'] = [('id', 'in', created_orders.ids)]
          
         return action
-    
-    def action_create_trucking_order(self):
-        return False
+

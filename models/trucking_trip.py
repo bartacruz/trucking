@@ -14,13 +14,13 @@ class TruckingTrip(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     
     state = fields.Selection([
-        ('draft','Draft'),
-        ('assigned','Assigned'),
-        ('confirmed','Confirmed'),
-        ('started','Started'),
-        ('arrived','Arrived'),
-        ('completed','Completed'),
-        ('cancelled','Cancelled',)
+        ('draft','Draft'), # dark 
+        ('assigned','Assigned'), # secondary fa-user
+        ('confirmed','Confirmed'), #primary fa-user
+        ('started','Started'),     # primary fa-truck
+        ('arrived','Arrived'),     # primary fa-home 
+        ('completed','Completed'), # success fa-check-circle
+        ('cancelled','Cancelled',) # danger fa-ban
         
         ],
         compute='_compute_state',
@@ -288,7 +288,30 @@ class TruckingTrip(models.Model):
         trip.message_post(body=message)
         trip.driver_response = False
         return trip.id
+    def unlink(self):
+        """ 
+        Impedir el borrado si el viaje ya tiene gestión operativa.
+        Este método se activará incluso si se borra la Sale Order Line 
+        gracias al ondelete='cascade'.
+        """
+        for trip in self:
+            if not trip.can_be_deleted():
+                raise UserError(
+                    f"No se puede eliminar el viaje '{trip.name}'. "
+                    "Ya cuenta con conductor asignado o datos de ruta confirmados."
+                )
+        return super(TruckingTrip, self).unlink()
     
+    ### Bussiness logic ###    
+    
+    def can_be_deleted(self):
+        """
+        Determina si el viaje permite cambios estructurales desde la SO.
+        Retorna True si está en borrador o si no tiene conductor y distancia 0.
+        """
+        self.ensure_one()
+        # Regla: Estado draft O (Sin conductor Y sin distancia)
+        return self.state == 'draft' or (not self.driver_id and self.distance == 0)
 
     ### Whatsapp Integration ###
         

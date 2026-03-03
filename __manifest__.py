@@ -21,6 +21,7 @@
         ],
     },
     'data': [
+        'wizard/trucking_create_so.xml',
         'data/ir_sequence_data.xml',
         "security/ir.model.access.csv",
         'views/fleet_vehicle.xml',
