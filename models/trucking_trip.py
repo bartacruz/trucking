@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from odoo import _, api, fields, models
+from odoo import _, api, fields, models, SUPERUSER_ID
 from odoo.exceptions import UserError, ValidationError
 from markupsafe import Markup
 
@@ -65,7 +65,7 @@ class TruckingTrip(models.Model):
 
     trailer_id = fields.Many2one(
         related='vehicle_id.trailer_id', string="Trailer",
-        store=True, readonly=True
+        store=True, readonly=False
     )
 
     contact_phone = fields.Char(compute = '_compute_contact_phone')
@@ -79,12 +79,16 @@ class TruckingTrip(models.Model):
     
     commitment_date = fields.Datetime(tracking=True)
     start_date = fields.Datetime(tracking=True)
+    arrived_date = fields.Datetime(tracking=True)
     end_date = fields.Datetime(tracking=True)
     
     distance = fields.Integer(tracking=True)
+    delivered_cpe = fields.Integer(related="cpe_id.unload_net")
     delivered = fields.Integer()
-    delivered_extra =fields.Integer()
-    delivered_total = fields.Integer(compute='_compute_delivered', readonly=True, tracking=True)
+    delivered_to_invoice =fields.Integer(_("To Invoice"),compute='_compute_delivered', readonly=True, tracking=True)
+    delivered_diff = fields.Integer(_("Difference"), compute='_compute_delivered')
+    delivered_total = fields.Integer()
+    
 
     
     sale_line_id = fields.Many2one(
@@ -97,11 +101,15 @@ class TruckingTrip(models.Model):
     )
 
     sale_id = fields.Many2one('sale.order', related='sale_line_id.order_id',readonly=True,store=True)
-    
+    price_unit = fields.Float(related="sale_line_id.price_unit")
+    product_uom = fields.Many2one('uom.uom', related='sale_line_id.product_uom')
+    rate_label = fields.Char(_("Rate"),compute="_compute_rate_label")
     cpe_id = fields.Many2one("afip.cpe","Carta de Porte",ondelete="set null")
+    cpe_pdf = fields.Many2one('ir.attachment', related='cpe_id.pdf3')
+    cpe_status_date = fields.Datetime(related = 'cpe_id.status_date')
     cpe_mismatch = fields.Boolean()
     
-    driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ])
+    driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ], tracking=True)
     
     warnings = fields.Char()
     
@@ -162,10 +170,12 @@ class TruckingTrip(models.Model):
         for record in self:
             record.is_active = record.state not in ['draft','completed','cancelled']
     
-    @api.depends('delivered','delivered_extra','cpe_id')
+    @api.depends('delivered_cpe','delivered')
     def _compute_delivered(self):
         for record in self:
-            record.delivered_total = record.delivered + record.delivered_extra
+            
+            record.delivered_to_invoice = record.delivered or record.delivered_cpe
+            record.delivered_diff = record.delivered_cpe and record.delivered and record.delivered - record.delivered_cpe or 0
     
     @api.depends('sale_line_id')
     def _compute_sale_line_id(self):
@@ -184,7 +194,16 @@ class TruckingTrip(models.Model):
             # 2. Escribimos el ID del viaje en la nueva línea seleccionada
             if record.sale_line_id:
                 record.sale_line_id.trucking_trip_id = record.id
-            
+    
+    @api.depends('price_unit','product_uom')
+    def _compute_rate_label(self):
+        for record in self:
+            if record.price_unit:
+                price = self.company_id.currency_id.format(record.price_unit)
+                record.rate_label = _(f'{price} per {record.product_uom.name}')
+            else:
+                record.rate_label=False
+    
     @api.onchange('vehicle_id', 'driver_id', 'is_active')
     def _onchange_check_availability(self):
         if not self.is_active:
@@ -259,7 +278,7 @@ class TruckingTrip(models.Model):
             record.end_date = tms_order.date_end
             record.distance = tms_order.distance
             record.delivered = tms_order.delivered
-            record.delivered_extra = tms_order.delivered_extra
+            record.delivered_to_invoice = tms_order.delivered_extra and tms_order.delivered + tms_order.delivered_extra
             message = _(
                 "Trip cloned from: %s", 
                 Markup(
@@ -270,6 +289,76 @@ class TruckingTrip(models.Model):
             record.message_post(body=message)
             if tms_order.stage_id == self.env.ref("tms.tms_stage_order_cancelled"):
                 record.cancelled = True
+    
+    def action_update_from_cpe(self):
+        for record in self:
+            cpe = record.cpe_id
+            if cpe.transport_ids:
+                driver_id = cpe.transport_ids[0].driver_id
+                if record.driver_id and driver_id != record.driver_id:
+                    _logger.warning("CPE %s: Driver mismatch: %s (%s) != %s (%s) ",
+                        record,
+                        record.driver_id, 
+                        record.driver_id.name,
+                        driver_id,
+                        driver_id.name
+                    )
+                    if not record.cpe_mismatch:
+                        record.cpe_mismatch = True
+                        message = _(
+                            "Driver %s from CPE %s mismatches the one in the order (%s). The order was not updated.",
+                            f'{driver_id.name} ({driver_id.id})',
+                            Markup(
+                                f"""<a href=# data-oe-model=afip.cpe data-oe-id={record.cpe_id.id}"""
+                                f""">{record.cpe_id.name}</a>"""
+                            ),
+                            f'{record.driver_id.name} ({record.driver_id.id})',
+                        )
+                        self.with_user(SUPERUSER_ID).message_post(
+                            body=message,
+                            message_type='comment',
+                        )
+                    return False
+                record.cpe_mismatch = False
+                record.driver_id = cpe.transport_ids[0].driver_id
+                record.vehicle_id = cpe.transport_ids[0].vehicle_id
+                record.trailer_id = cpe.transport_ids[0].trailer_id
+                record.start_date = cpe.transport_ids[0].start_date
+                record.distance = cpe.transport_ids[0].distance
+                
+                #record.delivered_cpe = cpe.unload_net
+                
+                # If driver is on the CPE, update the confirmed status
+                if not record.driver_response:
+                    record.driver_response = 'confirmed'
+                
+                if cpe.status == 'CN':
+                    record.state ='completed'
+                    record.end_date = record.end_date or cpe.status_date
+                elif cpe.status == 'CF':
+                    record.state = 'arrived'
+                    record.arrived_date = record.arrived_date or cpe.status_date
+                elif cpe.status in ['AN','RE']:
+                    record.state = 'cancelled'
+                                    
+            if cpe.customer_id:
+                record.customer_id = cpe.customer_id
+                
+                # TODO: check if partner_invoice_id is the same of other trips.
+                record.sale_id.partner_invoice_id = cpe.customer_id                
+            if cpe.origin_locality_id:
+                record.origin_locality_id = cpe.origin_locality_id
+            if cpe.destination_locality_id:
+                record.destination_locality_id = cpe.destination_locality_id
+            
+            message = _(
+                "Orden actualizada desde la carta de porte: %s",
+                Markup(
+                    f"""<a href=# data-oe-model=afip.cpe data-oe-id={record.cpe_id.id}"""
+                    f""">{record.cpe_id.name}</a>"""
+                ),
+            )
+            self.message_post(body=message)
     
     @api.model
     def assign_driver(self,trip_id,driver_id):

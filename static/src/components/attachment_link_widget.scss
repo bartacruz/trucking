@@ -1,0 +1,10 @@
+.o_attachment_link_widget {
+    .o_attachment_name {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        &:hover { color: #714B67 !important; } /* Color Odoo */
+    }
+}

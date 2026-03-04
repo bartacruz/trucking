@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="trucking.AttachmentLinkField">
+        <div class="o_attachment_link_widget d-inline-flex align-items-center p-2 border rounded bg-light" t-if="props.record.data[props.name]">
+            <!-- Icono Condicional -->
+            <div class="o_attachment_image me-2">
+                <t t-if="isPdf">
+                    <img src="/web/static/img/mimetypes/pdf.svg" width="24" height="24" alt="PDF"/>
+                </t>
+                <t t-else="">
+                    <span class="fa fa-file-o fa-2x text-primary"/>
+                </t>
+            </div>
+            
+            <!-- Nombre y Controles -->
+            <div class="d-flex flex-column">
+                <a t-att-href="fileUrl" target="_blank" class="text-decoration-none fw-bold text-dark o_attachment_name">
+                    <t t-esc="fileName"/>
+                </a>
+                <small class="text-muted">
+                    <t t-if="isPdf">PDF</t>
+                    <t t-else="">Archivo</t>
+                </small>
+            </div>
+
+            <!-- Botón de Descarga separado -->
+            <a t-att-href="downloadUrl" class="ms-3 btn btn-link p-0 text-secondary" title="Descargar">
+                <i class="fa fa-download"/>
+            </a>
+        </div>
+        <span t-else="" class="text-muted small">Sin adjunto</span>
+    </t>
+</templates>

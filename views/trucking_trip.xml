@@ -4,7 +4,8 @@
         <field name="name">trucking.trip.view.tree</field>
         <field name="model">trucking.trip</field>
         <field name="arch" type="xml">
-            <tree string="" decoration-danger="is_active == True" decoration-success="state == 'completed'" decoration-muted="state=='cancelled'">
+            <tree string="" decoration-danger="is_active == True" decoration-success="state == 'completed'"
+                decoration-muted="state=='cancelled'">
                 <field name="name" />
                 <field name="is_active" optional="hide" />
                 <field name="cancelled" optional="hide" />
@@ -67,37 +68,59 @@
 
                             <label for="vehicle_id" string="Vehicle" />
                             <div class="d-flex w-75">
-                                <field name="vehicle_id" readonly="cpe_id" />
-                                <field name="trailer_id" />
+                                <field name="vehicle_id" readonly="cpe_id or state in ['completed','cancelled']" title="Vehicle" />
+                                <span>-</span>
+                                <field name="trailer_id" readonly="cpe_id or state in ['completed','cancelled']" title="Trailer" />
+                            </div>
+                            <label for="cpe_id" string="Carta de Porte" />
+                            <div>
+                                <field name="cpe_id" />
+                                <div class="d-flex">
+                                    <span>Fecha:</span>
+                                    <field name="cpe_status_date" invisible="not cpe_status_date" />
+                                </div>
+                                <field name="cpe_pdf" widget="attachment_link" nolabel="1" invisible="not cpe_pdf" />
                             </div>
 
                         </group>
                         <group>
                             <field name="commitment_date" />
                             <field name="start_date" />
+                            <field name="arrived_date" />
                             <field name="end_date" />
-
+                            <separator string="Cargo" />
                             <label for="distance" />
                             <div name="distance-val" class="d-flex w-25">
                                 <field name="distance" class="text-end" />
                                 <span class="ms-1">Kms</span>
+                            </div>
+                            <label for="delivered_cpe" invisible="not cpe_id" />
+                            <div name="delivered_cpe-val" class="d-flex w-25" invisible="not cpe_id">
+                                <field name="delivered_cpe" class="text-end"/>
+                                <span class="ms-1">Kg</span>
                             </div>
                             <label for="delivered" />
                             <div name="delivered-val" class="d-flex w-25">
                                 <field name="delivered" class="text-end" />
                                 <span class="ms-1">Kg</span>
                             </div>
-                            <label for="delivered_extra" />
-                            <div name="delivered_extra-val" class="d-flex w-25">
-                                <field name="delivered_extra" class="text-end" />
-                                <span class="ms-1">Kg</span>
+
+                            <label for="delivered_diff" invisible="not delivered_diff" />
+                            <div name="delivered_diff-wrap" class="d-flex w-25" invisible="not delivered_diff">
+                                <div name="delivered_diff-val" class="d-flex" >
+                                    <field name="delivered_diff" class="text-end" />
+                                    <span class="ms-1">Kg</span>
+                                </div>
                             </div>
-                            <label for="delivered_total" />
-                            <div name="delivered_total-val" class="d-flex w-25">
-                                <field name="delivered_total" class="text-end" />
-                                <span class="ms-1">Kg</span>
+                            <label for="delivered_to_invoice" />
+                            <div class="w-25">
+                                <div name="delivered_to_invoice-val" class="d-flex">
+                                    <field name="delivered_to_invoice" class="text-end" />
+                                    <span class="ms-1">Kg</span>
+                                </div>
                             </div>
-                            <field name="cpe_id" />
+
+                            <field name="rate_label" />
                         </group>
 
                     </group>
@@ -176,5 +199,16 @@
             'search_default_active': 1,
             'search_default_today': 1
             }</field>
+    </record>
+    <record id="ir_action_server_action_update_from_cpe" model="ir.actions.server">
+        <field name="name">Update from CPE</field>
+        <field name="model_id" ref="trucking.model_trucking_trip" />
+        <field name="binding_model_id" ref="trucking.model_trucking_trip" />
+        <field name="binding_view_types">form</field>
+        <field name="groups_id" eval="[Command.link(ref('base.group_system'))]" />
+        <field name="state">code</field>
+        <field name="code">
+            action = record.action_update_from_cpe()
+        </field>
     </record>
 </odoo>
