@@ -14,7 +14,7 @@
                     <input class="o_input w-100" placeholder="Filter drivers" t-model="state.searchString"/>
                 </div>
                 <div t-foreach="displayedPartners" t-as="partner" t-key="partner.id"  class="o_trucking_driver_hover driver p-2 ps-3 border-bottom" t-att-data-driver-id="partner.id" t-on-click="selectDriver" draggable="true" t-on-dragstart="onDrag" t-on-drop="onDrop">
-                        <span t-esc="partner.display_name" t-att-title="partner.state" t-attf-class="{{partner.state == 'available' ? '':'fst-italic fw-light'}}"/>                    
+                        <span t-esc="partner.display_name" t-att-title="partner.state" t-attf-class="{{partner.trucking_state == 'available' ? '':'fst-italic fw-light'}}"/>
                 </div>
             </div>
             <div class="w-100 d-flex justify-content-center">

@@ -1,6 +1,9 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
+import logging
+
+_logger = logging.getLogger(__name__)
 class ResPartner(models.Model):
     _inherit = 'res.partner'
     
@@ -26,8 +29,13 @@ class ResPartner(models.Model):
         ('unavailable','Unavailable'),
         ],
         group_expand="_read_group_trucking_states",
+        compute = '_compute_trucking_state',
+        store=True,
+        readonly=False,
         tracking=True
     )
+    
+    trucking_is_active = fields.Boolean()
     
     # Relación inversa necesaria para el cómputo
     trucking_trip_ids = fields.One2many(
@@ -56,12 +64,58 @@ class ResPartner(models.Model):
         string="Estado del Viaje Activo",
         store=False
     )
+    
+    # For kanban sorting
     trucking_sequence = fields.Integer(string="Secuencia", default=10, copy=False)
+    
+    # For drivers list sorting
+    trucking_state_sequence = fields.Integer(
+        string="Secuencia de Estado",
+        compute='_compute_trucking_state_sequence',
+        store=True,
+        index=True  # Indexado para que el order sea rapidísimo
+    )
+    
+    def write(self, values):
+        old_state = self.trucking_state
+        ret = super().write(values)
+        if self.trucking_state != old_state:
+            self._trucking_state_updated()
+    
+    
+    @api.depends('trucking_state')
+    def _compute_trucking_state_sequence(self):
+        # Mapeo lógico: Available (1) -> Assigned (2) -> Unavailable (3)
+        mapping = {
+            'available': 1,
+            'assigned': 2,
+            'unavailable': 3,
+        }
+        for record in self:
+            record.trucking_state_sequence = mapping.get(record.trucking_state, 9)
+            print("partner state sequence changed",record)
+            self._notify_trucking_update()
 
+    @api.depends('active_trucking_trip_id','trucking_trip_ids')
+    def _compute_trucking_state(self):
+        for record in self:
+            old_state = record.trucking_state
+            print('actualizando trucking_state',record)
+            print(record.name,record.active_trucking_trip_id,record.trucking_state)
+            if record.trucking_state == 'assigned' and not record.active_trucking_trip_id:
+                record.trucking_state = 'available'
+            elif record.trucking_state != 'assigned' and record.active_trucking_trip_id:
+                record.trucking_state = 'assigned'
+            if old_state != record.trucking_state:
+                print("llamando a _trucking_state_updated",record)
+                record._trucking_state_updated()
+                
+        
     @api.depends('trucking_trip_ids')
     def _compute_trucking_trip_count(self):
         for record in self:
             record.trucking_trip_count = len(record.trucking_trip_ids)
+            
 
     @api.depends('trucking_trip_ids.is_active')
     def _compute_active_trucking_trip_id(self):
@@ -70,6 +124,7 @@ class ResPartner(models.Model):
             active_trip = record.trucking_trip_ids.filtered(lambda t: t.is_active)
             # Tomamos el primero si existe, de lo contrario False
             record.active_trucking_trip_id = active_trip[0] if active_trip else False
+            
 
     @api.depends('vehicle_id')
     def _compute_vehicle_id(self):
@@ -98,27 +153,47 @@ class ResPartner(models.Model):
         aparezcan como columnas en el Kanban, incluso si están vacías.
         """
         # Retornamos la lista de claves del Selection
-        return [key for key, val in self._fields['trucking_state'].selection]
-
-    def write(self, vals):
-        # Lógica de Lista de Espera: Si pasa a 'available', va al final
-        if vals.get('trucking_state') == 'available':
-            for record in self:
+        return [key for key, val in self._fields['trucking_state'].selection]    
+        
+    ### Notifications ###
+    
+    def _notify_trucking_update(self, partner_ids=False):
+        partners = self.browse(partner_ids or self)
+        notifications = []
+        for partner in partners:
+            payload = {
+                'id': partner.id,
+            }
+            notifications.append((
+                'trucking',
+                'trucking_driver_changed',
+                payload
+            ))
+        print("_notify_trucking_update",notifications)
+        self.env['bus.bus']._sendmany(notifications)
+     
+    def _trucking_state_updated(self):
+        self.ensure_one()
+        try:
+            # If driver is made available, must go to the end of the queue
+            if self.trucking_state == 'available':
                 last_available = self.env['res.partner'].search([
                     ('trucking_state', '=', 'available'),
                     ('truck_driver', '=', True),
-                    ('id', '!=', record.id)
+                    ('id', '!=', self.id)
                 ], order='trucking_sequence desc', limit=1)
-                vals['trucking_sequence'] = (last_available.trucking_sequence + 1) if last_available else 10
+                self.trucking_sequence = (last_available.trucking_sequence + 1) if last_available else 10
 
-        if vals.get('trucking_state') == 'assigned':
-            for record in self:
-                if not record.active_trucking_trip_id:
+            if self.trucking_state == 'assigned':
+                if not self.active_trucking_trip_id:
                     raise UserError("No podés asignar un conductor sin un viaje activo. "
                                     "Por favor, usá el botón de 'Asignar Viaje' en la tarjeta.")
-
-        return super(ResPartner, self).write(vals)
-
+        except:
+            _logger.exception("_trucking_state_updated %s" % self)
+        self._notify_trucking_update()
+        
+    ### Actions ###
+    
     def action_view_trucking_trips(self):
         self.ensure_one()
         return {

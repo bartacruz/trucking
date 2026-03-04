@@ -226,6 +226,13 @@ class TruckingTrip(models.Model):
                 vals["name"] = self.env["ir.sequence"].next_by_code("trucking.trip")
         return super(TruckingTrip, self).create(vals_list)
     
+    def write(self, vals):
+        ret = super().write(vals)
+        if any(key in vals for key in ['state','driver_id','tag_ids','cpe_id','warnings']):
+            print("sending trip_changed",self.id,self.sale_id)
+            self.env['bus.bus']._sendone('trucking','trucking_trip_changed',{'id':self.id,'order_id':self.sale_id.id})
+        return ret
+    
     def _convert_from_tms(self):
         for record in self:
 
@@ -263,15 +270,6 @@ class TruckingTrip(models.Model):
             if tms_order.stage_id == self.env.ref("tms.tms_stage_order_cancelled"):
                 record.cancelled = True
     
-    def unlink(self):
-        for record in self:
-            if not record.state == 'draft':
-                raise UserError(_(
-                    "No se puede eliminar el viaje '%s' porque contiene datos. "
-                    "Primero debe desactivarlo."
-                ) % record.display_name)
-        return super(TruckingTrip, self).unlink()
-    
     @api.model
     def assign_driver(self,trip_id,driver_id):
         trip = self.browse(trip_id)
@@ -288,6 +286,7 @@ class TruckingTrip(models.Model):
         trip.message_post(body=message)
         trip.driver_response = False
         return trip.id
+    
     def unlink(self):
         """ 
         Impedir el borrado si el viaje ya tiene gestión operativa.

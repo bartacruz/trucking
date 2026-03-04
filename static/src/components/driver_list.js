@@ -28,7 +28,7 @@ export class DriverList extends Component {
             lastSearch: "",
             folded:false,
         })
-        useBus(this.env.bus, "driver_changed", this.updateDrivers);
+        useBus(this.env.bus, "trucking:driver_changed", this.updateDrivers);
         onWillStart(async () => {
             await this.updateDrivers();
         })
@@ -100,7 +100,7 @@ export class DriverList extends Component {
                 "display_name": {},
                 "trucking_state": {},
             },
-            order: "trucking_state, trucking_sequence,name",
+            order: "trucking_state_sequence, trucking_sequence,name",
             limit,
             offset,
         })

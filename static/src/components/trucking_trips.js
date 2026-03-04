@@ -21,7 +21,7 @@ export class TruckingTripsField extends Component {
             false
         );
         // this.refresh = useDebounced(this.refresh,1500);
-        useBus(this.env.bus, "order_changed", this.updateTrips);
+        useBus(this.env.bus, "trucking:trip_changed", this.updateTrips);
         const searchModel = this.env.searchModel;
 
     }
@@ -48,7 +48,6 @@ export class TruckingTripsField extends Component {
         var cpe = record.data.cpe_id ? record.data.cpe_id[1] : false;
         var vehicle = record.data.vehicle_id ? record.data.vehicle_id[1] : false;
         var trailer = record.data.trailer_id ? record.data.trailer_id[1] : false;
-        
         
         return {
             id: record.id, // datapoint_X
