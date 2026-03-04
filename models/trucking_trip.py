@@ -402,6 +402,17 @@ class TruckingTrip(models.Model):
         # Regla: Estado draft O (Sin conductor Y sin distancia)
         return self.state == 'draft' or (not self.driver_id and self.distance == 0)
 
+    def action_view_sales(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "sale.order",
+            "views": [[False, "form"]],
+            "res_id": self.sale_line_id.order_id.id or self.sale_id.id,
+            "context": {"create": False},
+            "name": _("Sales Orders"),
+        }
+        
     ### Whatsapp Integration ###
         
     def _whatsapp_get_partner(self):

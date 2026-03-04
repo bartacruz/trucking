@@ -40,6 +40,17 @@
                 <sheet>
                     <!-- Smart Buttons -->
                     <div class="oe_button_box" name="button_box">
+                        <button
+                            name="action_view_sales"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-usd"
+                            invisible="not sale_id"
+                        >
+                            <span class="o_stat_text">Sale Order</span>
+                            <field name="sale_id" invisible="1" />
+                            <field name="sale_line_id" invisible="1" />
+                </button>
                     </div>
                     <div class="oe_title">
                         <label for="customer_id" class="oe_edit_only" string="Customer" />
@@ -75,9 +86,9 @@
                             <label for="cpe_id" string="Carta de Porte" />
                             <div>
                                 <field name="cpe_id" />
-                                <div class="d-flex">
+                                <div class="d-flex"  invisible="not cpe_status_date">
                                     <span>Fecha:</span>
-                                    <field name="cpe_status_date" invisible="not cpe_status_date" />
+                                    <field name="cpe_status_date" />
                                 </div>
                                 <field name="cpe_pdf" widget="attachment_link" nolabel="1" invisible="not cpe_pdf" />
                             </div>
