@@ -54,7 +54,7 @@ class TruckingTrip(models.Model):
     
     driver_id = fields.Many2one(
         'res.partner', string="Conductor",
-        compute="_compute_driver_id", store=True, readonly=False, tracking=True, domain=[('truck_driver','=',True)]
+        tracking=True, domain=[('truck_driver','=',True)]
     )
     
     vehicle_id = fields.Many2one(
@@ -111,6 +111,7 @@ class TruckingTrip(models.Model):
     def _compute_state(self):
         # TODO: revisar estados de CPE
         for record in self:
+            old_state = record.state
             if record.cancelled:
                 record.state='cancelled'
             elif record.end_date and record.driver_id:
@@ -123,25 +124,25 @@ class TruckingTrip(models.Model):
                 record.state = 'assigned'
             else:
                 record.state = 'draft'
+            if old_state != record.state:
+                self.env['bus.bus']._sendone('trucking','trucking_trip_changed',{'id':record.id,'order_id':record.sale_id.id})
+
             
-    @api.depends('vehicle_id.driver_id')
-    def _compute_driver_id(self):
-        for record in self:
-            record.driver_id = record.vehicle_id.driver_id
-            print(record,"setting driver",record.driver_id)
+    # @api.depends('vehicle_id.driver_id')
+    # def _compute_driver_id(self):
+    #     for record in self:
+    #         record.driver_id = record.vehicle_id.driver_id
+    #         print(record,"setting driver",record.driver_id)
 
     @api.depends('driver_id.vehicle_id')
     def _compute_vehicle_id(self):
         for record in self:
-            record.vehicle_id = record.driver_id.vehicle_id
-            print(record,"setting vehicle",record.vehicle_id)
-            #if record.driver_id:
-            # vehicle = self.env['fleet.vehicle'].search([
-            #     ('driver_id', '=', record.driver_id.id),
-            #     ('vehicle_type', '=', 'truck')
-            # ], limit=1)
-            # if vehicle:
-            #     record.vehicle_id = vehicle
+            if not record.state in ['completed','cancelled']:
+                record.vehicle_id = record.driver_id.vehicle_id
+                print(record,"setting vehicle",record.vehicle_id)
+            else:
+                record.vehicle_id = record.vehicle_id
+                print("not changing vehicle of trip",self,self.state)
 
 
     @api.depends('customer_id')
@@ -247,9 +248,9 @@ class TruckingTrip(models.Model):
                 return
             
             driver_id = tms_order.driver_id and tms_order.driver_id.partner_id or False
-            if driver_id:
+            if driver_id and not driver_id.truck_driver:
                 driver_id.truck_driver = True
-                tms_order.driver_id.vehicle_id.driver_id = driver_id
+                driver_id.vehicle_id = tms_order.driver_id.vehicle_id
             record.driver_id = driver_id
             record.cpe_id = tms_order.cpe_id
             
