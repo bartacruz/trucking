@@ -77,10 +77,12 @@ class ResPartner(models.Model):
     )
     
     def write(self, values):
-        old_state = self.trucking_state
+        old_states = {p.id: p.trucking_state for p in self}
         ret = super().write(values)
-        if self.trucking_state != old_state:
-            self._trucking_state_updated()
+        changed = self.filtered(lambda p: p.trucking_state != old_states.get(p.id))
+        # TODO: make _trucking_state_updated multi, and call changed._trucking_state_updated.
+        for record in changed:
+            record._trucking_state_updated()
     
     
     @api.depends('trucking_state')
@@ -92,21 +94,25 @@ class ResPartner(models.Model):
             'unavailable': 3,
         }
         for record in self:
-            record.trucking_state_sequence = mapping.get(record.trucking_state, 9)
-            print("partner state sequence changed",record)
-            self._notify_trucking_update()
+            if record.trucking_state != record._origin.trucking_state:
+                record.trucking_state_sequence = mapping.get(record.trucking_state, 9)
+                print("partner state sequence changed",record)
+                self._notify_trucking_update()
 
-    @api.depends('active_trucking_trip_id','trucking_trip_ids')
+    @api.depends('active_trucking_trip_id','trucking_trip_ids','truck_driver')
     def _compute_trucking_state(self):
         for record in self:
-            old_state = record.trucking_state
             print('actualizando trucking_state',record)
             print(record.name,record.active_trucking_trip_id,record.trucking_state)
             if record.trucking_state == 'assigned' and not record.active_trucking_trip_id:
                 record.trucking_state = 'available'
             elif record.trucking_state != 'assigned' and record.active_trucking_trip_id:
                 record.trucking_state = 'assigned'
-            if old_state != record.trucking_state:
+            else:
+                # keep the state if set or if it's a driver, set to unavailable
+                record.trucking_state = record.trucking_state or record.truck_driver and 'unavailable' or False
+                
+            if record.trucking_state != record._origin.trucking_state:
                 print("llamando a _trucking_state_updated",record)
                 record._trucking_state_updated()
                 
