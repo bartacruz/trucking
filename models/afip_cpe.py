@@ -2,13 +2,19 @@ from odoo import _, api, fields, models
 
 class AfipCPE(models.Model):
     _inherit = 'afip.cpe'
-    
+    trucking_trip_ids = fields.One2many('trucking.trip','cpe_id') 
     trucking_trip_id = fields.Many2one('trucking.trip', compute='_compute_trucking_trip_id')
     trucking_has_trip = fields.Boolean(compute="_compute_trucking_trip_id", store=True)
     
+    @api.depends('trucking_trip_ids')
     def _compute_trucking_trip_id(self):
         for record in self:
-            trip_id = self.env['trucking.trip'].search([ ('cpe_id','=',record.id) ],limit=1)
+            if not record.trucking_trip_ids:
+                record.trucking_trip_id=False
+                record.trucking_has_trip=False
+                continue
+            trip_id = self.trucking_trip_ids.sorted(lambda t: (-t.commitment_date,-t.start_date))[0]
+            #trip_id = self.env['trucking.trip'].search([ ('cpe_id','=',record.id) ],limit=1)
             record.trucking_trip_id = trip_id
             record.trucking_has_trip = len(trip_id) > 0
     
