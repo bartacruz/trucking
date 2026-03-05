@@ -22,7 +22,7 @@
                     <button name="%(trucking.actrion_create_so)d"
                         type="action"
                         class="btn-primary o_button_create_trucking_sale"
-                        string="Nueva M" display="always" />
+                        string="New Trucking Order" display="always" />
                 </header>
                 <templates>
                     <t t-name="kanban-box">
@@ -75,6 +75,7 @@
             </kanban>
         </field>
     </record>
+
     <record id="sale_order_view_form_inherit" model="ir.ui.view">
         <field name="name">sale.order.form.inherit2.trucking</field>
         <field name="model">sale.order</field>
@@ -91,7 +92,6 @@
             </field>
         </field>
     </record>
-
 
     <record id="view_order_form_inherit" model="ir.ui.view">
         <field name="name">sale.order.form.inherit.trucking</field>
@@ -124,7 +124,6 @@
         </field>
     </record>
 
-    
     <record id="view_sale_order_trucking_search" model="ir.ui.view">
         <field name="name">sale.order.trucking.search</field>
         <field name="model">sale.order</field>
@@ -133,8 +132,10 @@
                 <field name="partner_id" />
                 <field name="partner_invoice_id" />
                 <field name="name" />
+                <field name="trucking_trip_ids" />
                 <field name="origin_locality_id" />
-                <field name="origin_locality_id" />
+                <field name="destination_locality_id" />
+                
                 <filter string="My Orders" domain="[('user_id', '=', uid)]" name="my_trucking_sale_orders_filter" />
                 <group name="sale_dates" string="Fecha">
                     <filter string="Hoy" name="filter_today_creation"

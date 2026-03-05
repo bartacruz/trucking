@@ -131,11 +131,12 @@
                 <field name="vehicle_id" />
                 <field name="active_trucking_trip_id" />
 
-                <filter string="Disponibles" name="available" domain="[('trucking_state', '=', 'available')]" />
-                <filter string="Asignados" name="assigned" domain="[('trucking_state', '=', 'assigned')]" />
+                <filter string="Available" name="available" domain="[('trucking_state', '=', 'available')]" />
+                <filter string="Assigned" name="assigned" domain="[('trucking_state', '=', 'assigned')]" />
+                <filter string="Unavailable" name="unavailable" domain="[('trucking_state', '=', 'unavailable')]" />
 
-                <group expand="0" string="Agrupar por...">
-                    <filter string="Estado del Conductor" name="group_trucking_state" context="{'group_by': 'trucking_state'}" />
+                <group expand="0" string="Group By...">
+                    <filter string="Driver State" name="group_trucking_state" context="{'group_by': 'trucking_state'}" />
                 </group>
             </search>
         </field>
@@ -143,7 +144,7 @@
 
 
     <record id="action_truck_drivers_kanban" model="ir.actions.act_window">
-        <field name="name">Tablero de Conductores</field>
+        <field name="name">Drivers Board</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">kanban,tree,form</field>
         <field name="search_view_id" ref="view_res_partner_search_trucking" />
@@ -161,7 +162,7 @@
              ]" />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Organiza tu flota de conductores.
+                Organize your driver's fleet.
             </p>
         </field>
     </record>

@@ -6,8 +6,7 @@
         <field name="inherit_id" ref="fleet.fleet_vehicle_view_form" />
         <field name="arch" type="xml">
             <xpath expr="//group" position="inside">
-                <group string="Vinculación de Equipo" name="trailer_rel_group">
-                    <!-- Se muestra solo si el modelo es tipo Camión -->
+                <group string="Equipment" name="trailer_rel_group">
                     <field name="trailer_id"
                         invisible="vehicle_type != 'truck'" />
 

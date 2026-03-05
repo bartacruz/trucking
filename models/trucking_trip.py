@@ -93,8 +93,6 @@ class TruckingTrip(models.Model):
     delivered_diff = fields.Integer(_("Difference"), compute='_compute_delivered')
     delivered_total = fields.Integer()
     
-
-    
     sale_line_id = fields.Many2one(
         'sale.order.line',
         string="Línea de Pedido",
@@ -138,24 +136,14 @@ class TruckingTrip(models.Model):
                 record.state = 'draft'
             if old_state != record.state:
                 self.env['bus.bus']._sendone('trucking','trucking_trip_changed',{'id':record.id,'order_id':record.sale_id.id})
-
-            
-    # @api.depends('vehicle_id.driver_id')
-    # def _compute_driver_id(self):
-    #     for record in self:
-    #         record.driver_id = record.vehicle_id.driver_id
-    #         print(record,"setting driver",record.driver_id)
-
+        
     @api.depends('driver_id.vehicle_id')
     def _compute_vehicle_id(self):
         for record in self:
             if not record.state in ['completed','cancelled']:
                 record.vehicle_id = record.driver_id.vehicle_id
-                print(record,"setting vehicle",record.vehicle_id)
             else:
                 record.vehicle_id = record.vehicle_id
-                print("not changing vehicle of trip",self,self.state)
-
 
     @api.depends('customer_id')
     def _compute_contact_phone(self):
@@ -177,25 +165,21 @@ class TruckingTrip(models.Model):
     @api.depends('delivered_cpe','delivered')
     def _compute_delivered(self):
         for record in self:
-            
             record.delivered_to_invoice = record.delivered or record.delivered_cpe
             record.delivered_diff = record.delivered_cpe and record.delivered and record.delivered - record.delivered_cpe or 0
     
     @api.depends('sale_line_id')
     def _compute_sale_line_id(self):
         for record in self:
-            # Buscamos la línea que apunta a este registro específico
             line = self.env['sale.order.line'].search([('trucking_trip_id', '=', record.id)], limit=1)
             record.sale_line_id = line if line else False
 
     def _inverse_sale_line_id(self):
         for record in self:
-            # 1. Liberamos cualquier línea que tuviera este viaje asignado previamente
             old_lines = self.env['sale.order.line'].search([('trucking_trip_id', '=', record.id)])
             if old_lines:
                 old_lines.write({'trucking_trip_id': False})
             
-            # 2. Escribimos el ID del viaje en la nueva línea seleccionada
             if record.sale_line_id:
                 record.sale_line_id.trucking_trip_id = record.id
     
@@ -204,7 +188,7 @@ class TruckingTrip(models.Model):
         for record in self:
             if record.price_unit:
                 price = self.company_id.currency_id.format(record.price_unit)
-                record.rate_label = _(f'{price} per {record.product_uom.name}')
+                record.rate_label = _('%s per %s',price,record.product_uom.name)
             else:
                 record.rate_label=False
     
@@ -218,26 +202,27 @@ class TruckingTrip(models.Model):
 
         # Verificar Camión
         if self.vehicle_id:
-            conflict_truck = self.search(domain + [('vehicle_id', '=', self.vehicle_id.id)], limit=1)
-            if conflict_truck:
-                warning_msg += _("- El camión %s ya está en la orden activa: %s\n") % (
-                    self.vehicle_id.display_name, conflict_truck.display_name or 'ID ' + str(conflict_truck.id)
+            conflict_truck_order = self.search(domain + [('vehicle_id', '=', self.vehicle_id.id)], limit=1)
+            if conflict_truck_order:
+                warning_msg += _("Vehicle %s is already active on order %s\n") % (
+                    self.vehicle_id.display_name, conflict_truck_order.display_name or 'ID ' + str(conflict_truck_order.id)
                 )
 
         # Verificar Conductor
         if self.driver_id:
-            conflict_driver = self.search(domain + [('driver_id', '=', self.driver_id.id)], limit=1)
-            if conflict_driver:
-                warning_msg += _("- El conductor %s ya está en la orden activa: %s\n") % (
-                    self.driver_id.name, conflict_driver.display_name or 'ID ' + str(conflict_driver.id)
+            conflict_order = self.search(domain + [('driver_id', '=', self.driver_id.id)], limit=1)
+            if conflict_order:
+                warning_msg += _("Driver  %s is assigned to active order: %s\n",
+                    self.driver_id.name, 
+                    conflict_order.display_name or 'ID ' + str(conflict_order.id)
                 )
 
         if warning_msg:
             return {
                 'warning': {
-                    'title': _("Recurso actualmente ocupado"),
-                    'message': _("Ten en cuenta que:\n\n") + warning_msg + 
-                               _("\nPuedes continuar si esta es una asignación futura."),
+                    'title': _("Resource currently busy"),
+                    'message': _("Be aware that:\n\n") + warning_msg + 
+                               _("\nYou can dismiss this message if this is a future assignment."),
                 }
             }
             
@@ -433,17 +418,14 @@ class TruckingTrip(models.Model):
         return trip.id
     
     def unlink(self):
-        """ 
-        Impedir el borrado si el viaje ya tiene gestión operativa.
-        Este método se activará incluso si se borra la Sale Order Line 
-        gracias al ondelete='cascade'.
-        """
         for trip in self:
             if not trip.can_be_deleted():
-                raise UserError(
-                    f"No se puede eliminar el viaje '{trip.name}'. "
-                    "Ya cuenta con conductor asignado o datos de ruta confirmados."
-                )
+                raise UserError(_(
+                    "You can't delete a trip with information"
+                    "Trip %s has information that can't be deleted. "
+                    "You can cancel the trip or set it to draft and then delete it.",
+                    trip.name
+                ))
         return super(TruckingTrip, self).unlink()
     
     ### Bussiness logic ###    
@@ -512,7 +494,7 @@ class TruckingTrip(models.Model):
         }
     def action_open_trip_form(self):
         return {
-            'name': 'Detalle del Viaje',
+            'name': _('Trip Details'),
             'type': 'ir.actions.act_window',
             'res_model': 'trucking.trip', # Asegúrate que sea tu modelo
             'view_mode': 'form',

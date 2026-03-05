@@ -28,12 +28,13 @@
                     name="action_open_trip_form" 
                     type="object" 
                     icon="fa-external-link" 
-                    title="Abrir Viaje" 
+                    title="Open Trip" 
                     invisible="not context.get('show_trip_open_button')"
                 />
             </tree>
         </field>
     </record>
+
     <record id="trucking_trip_view_form" model="ir.ui.view">
         <field name="name">trucking.trip.view.form</field>
         <field name="model">trucking.trip</field>
@@ -161,16 +162,16 @@
         <field name="arch" type="xml">
             <search string="Búsqueda de Viajes">
                 <!-- 1. Campos Buscables (Orden solicitado) -->
-                <field name="partner_id" string="Cliente" />
-                <field name="customer_id" string="Sub-Cliente/Destino" />
-                <field name="driver_id" string="Conductor" />
-                <field name="sale_id" string="Orden de Venta" />
-                <field name="vehicle_id" string="Vehículo" />
-                <field name="name" string="Número de Viaje" />
+                <field name="name" string="Trip Name" />
+                <field name="partner_id" string="Solicitor" />
+                <field name="customer_id" string="Customer" />
+                <field name="driver_id" string="Driver" />
+                <field name="sale_id" string="Sale Order" />
+                <field name="vehicle_id" string="Vehicle" />
+        
                 <separator />
 
-                <!-- 2. Filtros de Estado -->
-                <filter string="Viajes Activos" name="active" domain="[('is_active', '=', True)]" />
+                <filter string="Active Trips" name="active" domain="[('is_active', '=', True)]" />
                 <separator />
                 <filter string="Borrador" name="state_draft" domain="[('state', '=', 'draft')]" />
                 <filter string="Asignado" name="state_assigned" domain="[('state', '=', 'assigned')]" />

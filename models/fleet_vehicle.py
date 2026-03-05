@@ -15,19 +15,17 @@ class FleetVehicle(models.Model):
     # Relación: Camión -> Trailer
     trailer_id = fields.Many2one(
         'fleet.vehicle', 
-        string="Trailer Acoplado",
+        string="Trailer",
         domain=[('vehicle_type', '=', 'trailer')],
         tracking=True,
-        help="Selecciona el trailer que está enganchado a este camión."
     )
 
     # Referencia Inversa: Trailer -> Camión
     truck_id = fields.Many2one(
         'fleet.vehicle',
-        string="Camión Actual",
+        string="Truck",
         compute="_compute_truck_id",
         store=True,
-        help="Muestra el camión al que este trailer está acoplado actualmente."
     )
 
     _sql_constraints = [

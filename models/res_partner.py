@@ -17,7 +17,7 @@ class ResPartner(models.Model):
         store=True,
         ondelete='set null',
         tracking=True,
-        help="Vehículo vinculado a este contacto a través del campo 'Conductor' en Flota."
+        help="Truck vehicle"
     )
     trailer_id = fields.Many2one(
         'fleet.vehicle',
@@ -37,23 +37,21 @@ class ResPartner(models.Model):
     
     trucking_is_active = fields.Boolean()
     
-    # Relación inversa necesaria para el cómputo
     trucking_trip_ids = fields.One2many(
         'trucking.trip', 
         'driver_id', 
         string="Historial de Viajes"
     )
 
-    # Campo para el contador del Smart Button
     trucking_trip_count = fields.Integer(
-        string="Cant. de Viajes", 
+        string="Trip Count", 
         compute="_compute_trucking_trip_count"
     )
 
     # Campo computado con su dependencia automática
     active_trucking_trip_id = fields.Many2one(
         'trucking.trip',
-        string="Viaje Activo",
+        string="Active Trip",
         compute="_compute_active_trucking_trip_id",
         store=True,
         index=True
@@ -61,12 +59,12 @@ class ResPartner(models.Model):
     
     active_trucking_trip_state = fields.Selection(
         related='active_trucking_trip_id.state',
-        string="Estado del Viaje Activo",
+        string=_("Active Trip State"),
         store=False
     )
     
     # For kanban sorting
-    trucking_sequence = fields.Integer(string="Secuencia", default=10, copy=False)
+    trucking_sequence = fields.Integer(string="Sequence", default=10, copy=False)
     
     # For drivers list sorting
     trucking_state_sequence = fields.Integer(
@@ -87,7 +85,6 @@ class ResPartner(models.Model):
     
     @api.depends('trucking_state')
     def _compute_trucking_state_sequence(self):
-        # Mapeo lógico: Available (1) -> Assigned (2) -> Unavailable (3)
         mapping = {
             'available': 1,
             'assigned': 2,
@@ -141,14 +138,10 @@ class ResPartner(models.Model):
 
     def _inverse_vehicle_id(self):
         for record in self:
-            # 1. Buscamos vehículos que tengan a este partner como conductor y los liberamos
-            # (Para asegurar que el partner solo tenga un vehículo a la vez)
             old_vehicles = self.env['fleet.vehicle'].search([('driver_id', '=', record.id)])
             if old_vehicles:
                 old_vehicles.write({'driver_id': False})
             
-            # 2. Si se seleccionó un nuevo vehículo en la ficha del contacto,
-            # le asignamos este partner como su conductor oficial
             if record.vehicle_id:
                 record.vehicle_id.driver_id = record.id
 
@@ -158,7 +151,6 @@ class ResPartner(models.Model):
         Este método devuelve todas las opciones del Selection para que 
         aparezcan como columnas en el Kanban, incluso si están vacías.
         """
-        # Retornamos la lista de claves del Selection
         return [key for key, val in self._fields['trucking_state'].selection]    
         
     ### Notifications ###
@@ -189,11 +181,6 @@ class ResPartner(models.Model):
                     ('id', '!=', self.id)
                 ], order='trucking_sequence desc', limit=1)
                 self.trucking_sequence = (last_available.trucking_sequence + 1) if last_available else 10
-
-            if self.trucking_state == 'assigned':
-                if not self.active_trucking_trip_id:
-                    raise UserError("No podés asignar un conductor sin un viaje activo. "
-                                    "Por favor, usá el botón de 'Asignar Viaje' en la tarjeta.")
         except:
             _logger.exception("_trucking_state_updated %s" % self)
         self._notify_trucking_update()
@@ -204,12 +191,10 @@ class ResPartner(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Viajes de Transporte',
+            'name': 'Trips',
             'view_mode': 'tree,form',
             'res_model': 'trucking.trip',
             'domain': [('driver_id', '=', self.id)],
-            # Forzamos que los activos (is_active=True) aparezcan primero, 
-            # y luego por ID descendente (los más nuevos arriba)
             'context': {
                 'default_driver_id': self.id,
                 'default_order': 'is_active desc, id desc'
