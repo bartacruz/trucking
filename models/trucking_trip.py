@@ -13,6 +13,10 @@ class TruckingTrip(models.Model):
     _description = 'Trucking Trip'
     _inherit = ["mail.thread", "mail.activity.mixin"]
     
+    def _default_product(self):
+        # TODO: get it from settings
+        return self.env['product.product'].search([ ('trucking_trip','=',True) ], limit=1)
+    
     state = fields.Selection([
         ('draft','Draft'), # dark 
         ('assigned','Assigned'), # secondary fa-user
@@ -462,7 +466,23 @@ class TruckingTrip(models.Model):
         km_uom = self.env.ref('uom.product_uom_km')
         for record in self:
             line = record.sale_line_id
+            if not line:
+                _logger.warning("Trucking trip %s is not associated with a sale order line",record.name)
+                continue
+            
             product_id = line.product_id
+            
+            if not product_id:
+                product_id = self._default_product()
+                _logger.warning("Trucking trip %s order line %s of sale order %s doesn't have a product. Setting %s to it",record.name,line.id,record.sale_id,product_id.name)
+                line.product_id = product_id
+            
+            if record.state == 'cancelled':
+                line.qty_delivered = 0
+                line.product_uom = product_id.uom_id
+                line.product_uom_qty = line.qty_delivered
+                continue
+            
             line.distance = record.distance
             
             if product_id.uom_id.category_id == weight_uom:
@@ -473,10 +493,10 @@ class TruckingTrip(models.Model):
             elif product_id.uom_id.category_id == units_uom:
                 line.qty_delivered = (record.distance and record.delivered_to_invoice) and 1 or 0
             
-            line.product_uom = product_id.uom_id
+            line.product_uom = product_id.uom_id or units_uom
             line.product_uom_qty = line.qty_delivered
-            
-            print("_update_sale_line of",record)
+            line.name = f'{record.name} {record.driver_id.display_name}'
+            print("_update_sale_line of",record, line.name,line.product_id,line.product_uom.name)
 
     ### Actions ###
     

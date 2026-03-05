@@ -14,8 +14,7 @@ class SaleOrderLine(models.Model):
 
     cloned_line_id = fields.Many2one('sale.order.line')
     distance = fields.Float(string="Distancia (km)")
-
-    
+   
     _sql_constraints = [
         ('trucking_trip_unique', 'unique(trucking_trip_id)', '¡Este viaje ya está asignado a otra línea de pedido!')
     ]
@@ -50,6 +49,17 @@ class SaleOrderLine(models.Model):
             trip = record.trucking_trip_id.create([vals])
             record.order_id._post_trip_message(trip)
     
+    @api.depends('state', 'product_uom_qty', 'qty_delivered', 'qty_to_invoice', 'qty_invoiced', 'trucking_trip_id.state')
+    def _compute_invoice_status(self):
+        super()._compute_invoice_status()
+        for line in self:
+            if line.trucking_trip_id:
+                if line.trucking_trip_id.state in ['completed', 'cancelled']:
+                    line.invoice_status = 'to invoice'
+                else:
+                    line.invoice_status = 'no'
+                print("_compute_invoice_status",line,line.trucking_trip_id.state,line.invoice_status)
+                
     @api.depends('order_id.pricelist_id','product_uom_qty', 'distance')
     def _compute_price_unit(self):
         super()._compute_price_unit()
@@ -60,13 +70,15 @@ class SaleOrderLine(models.Model):
     def _compute_pricelist_item_id(self):
         
         for line in self:
-            quantity = getattr(line, line.order_id.pricelist_id.qty_field) or 1
+            qty_field=line.order_id.pricelist_id.qty_field or 'product_uom_qty'
+            quantity = getattr(line, qty_field ) or 1
+            print("checking pricelist_item of",line,"with",qty_field," quantity",quantity)
             line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
                 line.product_id,
                 quantity=quantity,
                 date=line._get_order_date(),
             )
-            print("checking pricelist_item of",line,"with",quantity,)
+            
                 
     def _prepare_trucking_values(self, **kwargs):
         """

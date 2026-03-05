@@ -5,20 +5,28 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     trucking_trip_ids = fields.One2many('trucking.trip','sale_id')
-    has_trucking_trips = fields.Boolean(compute='_compute_tracking_trips',store=True)
-    trucking_trip_active = fields.Boolean(compute='_compute_tracking_trips',store=True)
-    
+    has_trucking_trips = fields.Boolean(compute='_compute_trucking_trips',store=True)
+    trucking_trip_active = fields.Boolean(compute='_compute_trucking_trips',store=True)
     origin_locality_id = fields.Many2one('afip.locality',tracking=True)
     destination_locality_id = fields.Many2one('afip.locality',tracking=True)
     
     @api.depends('order_line.product_id','trucking_trip_ids')
-    def _compute_tracking_trips(self):
+    def _compute_trucking_trips(self):
         for record in self:
             lines_with_trips = record.order_line.filtered(lambda L: L.product_id.trucking_trip)
             record.has_trucking_trips = len(lines_with_trips) > 0
             record.trucking_trip_active = len(lines_with_trips.filtered(lambda L: L.trucking_trip_id.state not in ['completed','cancelled']) ) >0
             print("line_with_trips",lines_with_trips)
-            
+                    
+    @api.depends('order_line.invoice_status', 'order_line.trucking_trip_id.state')
+    def _compute_invoice_status(self):
+        super()._compute_invoice_status()
+        for order in self:
+            trips_pending = order.order_line.filtered(lambda l: l.invoice_status =='no' )
+            print("invoice_status",order.name,trips_pending)
+            if trips_pending:
+                order.invoice_status='no'
+    
     def _post_trip_message(self, new_trucking_trips):
         """
         Post messages to the Sale Order and the newly created Trucking Trips
