@@ -4,8 +4,7 @@
         <field name="name">trucking.trip.view.tree</field>
         <field name="model">trucking.trip</field>
         <field name="arch" type="xml">
-            <tree string="" decoration-danger="is_active == True" decoration-success="state == 'completed'"
-                decoration-muted="state=='cancelled'">
+            <tree string="" decoration-muted="state=='cancelled'">
                 <field name="name" />
                 <field name="is_active" optional="hide" />
                 <field name="cancelled" optional="hide" />
@@ -20,7 +19,18 @@
                 <field name="start_date" optional="hide" />
                 <field name="end_date" optional="hide" />
                 <field name="cpe_id" optional="show" />
-                <field name="state" />
+                <field name="state" widget="badge"
+                    decoration-primary="is_active" 
+                    decoration-success="state == 'completed'" 
+                    decoration-danger="state == 'cancelled'" 
+                    decoration-info="state=='draft'" />
+                <button 
+                    name="action_open_trip_form" 
+                    type="object" 
+                    icon="fa-external-link" 
+                    title="Abrir Viaje" 
+                    invisible="not context.get('show_trip_open_button')"
+                />
             </tree>
         </field>
     </record>

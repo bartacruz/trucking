@@ -244,15 +244,67 @@ class TruckingTrip(models.Model):
         for vals in vals_list:
             if vals.get("name", _("New")) == _("New"):
                 vals["name"] = self.env["ir.sequence"].next_by_code("trucking.trip")
-        return super(TruckingTrip, self).create(vals_list)
+        records = super(TruckingTrip, self).create(vals_list)
+        print("create",records)
+        for record in records:
+            if record.sale_line_id.tms_order_ids:
+                record._import_from_tms()
+        return records
+    
     
     def write(self, vals):
         ret = super().write(vals)
+        if 'cpe_id' in vals:
+            if self.cpe_id:
+                updated = self.cpe_id.action_update_cpe()
+                if not updated:
+                    self.action_update_from_cpe()
+            elif self.cpe_mismatch:
+                self.cpe_mismatch=False
+        
         if any(key in vals for key in ['state','driver_id','tag_ids','cpe_id','warnings']):
             print("sending trip_changed",self.id,self.sale_id)
             self.env['bus.bus']._sendone('trucking','trucking_trip_changed',{'id':self.id,'order_id':self.sale_id.id})
+        if any(key in vals for key in ['state','distance','delivered','delivered_cpe']):
+            self._update_sale_line()
+            
         return ret
     
+    def _import_from_tms(self):
+        self.ensure_one()
+        tms_order = self.sale_line_id.tms_order_ids[0]
+        if not tms_order:
+            _logger.warning(_("Line %s doesn't have a tms_order",self.sale_line_id))
+            return
+        self.cpe_id = tms_order.cpe_id
+        if self.cpe_id and self.cpe_id.status != 'BR':
+            print(self,"updating from cpe")
+            self.action_update_from_cpe()
+        else:
+            print(self,"no cpe or CPE in draft state. updating all")
+            driver_id = tms_order.driver_id and tms_order.driver_id.partner_id or False
+            if driver_id and not driver_id.truck_driver:
+                driver_id.truck_driver = True
+                driver_id.vehicle_id = tms_order.driver_id.vehicle_id
+            self.driver_id = driver_id
+            self.vehicle_id = tms_order.vehicle_id
+            self.trailer_id = tms_order.trailer_id
+            self.commitment_date = tms_order.scheduled_date_start or self.sale_id.commitment_date
+            self.start_date = tms_order.date_start
+            self.end_date = tms_order.date_end
+            self.distance = tms_order.distance
+            self.delivered = tms_order.delivered_total
+            if tms_order.stage_id == self.env.ref("tms.tms_stage_order_cancelled"):
+                self.cancelled = True
+        message = _(
+            "Trip cloned from: %s", 
+            Markup(
+                f"""<a href=# data-oe-model=tms.order data-oe-id={tms_order.id}"""
+                f""">{tms_order.name}</a>"""
+            )
+        )
+        self.message_post(body=message)
+            
     def _convert_from_tms(self):
         for record in self:
 
@@ -287,8 +339,7 @@ class TruckingTrip(models.Model):
                 )
             )
             record.message_post(body=message)
-            if tms_order.stage_id == self.env.ref("tms.tms_stage_order_cancelled"):
-                record.cancelled = True
+            
     
     def action_update_from_cpe(self):
         for record in self:
@@ -342,7 +393,7 @@ class TruckingTrip(models.Model):
                     record.state = 'cancelled'
                                     
             if cpe.customer_id:
-                record.customer_id = cpe.customer_id
+                #record.customer_id = cpe.customer_id
                 
                 # TODO: check if partner_invoice_id is the same of other trips.
                 record.sale_id.partner_invoice_id = cpe.customer_id                
@@ -402,6 +453,33 @@ class TruckingTrip(models.Model):
         # Regla: Estado draft O (Sin conductor Y sin distancia)
         return self.state == 'draft' or (not self.driver_id and self.distance == 0)
 
+    def _update_sale_line(self):
+        distance_uom = self.env.ref('uom.uom_categ_length')
+        weight_uom = self.env.ref('uom.product_uom_categ_kgm')
+        units_uom = self.env.ref('uom.product_uom_categ_unit')
+        
+        kg_uom = self.env.ref('uom.product_uom_kgm')
+        km_uom = self.env.ref('uom.product_uom_km')
+        for record in self:
+            line = record.sale_line_id
+            product_id = line.product_id
+            line.distance = record.distance
+            
+            if product_id.uom_id.category_id == weight_uom:
+                line.qty_delivered = kg_uom._compute_quantity(record.delivered_to_invoice,product_id.uom_id)
+                
+            elif product_id.uom_id.category_id == distance_uom:
+                line.qty_delivered = km_uom._compute_quantity(record.distance,product_id.uom_id)
+            elif product_id.uom_id.category_id == units_uom:
+                line.qty_delivered = (record.distance and record.delivered_to_invoice) and 1 or 0
+            
+            line.product_uom = product_id.uom_id
+            line.product_uom_qty = line.qty_delivered
+            
+            print("_update_sale_line of",record)
+
+    ### Actions ###
+    
     def action_view_sales(self):
         self.ensure_one()
         return {
@@ -412,7 +490,15 @@ class TruckingTrip(models.Model):
             "context": {"create": False},
             "name": _("Sales Orders"),
         }
-        
+    def action_open_trip_form(self):
+        return {
+            'name': 'Detalle del Viaje',
+            'type': 'ir.actions.act_window',
+            'res_model': 'trucking.trip', # Asegúrate que sea tu modelo
+            'view_mode': 'form',
+            'res_id': self.id,
+            'target': 'current', # Esto es la clave para que no sea modal
+        }
     ### Whatsapp Integration ###
         
     def _whatsapp_get_partner(self):

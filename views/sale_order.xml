@@ -19,10 +19,10 @@
                 <field name="tag_ids" />
                 <field name="trucking_trip_active" />
                 <header>
-                    <button name="%(trucking.actrion_create_so)d" 
-                        type="action" 
-                        class="btn-primary o_button_create_trucking_sale" 
-                        string="Nueva M" display="always"/>
+                    <button name="%(trucking.actrion_create_so)d"
+                        type="action"
+                        class="btn-primary o_button_create_trucking_sale"
+                        string="Nueva M" display="always" />
                 </header>
                 <templates>
                     <t t-name="kanban-box">
@@ -75,6 +75,23 @@
             </kanban>
         </field>
     </record>
+    <record id="sale_order_view_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit2.trucking</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="tms_sale.sale_order_view_form" />
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <field name="has_tms_order" invisible="1" />
+            </div>
+            <field name="tms_factor" position="attributes">
+                <attribute name="column_invisible">not parent.has_tms_order</attribute>
+            </field>
+            <field name="tms_factor_uom" position="attributes">
+                <attribute name="column_invisible">not parent.has_tms_order</attribute>
+            </field>
+        </field>
+    </record>
+
 
     <record id="view_order_form_inherit" model="ir.ui.view">
         <field name="name">sale.order.form.inherit.trucking</field>
@@ -83,6 +100,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="commitment_date" />
+                <field name="has_trucking_trips" invisible="1" />
             </xpath>
             <xpath expr="//page[@name='order_lines']" position="before">
                 <page string="Viajes" name="trucking_trips" invisible='not trucking_trip_ids' icon="fa-truck">
@@ -94,13 +112,19 @@
                             <field name="destination_locality_id" />
                         </group>
                     </group>
-                    <!-- <button type="object" name="action_new_trip_sale" class="btn btn-primary btn-sm" string="New Trip"/> -->
-                    <field name="trucking_trip_ids" mode="tree" />
+                    <button type="object" name="action_new_trip_sale" class="btn btn-primary btn-sm" string="New Trip" />
+                    <field name="trucking_trip_ids" context="{'show_trip_open_button': True}" />
                 </page>
             </xpath>
+            <xpath expr="//tree//field[@name='name']" position="after">
+                <field name="trucking_trip_id" column_invisible="not parent.has_trucking_trips" optional="hide" />
+                <field name="distance" column_invisible="not parent.has_trucking_trips" optional="show" />
+            </xpath>
+            
         </field>
     </record>
 
+    
     <record id="view_sale_order_trucking_search" model="ir.ui.view">
         <field name="name">sale.order.trucking.search</field>
         <field name="model">sale.order</field>
@@ -166,4 +190,5 @@
             action = record.action_trucking_clone_tms()
         </field>
     </record>
+
 </odoo>

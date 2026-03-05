@@ -14,7 +14,7 @@
     "version": "17.0.1.0.2",
     "license": "AGPL-3",
 
-    'depends': ['base','fleet', 'sale','l10n_ar_afip_cpe','mail_gateway_whatsapp'],
+    'depends': ['base','fleet', 'sale','l10n_ar_afip_cpe','mail_gateway_whatsapp','tms_sale','tms_shipment'],
     "assets": {
         "web.assets_backend": [
             'trucking/static/src/components/*',
@@ -25,6 +25,7 @@
         'data/ir_sequence_data.xml',
         "security/ir.model.access.csv",
         'views/fleet_vehicle.xml',
+        'views/product_pricelist.xml',
         'views/product_template.xml',
         'views/res_partner.xml',
         'views/sale_order.xml',
