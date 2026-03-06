@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="trucking.DriverList">
-        <div class="trucking_driverlist overflow-hidden" id="truckingDriverlist" t-ref="root">
+        <div class="trucking-driverslist" id="truckingDriverlist" t-ref="root">
                                 
             <!-- <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" t-on-change="onChangeActiveDrivers"/>
@@ -9,16 +9,19 @@
                     Active drivers
                 </label>
             </div> -->
-            <div t-ref="drivers">
-                <div class="p-1 my-2">
+            
+            <div class="drivers-container" t-ref="drivers">
+                <div class="drivers-search">
                     <input class="o_input w-100" placeholder="Filter drivers" t-model="state.searchString"/>
+                </div>                
+                <div class="drivers-list">
+                    <div t-foreach="displayedPartners" t-as="partner" t-key="partner.id"  class="o_trucking_driver_hover driver p-2 ps-3 border-bottom" t-att-data-driver-id="partner.id" t-on-click="selectDriver" draggable="true" t-on-dragstart="onDrag" t-on-drop="onDrop">
+                            <span t-esc="partner.display_name" t-att-title="partner.state" t-attf-class="{{partner.trucking_state == 'available' ? '':'fst-italic fw-light'}}"/>
+                    </div>
                 </div>
-                <div t-foreach="displayedPartners" t-as="partner" t-key="partner.id"  class="o_trucking_driver_hover driver p-2 ps-3 border-bottom" t-att-data-driver-id="partner.id" t-on-click="selectDriver" draggable="true" t-on-dragstart="onDrag" t-on-drop="onDrop">
-                        <span t-esc="partner.display_name" t-att-title="partner.state" t-attf-class="{{partner.trucking_state == 'available' ? '':'fst-italic fw-light'}}"/>
+                 <div class="drivers-pager">
+                    <Pager offset="pager.offset" limit="pager.limit" total="pager.total" onUpdate.bind="onUpdatePager" />
                 </div>
-            </div>
-            <div class="w-100 d-flex justify-content-center">
-                <Pager offset="pager.offset" limit="pager.limit" total="pager.total" onUpdate.bind="onUpdatePager" />
             </div>
         </div>
     

@@ -1,26 +1,54 @@
+@media (max-width: 994px) and (min-width: 768px) {
+    .o_trucking_kanban_sidebar {
+        top:153px;
+    }
+}
 .o_trucking_kanban_sidebar {
+    position:fixed;
+    // float: left;
+    // height: calc(100dvh - 120px);
+    top:105px;
+    bottom:10px;
+    width: 240px;
+
+    ~ .o_kanban_renderer {
+        margin-left:235px;
+    }
+    .o_trucking_kanban_container {
+        position:absolute;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: left;
+        justify-items: stretch;
+
+        .o_trucking_kanban_heading {
+            display: flex ;
+            flex-direction: row;
+            align-items: center;
+            .fa-arrow-circle-right{
+                display: none;
+            }
+            .fa-arrow-circle-left{
+                display: block;
+            }
+        }
+        .o_trucking_kanban_sidebar_content {
+            transition: width 0.2s;
+            width: 230px;
+            flex-grow: 4;
+            height: 100%;
+            min-height: 0;
+        }
+    }
     
-    float: left;
-    margin-top: 13px;
-    .o_trucking_kanban_heading {
-        display: flex ;
-        flex-direction: row;
-        align-items: center;
-        .fa-arrow-circle-right{
-            display: none;
-        }
-        .fa-arrow-circle-left{
-            display: block;
-        }
-    }
-    .o_trucking_kanban_sidebar_content {
-        transition: width 0.2s;
-        overflow: hidden;
-        width: 250px;
-    }
     &.folded {
+        width:40px;
         .o_trucking_kanban_heading {
             flex-direction: column;
+            margin-left:10px;
             .fa-arrow-circle-right{
                 display: block;
             }
@@ -33,6 +61,9 @@
         }
         .o_trucking_kanban_title {
             writing-mode: vertical-lr;
+        }
+        ~ .o_kanban_renderer {
+            margin-left:50px;
         }
     }
 }

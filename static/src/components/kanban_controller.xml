@@ -2,19 +2,23 @@
 <templates>
     <t t-name="trucking.TruckingKanbanController" t-inherit="web.KanbanView">
         <xpath expr="//t[@t-component='props.Renderer']" position="before">
-            <div class="bg-white border-end border-top o_trucking_kanban_sidebar h-100">
-                <div class="p-2 o_trucking_kanban_heading" t-on-click="toggleFold">
-                    <i class="fa fa-arrow-circle-right"/>
-                    <div class="o_trucking_kanban_title fs-3 p-1">
-                        <strong>Drivers List</strong>
+
+            <div class="bg-white border-end border-bottom o_trucking_kanban_sidebar">
+                <div class="o_trucking_kanban_container">
+                    <div class="p-2 o_trucking_kanban_heading" t-on-click="toggleFold">
+                        <i class="fa fa-arrow-circle-right"/>
+                        <div class="o_trucking_kanban_title fs-3 p-1">
+                            <strong>Drivers List</strong>
+                        </div>
+                        <i class="fa fa-arrow-circle-left"/>
+                        
                     </div>
-                    <i class="fa fa-arrow-circle-left"/>
-                    
-                </div>
-                <div class="o_trucking_kanban_sidebar_content">
-                    <DriverList selectDriver.bind="selectDriver" />
+                    <div class="o_trucking_kanban_sidebar_content">
+                        <DriverList selectDriver.bind="selectDriver" />
+                    </div>
                 </div>
             </div>
         </xpath>
+
     </t>
 </templates>

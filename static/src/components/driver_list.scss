@@ -1,5 +1,41 @@
-.o_trucking_driver_hover {
-    &:hover {
-        background-color: $gray-200;
+.trucking-driverslist {
+    // position:absolute;
+    // height:calc(100dvh - 250px);
+    // width:230px;
+    height:100%;
+    .drivers-search {
+        padding: 5px;
+        margin-left:10px;
     }
+    .drivers-container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        min-height: 0;
+        height: 100%;
+
+        .drivers-list {
+            flex-grow: 4;
+            overflow-y: auto;
+            height: 100%;
+            
+        }
+        .drivers-pager {
+            width: 100%;
+            margin-left:10px;
+            display: flex;
+            justify-content: center;
+        }
+        .o_trucking_driver_hover {
+            &:hover {
+                background-color: $gray-200;
+            }
+        }
+    }
+
+}
+.folded .trucking-driverslist {
+    display: none;
+    transition: all 0.4s;
 }
