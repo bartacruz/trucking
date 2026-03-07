@@ -74,6 +74,10 @@ class ResPartner(models.Model):
         index=True  # Indexado para que el order sea rapidísimo
     )
     
+    @api.model
+    def truck_drivers(self):
+        return self.search([('truck_driver','=',True)],order='name')
+    
     def write(self, values):
         old_states = {p.id: p.trucking_state for p in self}
         ret = super().write(values)
@@ -84,17 +88,18 @@ class ResPartner(models.Model):
     
     
     @api.depends('trucking_state')
-    def _compute_trucking_state_sequence(self):
+    def _compute_trucking_state_sequence(self,force=False):
         mapping = {
             'available': 1,
             'assigned': 2,
             'unavailable': 3,
         }
         for record in self:
-            if record.trucking_state != record._origin.trucking_state:
+            if force or record.trucking_state != record._origin.trucking_state:
                 record.trucking_state_sequence = mapping.get(record.trucking_state, 9)
                 print("partner state sequence changed",record)
-                self._notify_trucking_update()
+                if not force:
+                    self._notify_trucking_update()
 
     @api.depends('active_trucking_trip_id','trucking_trip_ids','truck_driver')
     def _compute_trucking_state(self):

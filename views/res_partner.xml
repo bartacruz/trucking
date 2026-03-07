@@ -88,14 +88,16 @@
                     <div class="o_field_widget o_stat_info">
                         <!-- CASO 1: Con Viaje Activo (Verde) -->
                         <div invisible="not active_trucking_trip_id" class="text-success font-weight-bold">
-                            <field name="trucking_trip_count" class="o_stat_value" />
                             <span class="o_stat_text">Viajes</span>
+                            <field name="trucking_trip_count" class="text-success o_stat_value" />
+                            
                         </div>
 
                         <!-- CASO 2: Sin Viaje Activo (Estándar) -->
                         <div invisible="active_trucking_trip_id">
-                            <field name="trucking_trip_count" class="o_stat_value" />
                             <span class="o_stat_text">Viajes</span>
+                            <field name="trucking_trip_count" class="o_stat_value" />
+                            
                         </div>
                     </div>
                 </button>
