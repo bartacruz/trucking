@@ -12,6 +12,7 @@ class TruckingTrip(models.Model):
     _name = 'trucking.trip'
     _description = 'Trucking Trip'
     _inherit = ["mail.thread", "mail.activity.mixin"]
+    _order = 'id desc'
     
     def _default_product(self):
         # TODO: get it from settings
@@ -361,12 +362,12 @@ class TruckingTrip(models.Model):
                         record.cpe_mismatch = True
                         message = _(
                             "Driver %s from CPE %s mismatches the one in the order (%s). The order was not updated.",
-                            f'{driver_id.name} ({driver_id.id})',
+                            "%s (%s)" % (driver_id.name, driver_id.id,),
                             Markup(
                                 f"""<a href=# data-oe-model=afip.cpe data-oe-id={record.cpe_id.id}"""
                                 f""">{record.cpe_id.name}</a>"""
                             ),
-                            f'{record.driver_id.name} ({record.driver_id.id})',
+                            "%s (%s)" % (record.driver_id.name, record.driver_id.id,),
                         )
                         self.with_user(SUPERUSER_ID).message_post(
                             body=message,

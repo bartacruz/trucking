@@ -205,6 +205,9 @@
                 <field name="partner_id" string="Solicitor" />
                 <field name="customer_id" string="Customer" />
                 <field name="driver_id" string="Driver" />
+                <field name="origin_locality_id" string="Origin Locality" />
+                <field name="destination_locality_id" string="Destination Locality" />
+                <field name="cpe_id" string="CPE" />
                 <field name="sale_id" string="Sale Order" />
                 <field name="vehicle_id" string="Vehicle" />
         
@@ -212,54 +215,50 @@
 
                 <filter string="Active Trips" name="active" domain="[('is_active', '=', True)]" />
                 <separator />
-                <filter string="Borrador" name="state_draft" domain="[('state', '=', 'draft')]" />
-                <filter string="Asignado" name="state_assigned" domain="[('state', '=', 'assigned')]" />
-                <filter string="Confirmado" name="state_confirmed" domain="[('state', '=', 'confirmed')]" />
-                <filter string="Iniciado" name="state_started" domain="[('state', '=', 'started')]" />
-                <filter string="Arribado" name="state_arrived" domain="[('state', '=', 'arrived')]" />
-                <filter string="Completado" name="state_completed" domain="[('state', '=', 'completed')]" />
-                <filter string="Cancelado" name="state_cancelled" domain="[('state', '=', 'cancelled')]" />
+                <filter string="Draft" name="state_draft" domain="[('state', '=', 'draft')]" />
+                <filter string="Assigned" name="state_assigned" domain="[('state', '=', 'assigned')]" />
+                <filter string="Confirmed" name="state_confirmed" domain="[('state', '=', 'confirmed')]" />
+                <filter string="Started" name="state_started" domain="[('state', '=', 'started')]" />
+                <filter string="Arrived" name="state_arrived" domain="[('state', '=', 'arrived')]" />
+                <filter string="Completed" name="state_completed" domain="[('state', '=', 'completed')]" />
+                <filter string="Cancelled" name="state_cancelled" domain="[('state', '=', 'cancelled')]" />
 
                 <separator />
 
-                <!-- 3. Filtros por Fecha (Asumiendo campo start_date) -->
-                <!-- En Odoo 17, 'date_filter' permite selectores rápidos de hoy, semana, mes, etc. -->
                 <filter string="Fecha de la orden" name="commitment_filter" date="commitment_date" />
                 <filter string="Fecha de Inicio" name="start_date_filter" date="start_date" />
-                <!-- Filtros manuales de conveniencia -->
-                <filter string="Hoy" name="today"
+                <filter string="Today" name="today"
                     domain="[('commitment_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('commitment_date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]" />
 
                 <separator />
 
-                <!-- 4. Agrupaciones -->
                 <group expand="0" string="Agrupar por...">
-                    <filter string="Orden" name="group_sale" context="{'group_by': 'sale_id'}" />
-                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}" />
-                    <filter string="Conductor" name="group_driver" context="{'group_by': 'driver_id'}" />
-                    <filter string="Vehículo" name="group_vehicle" context="{'group_by': 'vehicle_id'}" />
-                    <filter string="Cliente" name="group_partner" context="{'group_by': 'partner_id'}" />
-                    <filter string="Fecha" name="group_date" context="{'group_by': 'commitment_date:month'}" />
+                    <filter string="Sale" name="group_sale" context="{'group_by': 'sale_id'}" />
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}" />
+                    <filter string="Driver" name="group_driver" context="{'group_by': 'driver_id'}" />
+                    <filter string="Vehicle" name="group_vehicle" context="{'group_by': 'vehicle_id'}" />
+                    <filter string="Client" name="group_partner" context="{'group_by': 'client_id'}" />
+                    <filter string="Solicitor" name="group_partner" context="{'group_by': 'partner_id'}" />
+                    <filter string="Date" name="group_date" context="{'group_by': 'commitment_date:month'}" />
                 </group>
             </search>
         </field>
     </record>
 
     <record id="action_trucking_trips" model="ir.actions.act_window">
-        <field name="name">Viajes de Transporte</field>
+        <field name="name">Trips</field>
         <field name="res_model">trucking.trip</field>
         <field name="view_mode">tree,form,kanban</field>
         <field name="search_view_id" ref="view_trucking_trip_search" />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Crea tu primer viaje de transporte
+                Create your first trucking trip
             </p>
         </field>
-        <!-- Filtros por defecto: Referenciamos los 'name' de los filtros en la Search View -->
-        <field name="context">{
+        <!-- <field name="context">{
             'search_default_active': 1,
             'search_default_today': 1
-            }</field>
+            }</field> -->
     </record>
     <record id="ir_action_server_action_update_from_cpe" model="ir.actions.server">
         <field name="name">Update from CPE</field>

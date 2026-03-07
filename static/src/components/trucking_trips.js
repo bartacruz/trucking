@@ -5,13 +5,21 @@ import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { useBus, useService } from "@web/core/utils/hooks";
 import { useX2ManyCrud } from "@web/views/fields/relational_utils";
-import { useDebounced } from "@web/core/utils/timing";
-
+import { _lt, _t } from "@web/core/l10n/translation";
 
 export class TruckingTripsField extends Component {
     static template = "trucking.TruckingTripsField";
     static props = {
         ...standardFieldProps,
+    }
+    static tripStates = {
+        draft: _lt("DraftO"),
+        assigned: _lt("Assigned"),
+        confirmed: _lt("Confirmed"),
+        started: _lt("Started"),
+        arrived: _lt("Arrived"),
+        completed: _lt("Completed"),
+        cancelled: _lt("Cancelled"),
     }
     setup() {
         this.orm = useService("orm");
@@ -48,7 +56,8 @@ export class TruckingTripsField extends Component {
         var cpe = record.data.cpe_id ? record.data.cpe_id[1] : false;
         var vehicle = record.data.vehicle_id ? record.data.vehicle_id[1] : false;
         var trailer = record.data.trailer_id ? record.data.trailer_id[1] : false;
-        
+        const stateLabel = this.constructor.tripStates[record.data.state] || record.data.state;
+        console.debug(record.data);
         return {
             id: record.id, // datapoint_X
             resId: record.resId,
@@ -58,6 +67,7 @@ export class TruckingTripsField extends Component {
             trailer: trailer,
             is_active: record.data.is_active,
             state: record.data.state,
+            stateLabel:stateLabel,
             warnings: record.data.warnings,
             cpe: cpe,
         };
@@ -111,7 +121,17 @@ export const truckingTripsField = {
             { name: "vehicle_id", type: "many2one" },
             { name: "trailer_id", type: "many2one" },
             { name: "is_active", type: "bool" },
-            { name: "state", type: "selection" },
+            {
+                name: "state", type: "selection", selection: [
+                    ["draft", _lt("DraftO")],
+                    ["assigned", _lt("Assigned")],
+                    ["confirmed", _lt("Confirmed")],
+                    ["started", _lt("Started")],
+                    ["arrived", _lt("Arrived")],
+                    ["completed", _lt("Completed")],
+                    ["cancelled", _lt("Cancelled")],
+                ]
+            },
             { name: "warnings", type: "char" },
             { name: "start_date", type: "date" },
             { name: "cpe_id", type: "many2one" },

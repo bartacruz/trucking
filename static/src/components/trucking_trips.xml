@@ -12,7 +12,7 @@
             t-on-drop.prevent="onDrop">
             
         <t t-foreach="trips" t-as="trip" t-key="trip.id">
-            <div t-attf-class="o_trip mt-1 p-1 rounded border o_row {{trip.driver ? 'text-bg-secondary':'border'}}" t-att-data-id="trip.resId" t-on-click="onClick">
+            <div t-attf-class="o_trip mt-1 p-1 rounded border o_row {{trip.driver ? 'text-bg-secondary':'border'}}" t-att-data-id="trip.resId" t-on-click="onClick" t-att-title="trip.text">
                 <div class="mb-1 d-flex justify-content-between" >
                     <div>
                         <span t-out="trip.driver" t-if="trip.driver"/>
@@ -30,6 +30,7 @@
                         <span t-out="trip.vehicle" t-if="trip.vehicle"/>
                         <span class="ms-1" t-out="trip.trailer" t-if="trip.trailer"/>
                     </div>
+                    <div class="small text-muted" t-out="trip.text"/>
                     <div>
                         <span 
                             t-attf-class = "
@@ -38,7 +39,7 @@
                             {{trip.state == 'completed' ? 'text-bg-success':''}}
                             {{trip.is_active? 'text-bg-primary':''}}
                             "
-                            t-out="trip.state" 
+                            t-out="trip.stateLabel" 
                             t-if="trip.state"
                         />
                     </div>
