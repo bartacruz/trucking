@@ -168,15 +168,15 @@
 
                 <filter string="My Orders" domain="[('user_id', '=', uid)]" name="my_trucking_sale_orders_filter" />
                 <group name="sale_dates" string="Fecha">
-                    <filter string="Hoy" name="filter_today_creation"
+                    <filter string="Today" name="filter_today_creation"
                         domain="[('create_date','&gt;', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]" />
-                    <filter string="7 días" name="filter_week_creation"
+                    <filter string="7 days" name="filter_week_creation"
                         domain="[('create_date','&gt;', (context_today() - datetime.timedelta(weeks=1)).strftime('%Y-%m-%d'))]" />
-                    <filter string="30 días" name="filter_mont_creation"
+                    <filter string="30 days" name="filter_mont_creation"
                         domain="[('create_date','&gt;', (context_today() - datetime.timedelta(months=1)).strftime('%Y-%m-%d'))]" />
                 </group>
-                <!-- <filter string="Active" name="trucking_actives" domain="[('trucking_active', '=', True),]" /> -->
-
+                <filter string="Active" name="trucking_actives" domain="[('trucking_trip_active', '=', True)]" />
+                <filter string="To Assign" name="trucking_to_assign" domain="[('trucking_trips_to_assign', '&gt;', 0)]" /> 
             </search>
         </field>
     </record>

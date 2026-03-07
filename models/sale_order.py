@@ -8,6 +8,7 @@ class SaleOrder(models.Model):
     has_trucking_trips = fields.Boolean(compute='_compute_trucking_trips',store=True)    
     trucking_trip_active = fields.Boolean(compute='_compute_trucking_trips',store=True)
     trucking_trips_count = fields.Integer(compute='_compute_trucking_trips')
+    trucking_trips_to_assign = fields.Integer(compute='_compute_trucking_trips', store=True)
     origin_locality_id = fields.Many2one('afip.locality',tracking=True)
     destination_locality_id = fields.Many2one('afip.locality',tracking=True)
         
@@ -34,7 +35,9 @@ class SaleOrder(models.Model):
     def _compute_trucking_trips(self):
         for record in self:
             lines_with_trips = record.order_line.filtered(lambda L: L.product_id.trucking_trip)
+            to_assign = lines_with_trips.filtered(lambda t: t.trucking_trip_state == 'draft')
             record.trucking_trips_count = len(lines_with_trips)
+            record.trucking_trips_to_assign = len(to_assign)
             record.has_trucking_trips = len(lines_with_trips) > 0
             record.trucking_trip_active = len(lines_with_trips.filtered(lambda L: L.trucking_trip_id.state not in ['completed','cancelled']) ) >0
             print("line_with_trips",lines_with_trips)
@@ -102,7 +105,7 @@ class SaleOrder(models.Model):
             created_orders = record.env[record._name]
             for record in record:
                 lines = []
-                tms_lines = record.order_line.filtered(lambda L: len(L.tms_order_ids) > 0)
+                tms_lines = record.order_line.filtered(lambda L: len(L.tms_order_ids) > 0).sorted('id')
                 for line in tms_lines:
                     print("changing line",line,"from",line.product_id.name,'to',product_id.name)
                     line.product_id = product_id
