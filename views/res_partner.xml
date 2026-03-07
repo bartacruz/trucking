@@ -167,11 +167,4 @@
         </field>
     </record>
 
-    <menuitem
-        id="menu_trucking_data_driver"
-        name="Drivers"
-        action="action_truck_drivers_kanban"
-        parent="trucking.data"
-        sequence="10"
-    />
 </odoo>

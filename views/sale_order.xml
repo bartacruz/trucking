@@ -37,9 +37,7 @@
                                     <div class="o_kanban_record_headings">
                                         <div class="mb-2">
                                             <strong class="o_kanban_record_title">
-                                                <field name="partner_id"
-                                                    widget="dynamic_m2o_field"
-                                                    options="{'field_to_show': 'alias_name'}" />
+                                                <field name="partner_id" />
                                             </strong>
                                         </div>
                                         <div class="text-muted o_row">
@@ -48,8 +46,7 @@
                                             <field name="destination_locality_id" />
                                         </div>
 
-                                        <t
-                                            t-if="record.partner_invoice_id.raw_value != record.partner_id.raw_value">
+                                        <t t-if="record.partner_invoice_id.raw_value != record.partner_id.raw_value">
                                             <div>
                                                 <span>For:</span>
                                                 <field name="partner_invoice_id" context="{'show_alias':True}" />
@@ -98,11 +95,14 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
+            <header position="inside">
+                <button type="object" name="action_to_draft" string="To Draft" class="btn btn-warning" invisible="state != 'sale'" />
+            </header>
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="commitment_date" />
-                <field name="has_trucking_trips" invisible="1" />
+                <field name="trucking_trips_count" invisible="1" />
             </xpath>
-            <xpath expr="//page[@name='order_lines']" position="before">
+            <xpath expr="//page[@name='order_lines']" position="after">
                 <page string="Viajes" name="trucking_trips" invisible='not trucking_trip_ids' icon="fa-truck">
                     <group>
                         <group>
@@ -113,14 +113,41 @@
                         </group>
                     </group>
                     <button type="object" name="action_new_trip_sale" class="btn btn-primary btn-sm" string="New Trip" />
-                    <field name="trucking_trip_ids" context="{'show_trip_open_button': True}" />
+                    <field name="trucking_trip_ids" context="{'show_trip_open_button': True, 'default_order': 'is_active desc, id desc'}" />
                 </page>
             </xpath>
             <xpath expr="//tree//field[@name='name']" position="after">
-                <field name="trucking_trip_id" column_invisible="not parent.has_trucking_trips" optional="hide" />
-                <field name="distance" column_invisible="not parent.has_trucking_trips" optional="show" />
+                <field name="trucking_trip_id" column_invisible="not parent.trucking_trips_count" optional="hide" />
+                
+                
+                <field name="trucking_trip_state" widget="badge"
+                    decoration-primary="trucking_trip_state in ['assigned','confirmed','started','arrived']" 
+                    decoration-success="trucking_trip_state == 'completed'" 
+                    decoration-danger="trucking_trip_state == 'cancelled'" 
+                    decoration-info="trucking_trip_state=='draft'"
+                    optional="show"
+                    />
+                    
+                
+                <field name="distance" column_invisible="not parent.trucking_trips_count" optional="show" />
+                
             </xpath>
-            
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button
+                    name="action_view_trucking_trips"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-truck"
+                    invisible="not trucking_trip_ids"
+                >
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Trips</span>
+                        <field name="trucking_trips_count" class="o_stat_value" />
+
+                        <field name="trucking_trip_ids" invisible="1" />
+                    </div>
+                </button>
+            </xpath>
         </field>
     </record>
 
@@ -135,7 +162,7 @@
                 <field name="trucking_trip_ids" />
                 <field name="origin_locality_id" />
                 <field name="destination_locality_id" />
-                
+
                 <filter string="My Orders" domain="[('user_id', '=', uid)]" name="my_trucking_sale_orders_filter" />
                 <group name="sale_dates" string="Fecha">
                     <filter string="Hoy" name="filter_today_creation"
@@ -170,15 +197,6 @@
             ]"
         />
     </record>
-
-
-    <menuitem
-        id="menu_trucking_dash_sale"
-        name="Orders"
-        action="action_trucking_dash_sale"
-        parent="trucking.dashboard"
-        sequence="10"
-    />
 
     <record id="ir_action_server_action_trucking_clone_tms" model="ir.actions.server">
         <field name="name">Trucking Clone</field>

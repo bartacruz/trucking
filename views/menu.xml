@@ -4,7 +4,7 @@
     <menuitem
         id="root"
         name="Trucking"
-        sequence="10"
+        sequence="1"
         web_icon="trucking,static/description/icon.png"
     />
 
@@ -13,6 +13,15 @@
     <menuitem id="trips" name="Trips" parent="root" />
     <menuitem id="data" name="Data" parent="root" />
     <menuitem id="settings" name="Settings" parent="root" />
+
+    <menuitem
+        id="menu_trucking_dash_sale"
+        name="Orders"
+        action="action_trucking_dash_sale"
+        parent="dashboard"
+        sequence="10"
+    />
+
     <menuitem
         id="menu_trucking_all_trips"
         name="All Trips"
@@ -20,6 +29,19 @@
         parent="trips"
         sequence="10"
     />
-
+    <menuitem
+        id="menu_trucking_data_driver"
+        name="Drivers"
+        action="action_truck_drivers_kanban"
+        parent="data"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_trucking_data_product"
+        name="Trip Products"
+        action="action_trucking_data_product"
+        parent="data"
+        sequence="10"
+    />
 
 </odoo>

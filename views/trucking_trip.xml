@@ -42,6 +42,34 @@
             <form string="">
                 <field name="is_active" invisible="1" />
                 <header>
+                    <button
+                        name="action_cancel_trip"
+                        type="object"
+                        string="Cancel"
+                        class="btn btn-danger text-uppercase"
+                        invisible="state == 'cancelled'"
+                    />
+                    <button
+                        name="action_enable_trip"
+                        type="object"
+                        string="Activate"
+                        class="btn btn-warning text-uppercase"
+                        invisible="state != 'cancelled'"
+                    />
+                    <button
+                        name="action_end_trip"
+                        type="object"
+                        string="End Trip"
+                        class="btn btn-primary text-uppercase"
+                        invisible="state != 'started'"
+                    />
+                    <button
+                        name="action_start_trip"
+                        type="object"
+                        string="Start Trip"
+                        class="btn btn-primary text-uppercase"
+                        invisible="state not in ['assigned','confirmed']"
+                    />
                     <field
                         name="state"
                         widget="statusbar"
@@ -51,6 +79,7 @@
                 <sheet>
                     <!-- Smart Buttons -->
                     <div class="oe_button_box" name="button_box">
+
                         <button
                             name="action_view_sales"
                             type="object"
@@ -58,22 +87,33 @@
                             icon="fa-usd"
                             invisible="not sale_id"
                         >
-                            <span class="o_stat_text">Sale Order</span>
-                            <field name="sale_id" invisible="1" />
-                            <field name="sale_line_id" invisible="1" />
-                </button>
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Sale Order</span>
+                                <field name="sale_id" class="o_stat_value" />
+                            
+                                <field name="sale_line_id" invisible="1" />
+                            </div>
+                        </button>
                     </div>
                     <div class="oe_title">
-                        <label for="customer_id" class="oe_edit_only" string="Customer" />
-                        <h1>
-                            <field name="customer_id" />
-                        </h1>
+                        <h2>
+                            <field name="name" class="oe_edit_only" string="Trip Name" nolabel="1" />
+                        </h2>
                     </div>
                     <group>
                         <group>
-                            <field name="contact_phone" widget="phone" />
+                            <label for="customer_id"/>
+                            <div class="mb-1">
+                                <field name="customer_id" />
+                                <field name="contact_phone" widget="phone" />
+                            </div>
+                            <field name="partner_id" invisible="customer_id == partner_id"/>
+                            <field name="commitment_date" />
                             <field name="origin_locality_id" />
                             <field name="destination_locality_id" />
+                        </group>
+
+                        <group>
                             <label for="driver_id" />
                             <div class="mb-1">
                                 <field name="driver_id" />
@@ -103,19 +143,18 @@
                                 </div>
                                 <field name="cpe_pdf" widget="attachment_link" nolabel="1" invisible="not cpe_pdf" />
                             </div>
-
                         </group>
                         <group>
-                            <field name="commitment_date" />
                             <field name="start_date" />
                             <field name="arrived_date" />
                             <field name="end_date" />
-                            <separator string="Cargo" />
                             <label for="distance" />
                             <div name="distance-val" class="d-flex w-25">
                                 <field name="distance" class="text-end" />
                                 <span class="ms-1">Kms</span>
                             </div>
+                        </group>
+                        <group>
                             <label for="delivered_cpe" invisible="not cpe_id" />
                             <div name="delivered_cpe-val" class="d-flex w-25" invisible="not cpe_id">
                                 <field name="delivered_cpe" class="text-end"/>

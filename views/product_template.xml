@@ -24,12 +24,5 @@
         <field name="domain">[('trucking_trip','=',True)]</field>
         <field name="view_mode">kanban,tree,form</field>
     </record>
-    <menuitem
-        id="menu_trucking_data_product"
-        name="Trip Products"
-        action="action_trucking_data_product"
-        parent="trucking.data"
-        sequence="10"
-    />
-
+    
 </odoo>
