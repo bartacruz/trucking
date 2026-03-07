@@ -9,39 +9,35 @@
     />
 
     <!-- Menus -->
-    <menuitem id="dashboard" name="Dashboard" parent="root" />
-    <menuitem id="trips" name="Trips" parent="root" />
-    <menuitem id="data" name="Data" parent="root" />
-    <menuitem id="settings" name="Settings" parent="root" />
+    <menuitem id="dashboard" name="Dashboard" parent="root" action="action_trucking_dash_sale" sequence="5"/>
+    <menuitem id="trips" name="Trips" parent="root" action="action_trucking_trips" sequence="10"/>
+    <menuitem id="drivers" name="Drivers" action="action_truck_drivers_kanban" parent="root" sequence="15" />
+    <menuitem id="data" name="Data" parent="root" sequence="20"/>
+    
+    <menuitem id="settings" name="Settings" parent="root" sequence="25"/>
 
     <menuitem
-        id="menu_trucking_dash_sale"
-        name="Orders"
-        action="action_trucking_dash_sale"
-        parent="dashboard"
-        sequence="10"
-    />
-
-    <menuitem
-        id="menu_trucking_all_trips"
-        name="All Trips"
-        action="action_trucking_trips"
-        parent="trips"
-        sequence="10"
-    />
-    <menuitem
-        id="menu_trucking_data_driver"
-        name="Drivers"
-        action="action_truck_drivers_kanban"
+        id="menu_trucking_data_vehicle"
+        name="Vehicles"
+        action="fleet.fleet_vehicle_action"
         parent="data"
-        sequence="10"
-    />
+        sequence="5"
+    /> 
     <menuitem
         id="menu_trucking_data_product"
         name="Trip Products"
         action="action_trucking_data_product"
         parent="data"
         sequence="10"
-    />
+    /> 
+    <menuitem
+        id="menu_trucking_data_pricelist"
+        name="Pricelists"
+        action="product.product_pricelist_action2"
+        parent="data"
+        sequence="15"
+    /> 
+    
+
 
 </odoo>
