@@ -1,0 +1,1282 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* trucking
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-07 03:39+0000\n"
+"PO-Revision-Date: 2026-03-07 03:39+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid ""
+"\n"
+"You can dismiss this message if this is a future assignment."
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "%s per %s"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/trucking_trips.xml:0
+#, python-format
+msgid "(Asignar)"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_sale_order_trucking_search
+msgid "30 días"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_sale_order_trucking_search
+msgid "7 días"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.sale_order_trucking_view_kanban
+msgid "<i class=\"fa fa-long-arrow-right mx-2 oe_read_only\" title=\"-&gt;\"/>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_kanban_trucking
+msgid "<span class=\"ms-1\">/</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "<span class=\"ms-1\">Kg</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "<span class=\"ms-1\">Kms</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "<span class=\"o_stat_text\">Sale Order</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
+msgid "<span class=\"o_stat_text\">Trips</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_partner_form_inherit
+msgid "<span class=\"o_stat_text\">Viajes</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "<span>-</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "<span>Fecha:</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.sale_order_trucking_view_kanban
+msgid "<span>For:</span>"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Activate"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__active_trucking_trip_id
+#: model:ir.model.fields,field_description:trucking.field_res_users__active_trucking_trip_id
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__active_trucking_trip_id
+msgid "Active Trip"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/res_partner.py:0
+#: model:ir.model.fields,field_description:trucking.field_res_partner__active_trucking_trip_state
+#: model:ir.model.fields,field_description:trucking.field_res_users__active_trucking_trip_state
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__active_trucking_trip_state
+#, python-format
+msgid "Active Trip State"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Active Trips"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Agrupar por..."
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.menu_trucking_all_trips
+msgid "All Trips"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/attachment_link_widget.xml:0
+#, python-format
+msgid "Archivo"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Arribado"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__arrived
+msgid "Arrived"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__arrived_date
+msgid "Arrived Date"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Asignado"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__res_partner__trucking_state__assigned
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__assigned
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
+msgid "Assigned"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__res_partner__trucking_state__available
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
+msgid "Available"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid ""
+"Be aware that:\n"
+"\n"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Borrador"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Búsqueda de Viajes"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__fleet_vehicle_model__vehicle_type__truck
+msgid "Camión"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Cancel"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Cancelado"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cancelled
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__cancelled
+msgid "Cancelled"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_afip_cpe
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_id
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Carta de Porte"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Cliente"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order_line__cloned_line_id
+msgid "Cloned Line"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order_line__cloned_tms_order_ids
+msgid "Cloned Tms Order"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__commitment_date
+msgid "Commitment Date"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__company_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__company_id
+msgid "Company"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__company_id
+msgid "Company related to this order"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Completado"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__completed
+msgid "Completed"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Conductor"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Confirmado"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__driver_response__confirmed
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__confirmed
+#, python-format
+msgid "Confirmed"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__contact_phone
+msgid "Contact Phone"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_mismatch
+msgid "Cpe Mismatch"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.actions.act_window,help:trucking.action_trucking_trips
+msgid "Crea tu primer viaje de transporte"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
+msgid "Create Sale"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_trucking_create_so
+msgid "Create a transport sale with trips"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__create_uid
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__create_date
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__partner_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__customer_id
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+#, python-format
+msgid "Customer"
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.dashboard
+msgid "Dashboard"
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.data
+msgid "Data"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__delivered
+msgid "Delivered"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__delivered_cpe
+msgid "Delivered CPE"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__delivered_total
+msgid "Delivered Total"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/attachment_link_widget.xml:0
+#, python-format
+msgid "Descargar"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order__destination_locality_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__destination_locality
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__destination_locality_id
+msgid "Destination Locality"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
+msgid "Details"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__delivered_diff
+#, python-format
+msgid "Difference"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__display_name
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/product_pricelist.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__distance
+#: model:ir.model.fields.selection,name:trucking.selection__product_pricelist__qty_field__distance
+#, python-format
+msgid "Distance"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order_line__distance
+msgid "Distance (km)"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__driver_id
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+#, python-format
+msgid "Driver"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Driver  %s is assigned to active order: %s\n"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__driver_phone
+msgid "Driver Phone"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__driver_response
+msgid "Driver Response"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
+msgid "Driver State"
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.menu_trucking_data_driver
+msgid "Drivers"
+msgstr ""
+
+#. module: trucking
+#: model:ir.actions.act_window,name:trucking.action_truck_drivers_kanban
+msgid "Drivers Board"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/kanban_controller.xml:0
+#, python-format
+msgid "Drivers List"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/trucking_trips.xml:0
+#, python-format
+msgid "En curso"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__end_date
+msgid "End Date"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "End Trip"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_fleet_vehicle_form_inherit_truck
+msgid "Equipment"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Estado"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/wizard/trucking_create_so.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__distance
+#, python-format
+msgid "Estimated Distance"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_sale_order_trucking_search
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Fecha"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__commitment_date
+msgid "Fecha de Entrega"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Fecha de Inicio"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Fecha de la orden"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/driver_list.xml:0
+#, python-format
+msgid "Filter drivers"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
+msgid "Group By..."
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order__has_trucking_trips
+msgid "Has Trucking Trips"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__trucking_trip_ids
+#: model:ir.model.fields,field_description:trucking.field_res_users__trucking_trip_ids
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__trucking_trip_ids
+msgid "Historial de Viajes"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_sale_order_trucking_search
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Hoy"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__id
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__id
+msgid "ID"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__message_has_error
+#: model:ir.model.fields,help:trucking.field_trucking_trip__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Iniciado"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__is_active
+msgid "Is Active"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__write_uid
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__write_date
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Line %s doesn't have a tms_order"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__sale_line_id
+msgid "Línea de Pedido"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_fleet_vehicle_model
+msgid "Model of a vehicle"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_sale_order_trucking_search
+msgid "My Orders"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__name
+msgid "Name"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: code:addons/trucking/models/trucking_trip.py:0
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "New"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
+msgid "New Trip"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.sale_order_trucking_view_kanban
+msgid "New Trucking Order"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_tree
+msgid "Open Trip"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Orden"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__order_id
+msgid "Order"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__order_confirmed
+msgid "Order Confirmed"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/product_pricelist.py:0
+#: model:ir.model.fields.selection,name:trucking.selection__product_pricelist__qty_field__product_uom_qty
+#, python-format
+msgid "Order Qty"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__sale_id
+msgid "Order Reference"
+msgstr ""
+
+#. module: trucking
+#: model:ir.actions.act_window,name:trucking.action_trucking_dash_sale
+#: model:ir.ui.menu,name:trucking.menu_trucking_dash_sale
+msgid "Orders"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.actions.act_window,help:trucking.action_truck_drivers_kanban
+msgid "Organize your driver's fleet."
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order__origin_locality_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__origin_locality
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__origin_locality_id
+msgid "Origin Locality"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/attachment_link_widget.xml:0
+#: code:addons/trucking/static/src/components/attachment_link_widget.xml:0
+#, python-format
+msgid "PDF"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__partner_id
+#, python-format
+msgid "Partner"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_pdf
+msgid "Pdf3"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Pedir Confirmación"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_product_pricelist
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__pricelist_id
+msgid "Pricelist"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_product_template
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__product_id
+msgid "Product"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/product_pricelist.py:0
+#: model:ir.model.fields,field_description:trucking.field_product_pricelist__qty_field
+#, python-format
+msgid "Qty Field"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: code:addons/trucking/wizard/trucking_create_so.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__price_unit
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__rate_label
+#, python-format
+msgid "Rate"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__driver_response__rejected
+#, python-format
+msgid "Rejected"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Resource currently busy"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
+msgid "Route"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__sale_label
+msgid "Sale Label"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Sale Order"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_sale_order
+msgid "Sales Order"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_sale_order_line
+msgid "Sales Order Line"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
+msgid "Save"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__end
+msgid "Scheduled end"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__start
+msgid "Scheduled start"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__trucking_state_sequence
+#: model:ir.model.fields,field_description:trucking.field_res_users__trucking_state_sequence
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__trucking_state_sequence
+msgid "Secuencia de Estado"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__trucking_sequence
+#: model:ir.model.fields,field_description:trucking.field_res_users__trucking_sequence
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__trucking_sequence
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.settings
+msgid "Settings"
+msgstr ""
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/attachment_link_widget.xml:0
+#, python-format
+msgid "Sin adjunto"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Solicitor"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__start_date
+msgid "Start Date"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Start Trip"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__started
+msgid "Started"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order_line__trucking_trip_state
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__destination_state_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__origin_state_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__state
+msgid "State"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_status_date
+msgid "Status Date"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
+msgid "To Draft"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__delivered_to_invoice
+#, python-format
+msgid "To Invoice"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_fleet_vehicle__trailer_id
+#: model:ir.model.fields,field_description:trucking.field_res_partner__trailer_id
+#: model:ir.model.fields,field_description:trucking.field_res_users__trailer_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__trailer_id
+#: model:ir.model.fields.selection,name:trucking.selection__fleet_vehicle_model__vehicle_type__trailer
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Trailer"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_sale_order_line__cloned_tms_order_ids
+msgid "Transport Order generated by the sales order item"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order__cloned_tms_order_ids
+msgid "Transport orders associated to this sale"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order_line__trucking_trip_id
+msgid "Trip"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__trucking_trip_count
+#: model:ir.model.fields,field_description:trucking.field_res_users__trucking_trip_count
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__trucking_trip_count
+msgid "Trip Count"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Trip Name"
+msgstr ""
+
+#. module: trucking
+#: model:ir.actions.act_window,name:trucking.action_trucking_data_product
+#: model:ir.ui.menu,name:trucking.menu_trucking_data_product
+msgid "Trip Products"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Trip cancelled because sale order %s was cancelled"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Trip cloned from: %s"
+msgstr ""
+
+#. module: trucking
+#: model:ir.actions.act_window,name:trucking.actrion_create_so
+msgid "Trip information"
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.trips
+msgid "Trips"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_fleet_vehicle__truck_id
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__vehicle_id
+msgid "Truck"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/res_partner.py:0
+#: model:ir.model.fields,field_description:trucking.field_res_partner__truck_driver
+#: model:ir.model.fields,field_description:trucking.field_res_users__truck_driver
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__truck_driver
+#, python-format
+msgid "Truck driver"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_res_partner__vehicle_id
+#: model:ir.model.fields,help:trucking.field_res_users__vehicle_id
+msgid "Truck vehicle"
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.root
+#: model_terms:ir.ui.view,arch_db:trucking.view_partner_form_inherit
+msgid "Trucking"
+msgstr ""
+
+#. module: trucking
+#: model:ir.actions.server,name:trucking.ir_action_server_action_trucking_clone_tms
+msgid "Trucking Clone"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_afip_cpe__trucking_has_trip
+msgid "Trucking Has Trip"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__trucking_is_active
+#: model:ir.model.fields,field_description:trucking.field_res_users__trucking_is_active
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__trucking_is_active
+msgid "Trucking Is Active"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/sale_order.py:0
+#, python-format
+msgid "Trucking Order Created: %s"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__trucking_state
+#: model:ir.model.fields,field_description:trucking.field_res_users__trucking_state
+#: model:ir.model.fields,field_description:trucking.field_tms_driver__trucking_state
+msgid "Trucking State"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_trucking_trip
+#: model:ir.model.fields,field_description:trucking.field_afip_cpe__trucking_trip_id
+#: model:ir.model.fields,field_description:trucking.field_afip_cpe__trucking_trip_ids
+#: model:ir.model.fields,field_description:trucking.field_afip_locality__trucking_trip_ids
+#: model:ir.model.fields,field_description:trucking.field_sale_order__trucking_trip_ids
+msgid "Trucking Trip"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order__trucking_trip_active
+msgid "Trucking Trip Active"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_afip_locality__trucking_trip_count
+msgid "Trucking Trip Count"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_afip_locality__trucking_trip_destination_ids
+msgid "Trucking Trip Destination"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_afip_locality__trucking_trip_origin_ids
+msgid "Trucking Trip Origin"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order__trucking_trips_count
+msgid "Trucking Trips Count"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_product_product__trucking_trip
+#: model:ir.model.fields,field_description:trucking.field_product_template__trucking_trip
+msgid "Trucking service"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_create_so__qty
+msgid "Trucks"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields.selection,name:trucking.selection__res_partner__trucking_state__unavailable
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
+msgid "Unavailable"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__price_unit
+msgid "Unit Price"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__product_uom
+msgid "Unit of Measure"
+msgstr ""
+
+#. module: trucking
+#: model:ir.actions.server,name:trucking.ir_action_server_action_update_from_cpe
+msgid "Update from CPE"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_fleet_vehicle
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Vehicle"
+msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Vehicle %s is already active on order %s\n"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_fleet_vehicle_model__vehicle_type
+msgid "Vehicle Type"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Vehículo"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_res_partner__vehicle_id
+#: model:ir.model.fields,field_description:trucking.field_res_users__vehicle_id
+msgid "Vehículo Asignado"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
+msgid "Viajes"
+msgstr ""
+
+#. module: trucking
+#: model:ir.actions.act_window,name:trucking.action_trucking_trips
+msgid "Viajes de Transporte"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__warnings
+msgid "Warnings"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_trucking_trip__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_afip_locality
+msgid "afip.locality"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.constraint,message:trucking.constraint_fleet_vehicle_driver_unique
+msgid "¡Este conductor ya tiene un vehículo asignado!"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.constraint,message:trucking.constraint_fleet_vehicle_trailer_unique
+msgid "¡Este trailer ya está asignado a otro camión!"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.constraint,message:trucking.constraint_sale_order_line_trucking_trip_unique
+msgid "¡Este viaje ya está asignado a otra línea de pedido!"
+msgstr ""

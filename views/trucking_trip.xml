@@ -237,7 +237,7 @@
                     <filter string="State" name="group_state" context="{'group_by': 'state'}" />
                     <filter string="Driver" name="group_driver" context="{'group_by': 'driver_id'}" />
                     <filter string="Vehicle" name="group_vehicle" context="{'group_by': 'vehicle_id'}" />
-                    <filter string="Client" name="group_partner" context="{'group_by': 'client_id'}" />
+                    <filter string="Customer" name="group_partner" context="{'group_by': 'customer_id'}" />
                     <filter string="Solicitor" name="group_partner" context="{'group_by': 'partner_id'}" />
                     <filter string="Date" name="group_date" context="{'group_by': 'commitment_date:month'}" />
                 </group>

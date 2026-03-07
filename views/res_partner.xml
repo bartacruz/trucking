@@ -129,7 +129,7 @@
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name" string="Conductor" />
+                <field name="name" string="Driver" />
                 <field name="vehicle_id" />
                 <field name="active_trucking_trip_id" />
 
