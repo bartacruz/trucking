@@ -1,6 +1,8 @@
 # Parar el cron de CPE
 # Instalar Trucking (Camiones)
+# Instalar tree remember tree column
 # Cambiar el web responsive por el de OCA
+# Ajustes -> Ventas -> Descuentos
 
 # Usuarios -> Conductores
 for d in env['tms.driver'].search([]):
