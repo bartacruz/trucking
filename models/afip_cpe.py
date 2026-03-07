@@ -13,7 +13,7 @@ class AfipCPE(models.Model):
                 record.trucking_trip_id=False
                 record.trucking_has_trip=False
                 continue
-            trip_id = self.trucking_trip_ids.sorted(lambda t: (-t.commitment_date,-t.start_date))[0]
+            trip_id = self.trucking_trip_ids[0]
             #trip_id = self.env['trucking.trip'].search([ ('cpe_id','=',record.id) ],limit=1)
             record.trucking_trip_id = trip_id
             record.trucking_has_trip = len(trip_id) > 0
