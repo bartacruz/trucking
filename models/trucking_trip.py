@@ -57,12 +57,12 @@ class TruckingTrip(models.Model):
     customer_id = fields.Many2one("res.partner", _("Customer"), related="sale_id.partner_shipping_id", store=True, tracking=True)
     
     driver_id = fields.Many2one(
-        'res.partner', string="Conductor",
+        'res.partner', string=_("Driver"),
         tracking=True, domain=[('truck_driver','=',True)]
     )
     
     vehicle_id = fields.Many2one(
-        'fleet.vehicle', string="Camión",
+        'fleet.vehicle', string="Truck",
         compute="_compute_vehicle_id", store=True, readonly=False,
         domain=[('vehicle_type', '=', 'truck')], tracking=True
     )
@@ -87,7 +87,7 @@ class TruckingTrip(models.Model):
     end_date = fields.Datetime(tracking=True)
     
     distance = fields.Integer(tracking=True)
-    delivered_cpe = fields.Integer(related="cpe_id.unload_net")
+    delivered_cpe = fields.Integer(related="cpe_id.unload_net", string="Delivered CPE")
     delivered = fields.Integer()
     delivered_to_invoice =fields.Integer(_("To Invoice"),compute='_compute_delivered', readonly=True, tracking=True)
     delivered_diff = fields.Integer(_("Difference"), compute='_compute_delivered')
@@ -106,6 +106,7 @@ class TruckingTrip(models.Model):
     price_unit = fields.Float(related="sale_line_id.price_unit")
     product_uom = fields.Many2one('uom.uom', related='sale_line_id.product_uom')
     rate_label = fields.Char(_("Rate"),compute="_compute_rate_label")
+    
     cpe_id = fields.Many2one("afip.cpe","Carta de Porte",ondelete="set null")
     cpe_pdf = fields.Many2one('ir.attachment', related='cpe_id.pdf3')
     cpe_status_date = fields.Datetime(related = 'cpe_id.status_date')
@@ -116,13 +117,27 @@ class TruckingTrip(models.Model):
     warnings = fields.Char()
     
     ### Compute methods
-    
-    @api.depends('cancelled','end_date','start_date','driver_id','driver_response')
+        
+    @api.depends('cancelled','end_date','start_date','driver_id','driver_response','sale_id.state')
     def _compute_state(self):
         # TODO: revisar estados de CPE
         for record in self:
             old_state = record.state
-            if record.cancelled:
+            
+            if record.sale_id.state == 'cancel':
+                record.state = 'cancelled'
+                
+                if old_state != record.state:
+                    message = _(
+                        "Trip cancelled because sale order %s was cancelled", 
+                        Markup(
+                            f"""<a href=# data-oe-model=sale.order data-oe-id={record.sale_id.id}"""
+                            f""">{record.sale_id.name}</a>"""
+                        )
+                    )
+                    record.message_post(body=message)
+                    
+            elif record.cancelled:
                 record.state='cancelled'
             elif record.end_date and record.driver_id:
                 record.state = 'completed'
@@ -243,7 +258,7 @@ class TruckingTrip(models.Model):
     
     def write(self, vals):
         ret = super().write(vals)
-        if 'cpe_id' in vals:
+        if 'cpe_id' in vals and not self.env.context.get('trucking_clone',False):
             if self.cpe_id:
                 updated = self.cpe_id.action_update_cpe()
                 if not updated:
@@ -265,26 +280,25 @@ class TruckingTrip(models.Model):
         if not tms_order:
             _logger.warning(_("Line %s doesn't have a tms_order",self.sale_line_id))
             return
+        driver_id = tms_order.driver_id and tms_order.driver_id.partner_id or False
+        if driver_id and not driver_id.truck_driver:
+            driver_id.truck_driver = True
+            driver_id.vehicle_id = tms_order.driver_id.vehicle_id
+        self.driver_id = driver_id
+        self.vehicle_id = tms_order.vehicle_id
+        self.trailer_id = tms_order.trailer_id
+        self.commitment_date = tms_order.scheduled_date_start or self.sale_id.commitment_date
+        self.start_date = tms_order.date_start
+        self.end_date = tms_order.date_end
+        self.distance = tms_order.distance
+        self.delivered = tms_order.delivered_total
+        
+        
         self.cpe_id = tms_order.cpe_id
         if self.cpe_id and self.cpe_id.status != 'BR':
             print(self,"updating from cpe")
             self.action_update_from_cpe()
-        else:
-            print(self,"no cpe or CPE in draft state. updating all")
-            driver_id = tms_order.driver_id and tms_order.driver_id.partner_id or False
-            if driver_id and not driver_id.truck_driver:
-                driver_id.truck_driver = True
-                driver_id.vehicle_id = tms_order.driver_id.vehicle_id
-            self.driver_id = driver_id
-            self.vehicle_id = tms_order.vehicle_id
-            self.trailer_id = tms_order.trailer_id
-            self.commitment_date = tms_order.scheduled_date_start or self.sale_id.commitment_date
-            self.start_date = tms_order.date_start
-            self.end_date = tms_order.date_end
-            self.distance = tms_order.distance
-            self.delivered = tms_order.delivered_total
-            if tms_order.stage_id == self.env.ref("tms.tms_stage_order_cancelled"):
-                self.cancelled = True
+            
         message = _(
             "Trip cloned from: %s", 
             Markup(
@@ -501,6 +515,29 @@ class TruckingTrip(models.Model):
             'res_id': self.id,
             'target': 'current', # Esto es la clave para que no sea modal
         }
+    def action_cancel_trip(self):
+        for record in self:
+            record.cancelled = True
+        return True
+    
+    def action_enable_trip(self):
+        for record in self:
+            record.cancelled = False
+        return True
+    
+    def action_end_trip(self):
+        trips_to_end = self.filtered(lambda t: t.state == 'started')
+        trips_to_end.end_date = datetime.now()
+        return len(trips_to_end) > 0
+    
+    def action_start_trip(self):
+        trips_to_start = self.filtered(lambda t: t.state in ['assigned','confirmed'])
+        trips_to_start.driver_response='confirmed'
+        trips_to_start.start_date = datetime.now()
+        return len(trips_to_start) > 0
+    
+    
+        
     ### Whatsapp Integration ###
         
     def _whatsapp_get_partner(self):
