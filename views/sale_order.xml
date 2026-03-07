@@ -96,14 +96,17 @@
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <header position="inside">
-                <button type="object" name="action_to_draft" string="To Draft" class="btn btn-warning" invisible="state != 'sale'" />
-            </header>
-            <xpath expr="//field[@name='date_order']" position="after">
-                <field name="commitment_date" />
+                <button type="object" name="action_to_draft" string="To Draft" class="btn btn-warning" invisible="state != 'sale'" 
+                    help="Sets this sale order's state to 'Draft' so it can be edited further\n\nIt doesn't affect trips."/>
                 <field name="trucking_trips_count" invisible="1" />
+                <field name="has_trucking_trips" invisible="1" />
+            </header>
+            <xpath expr="//field[@name='has_active_pricelist']" position="before">
+                <field name="commitment_date" invisible="not has_trucking_trips"/>
+
             </xpath>
             <xpath expr="//page[@name='order_lines']" position="after">
-                <page string="Viajes" name="trucking_trips" invisible='not trucking_trip_ids' icon="fa-truck">
+                <page string="Viajes" name="trucking_trips" invisible='not has_trucking_trips' icon="fa-truck">
                     <group>
                         <group>
                             <field name="origin_locality_id" />
@@ -117,7 +120,7 @@
                 </page>
             </xpath>
             <xpath expr="//tree//field[@name='name']" position="after">
-                <field name="trucking_trip_id" column_invisible="not parent.trucking_trips_count" optional="hide" />
+                <field name="trucking_trip_id" column_invisible="not parent.has_trucking_trips" optional="hide" />
                 
                 
                 <field name="trucking_trip_state" widget="badge"
@@ -129,7 +132,7 @@
                     />
                     
                 
-                <field name="distance" column_invisible="not parent.trucking_trips_count" optional="show" />
+                <field name="distance" column_invisible="not parent.has_trucking_trips" optional="show" />
                 
             </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
@@ -138,7 +141,7 @@
                     type="object"
                     class="oe_stat_button"
                     icon="fa-truck"
-                    invisible="not trucking_trip_ids"
+                    invisible="not has_trucking_trips"
                 >
                     <div class="o_stat_info">
                         <span class="o_stat_text">Trips</span>
