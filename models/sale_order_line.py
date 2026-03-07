@@ -114,10 +114,10 @@ class SaleOrderLine(models.Model):
         return super()._purchase_service_create(quantity)
     
     def _purchase_service_match_supplier(self, warning=True):
-        print("_purchase_service_match_supplier",self)
-        if self.trucking_trip_id:
+        print("_purchase_service_match_supplier",self, self.trucking_trip_id)
+        if self.product_id.trucking_trip and self.trucking_trip_id:
             if self.trucking_trip_id.driver_id:
-                print("_purchase_service_match_supplier",self.order_id,self.trucking_trip_id.name,self.trucking_trip_id.driver_id)
+                print("_purchase_service_match_supplier generating",self.order_id,self.trucking_trip_id.name,self.trucking_trip_id.driver_id)
                 driver_id = self.trucking_trip_id.driver_id
                 partner_id = driver_id.parent_id or driver_id
                 vals = [{
@@ -127,12 +127,20 @@ class SaleOrderLine(models.Model):
                  'price': self.price_unit,
                  'min_qty':0,
                 }]
-                print("_purchase_service_match_supplier",self.order_id,partner_id,vals)
+                print("_purchase_service_match_supplier creating",self.order_id,partner_id,vals)
                 supplier_info =self.env['product.supplierinfo'].create(vals)
+                print("_purchase_service_match_supplier created",supplier_info.partner_id,supplier_info.price)
                 return supplier_info
+            print("_purchase_service_match_supplier MOFO FAILIN'",self.order_id)
             raise UserWarning(_(
-                "Could not generate a purchase for %s since it doesn't "
+                "Could not generate a trucking purchase for %s since it doesn't "
                 "have a driver assigned.",
                 self.trucking_trip_id.name
                 ))            
         return super()._purchase_service_match_supplier(warning)
+    
+    def _purchase_service_prepare_line_values(self, purchase_order, quantity=False):
+        ret = super()._purchase_service_prepare_line_values(purchase_order, quantity)
+        print("_purchase_service_prepare_line_values", ret)
+        return ret
+        
