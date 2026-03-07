@@ -1,3 +1,7 @@
+#
+# Agregar los repos
+# /opt/odoo-17/repos/sale-workflow,/opt/odoo-17/repos/purchase-workflow,/opt/odoo-17/repos/account-financial-tools
+#
 # Parar el cron de CPE
 # Instalar Trucking (Camiones)
 # Instalar tree remember tree column
@@ -71,6 +75,9 @@ env.cr.commit()
 drivers._compute_trucking_state_sequence(force=True)
 env.cr.commit()
 
+
+# Reimportar las listas de precios.
+#
 # Reactivar el cron de las CPE
 
 # Y LITO
