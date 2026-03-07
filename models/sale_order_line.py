@@ -106,3 +106,33 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+    
+    ### Purchase methods ###
+    
+    def _purchase_service_create(self, quantity=False):
+        print("_purchase_service_create",quantity)
+        return super()._purchase_service_create(quantity)
+    
+    def _purchase_service_match_supplier(self, warning=True):
+        print("_purchase_service_match_supplier",self)
+        if self.trucking_trip_id:
+            if self.trucking_trip_id.driver_id:
+                print("_purchase_service_match_supplier",self.order_id,self.trucking_trip_id.name,self.trucking_trip_id.driver_id)
+                driver_id = self.trucking_trip_id.driver_id
+                partner_id = driver_id.parent_id or driver_id
+                vals = [{
+                 'partner_id': partner_id.id,
+                 'product_id': self.product_id.id,
+                 'product_tmpl_id': self.product_template_id.id,
+                 'price': self.price_unit,
+                 'min_qty':0,
+                }]
+                print("_purchase_service_match_supplier",self.order_id,partner_id,vals)
+                supplier_info =self.env['product.supplierinfo'].create(vals)
+                return supplier_info
+            raise UserWarning(_(
+                "Could not generate a purchase for %s since it doesn't "
+                "have a driver assigned.",
+                self.trucking_trip_id.name
+                ))            
+        return super()._purchase_service_match_supplier(warning)
