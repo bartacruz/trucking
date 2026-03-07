@@ -531,6 +531,13 @@ class TruckingTrip(models.Model):
         trips_to_end.end_date = datetime.now()
         return len(trips_to_end) > 0
     
+    def action_confirm_driver(self):
+        self.ensure_one()
+        if not self.driver_response == 'confirmed':
+            self.driver_response='confirmed'
+            return True
+        return False
+        
     def action_start_trip(self):
         trips_to_start = self.filtered(lambda t: t.state in ['assigned','confirmed'])
         trips_to_start.driver_response='confirmed'

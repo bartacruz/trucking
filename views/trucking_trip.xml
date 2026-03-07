@@ -118,14 +118,23 @@
                             <div class="mb-1">
                                 <field name="driver_id" />
                                 <field name="driver_phone" widget="phone" />
-                                <button
-                                    type="object"
-                                    name="action_send_whatsapp_request"
-                                    class="btn btn-sm btn-warning text-nowrap mx-auto"
-                                    icon="fa-whatsapp"
-                                    invisible="not driver_phone or not is_active">
-                                    Pedir Confirmación
-                                </button>
+                                <div class="d-flex">
+                                    <button
+                                        type="object"
+                                        name="action_send_whatsapp_request"
+                                        class="btn btn-sm btn-warning text-nowrap mx-auto"
+                                        icon="fa-whatsapp"
+                                        invisible="state != 'assigned' or not driver_phone">
+                                        Ask Confirmation
+                                    </button>
+                                    <button 
+                                        type="object" 
+                                        name="action_confirm_driver" 
+                                        class="btn btn-sm btn-primary text-nowrap mx-auto"
+                                        invisible="state != 'assigned'">
+                                        Confirm
+                                    </button>
+                                </div>
                             </div>
 
                             <label for="vehicle_id" string="Vehicle" />
@@ -255,10 +264,6 @@
                 Create your first trucking trip
             </p>
         </field>
-        <!-- <field name="context">{
-            'search_default_active': 1,
-            'search_default_today': 1
-            }</field> -->
     </record>
     <record id="ir_action_server_action_update_from_cpe" model="ir.actions.server">
         <field name="name">Update from CPE</field>
