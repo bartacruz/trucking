@@ -53,7 +53,20 @@ class MailMessage(models.Model):
     qr_code_ids = fields.One2many('qr.code', 'message_id')
     qr_codes_count = fields.Integer(compute="_compute_qr_codes", store=True)
     trucking_trip_id = fields.Many2one('trucking.trip',_('Related Trucking Trip'))
+    partner_ids = fields.Many2many('res.partner', string='Recipients', context={'active_test': False}, compute='_compute_discuss_members', store=True, copy=False)
     
+    @api.depends('res_id')
+    def _compute_discuss_members(self):
+        for record in self:
+            print(record.model,record.res_id)
+            if record.model != 'discuss.channel':
+                record.partner_ids = record.partner_ids or False
+                continue
+            channel = self.env[record.model].browse(record.res_id)
+            print("channel",channel,channel.channel_member_ids)
+            record.partner_ids = channel.channel_member_ids.partner_id
+            
+            
     def _process_qr_code(self,qr):
         self.ensure_one()
         self.env[self.model].browse(self.res_id).message_post(
