@@ -1,8 +1,14 @@
 from odoo import _,api, fields, models
 
 class TruckingCreateSO(models.TransientModel):
+    
     _name = "trucking.create.so"
     _description = "Create a transport sale with trips"
+    
+    def _default_product(self):
+        # TODO: get it from settings
+        return self.env['product.product'].search([ ('trucking_trip','=',True) ], limit=1)
+    
     
     company_id = fields.Many2one('res.company',default=lambda self: self.env.company)
     currency_id = fields.Many2one(related='company_id.currency_id')
@@ -11,7 +17,7 @@ class TruckingCreateSO(models.TransientModel):
     partner_id = fields.Many2one('res.partner', string='Customer', required=True)
     commitment_date = fields.Datetime(string="Fecha de Entrega", default=fields.Datetime.now)
     
-    product_id = fields.Many2one('product.product')
+    product_id = fields.Many2one('product.product', default=lambda self: self._default_product())
     pricelist_id = fields.Many2one('product.pricelist')
     price_unit = fields.Monetary(_("Rate"), 'currency_id' )
     
