@@ -418,7 +418,6 @@ class TruckingTrip(models.Model):
     @api.model
     def assign_driver(self,trip_id,driver_id):
         trip = self.browse(trip_id)
-        
         trip.driver_id = int(driver_id)
         print("Assigned driver %s to trip %s" % (driver_id,trip_id))
         message = _(

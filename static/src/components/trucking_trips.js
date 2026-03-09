@@ -6,6 +6,7 @@ import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { useBus, useService } from "@web/core/utils/hooks";
 import { useX2ManyCrud } from "@web/views/fields/relational_utils";
 import { _lt, _t } from "@web/core/l10n/translation";
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog"
 
 export class TruckingTripsField extends Component {
     static template = "trucking.TruckingTripsField";
@@ -24,6 +25,7 @@ export class TruckingTripsField extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.dialogService = useService("dialog");
         const { saveRecord, updateRecord, removeRecord } = useX2ManyCrud(
             () => this.props.record.data[this.props.name],
             false
@@ -45,11 +47,20 @@ export class TruckingTripsField extends Component {
     updateTrips(ev) {
         const detail = ev.detail;
         if (detail.order_id == this.props.record.resId) {
-            this.refresh();
+            this.refresh(detail.id);
         }
     }
-    async refresh() {
-        await this.props.record.load();
+    async refresh(trip_id) {
+        //console.debug("refresh Starting");
+        const data= this.props.record.data[this.props.name];
+        const idx = data._currentIds.indexOf(trip_id);
+        //console.debug("PAJAR",trip_id,data,idx);
+        const record = data.records[idx];
+        //console.debug("AGUJA",record);
+        const response = await record.load();
+        const record2 = this.props.record.data[this.props.name].records[idx];
+        //console.debug("refresh",response,record2);
+        // await this.props.record.load();
     }
     getTrip(record) {
         var driver = record.data.driver_id ? record.data.driver_id[1] : false;
@@ -57,7 +68,6 @@ export class TruckingTripsField extends Component {
         var vehicle = record.data.vehicle_id ? record.data.vehicle_id[1] : false;
         var trailer = record.data.trailer_id ? record.data.trailer_id[1] : false;
         const stateLabel = this.constructor.tripStates[record.data.state] || record.data.state;
-        console.debug(record.data);
         return {
             id: record.id, // datapoint_X
             resId: record.resId,
@@ -98,12 +108,36 @@ export class TruckingTripsField extends Component {
     onDrop(ev, a, b) {
         var target = $(ev.target).closest('.o_trip');
         target.removeClass('o_sarasa');
-
         const driver_id = ev.dataTransfer.getData("text");
         const trip = target.data("id");
-        this.assignTrip(trip, driver_id);
+        const data= this.props.record.data[this.props.name];
+        const idx = data._currentIds.indexOf(trip);
+        //console.debug("PAJAR",trip,data,idx);
+        const record = data.records[idx];
+        //console.debug("AGUJA",record);
+        if (record && record.data.driver_id != false){
+            const driverName = record.data.driver_id[1]
+            this.dialogService.add(ConfirmationDialog, {
+                title: "Confirmar reasignación",
+                body: `El viaje ya está asignado a ${driverName}. ¿Estás seguro de que quieres cambiar el conductor?`,
+                confirm: () => {
+                    console.debug("Hay driver. Confirmado");
+                    this.assignTrip(trip, driver_id);
+                },
+                cancel: () => {
+                    console.debug("Hay Driver. Cancelando assign");
+                },
+                confirmLabel: "Reasignar",
+                cancelLabel: "Cancelar",
+            });
+        } else {
+            //console.debug('No hay driver. Asigno');
+            this.assignTrip(trip, driver_id);
+        }
+        
     }
     get trips() {
+        //console.debug("get trips",this.props.record);
         return this.props.record.data[this.props.name].records.map((record) =>
             this.getTrip(record)
         );
