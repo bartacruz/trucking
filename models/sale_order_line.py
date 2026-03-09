@@ -61,6 +61,8 @@ class SaleOrderLine(models.Model):
                 else:
                     line.invoice_status = 'no'
                 print("_compute_invoice_status",line,line.trucking_trip_id.state,line.invoice_status)
+                if not line.purchase_line_count:
+                    line._purchase_service_generation()
                 
     @api.depends('order_id.pricelist_id','product_uom_qty', 'distance')
     def _compute_price_unit(self):
@@ -108,6 +110,12 @@ class SaleOrderLine(models.Model):
         }
     
     ### Purchase methods ###
+    def _purchase_service_generation(self):
+        # Remove lines with trucking trip that don't have the driver confirmed.
+        lines_with_trip_unconfirmed = self.filtered(lambda l: l.trucking_trip_id and not l.trucking_trip_id.state in ['confirmed','started','arrived','completed'])
+        lines_to_process = self-lines_with_trip_unconfirmed
+        print("_purchase_service_generation",self,lines_with_trip_unconfirmed)
+        return super(SaleOrderLine,lines_to_process)._purchase_service_generation()
     
     def _purchase_service_create(self, quantity=False):
         print("_purchase_service_create",quantity)
@@ -132,7 +140,7 @@ class SaleOrderLine(models.Model):
                 print("_purchase_service_match_supplier created",supplier_info.partner_id,supplier_info.price)
                 return supplier_info
             print("_purchase_service_match_supplier MOFO FAILIN'",self.order_id)
-            raise UserWarning(_(
+            raise UserError(_(
                 "Could not generate a trucking purchase for %s since it doesn't "
                 "have a driver assigned.",
                 self.trucking_trip_id.name
