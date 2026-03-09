@@ -78,7 +78,7 @@ msgstr "<span class=\"o_stat_text\">Orden de Venta</span>"
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
 msgid "<span class=\"o_stat_text\">Trips</span>"
-msgstr "<span class=\"o_stat_text\">Viajesr</span>"
+msgstr "<span class=\"o_stat_text\">Viajes</span>"
 
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_partner_form_inherit
@@ -1006,7 +1006,7 @@ msgstr "Fecha de Inicio"
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
 msgid "Start Trip"
-msgstr "Iniciado El"
+msgstr "Iniciar"
 
 #. module: trucking
 #. odoo-javascript

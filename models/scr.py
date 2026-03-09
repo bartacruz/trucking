@@ -75,6 +75,23 @@ env.cr.commit()
 drivers._compute_trucking_state_sequence(force=True)
 env.cr.commit()
 
+#
+# Porque el tms.sale usa el tms.factor indiscriminada y criminalmente...
+# Solo por estas cosas creo que debe haber pena capital.
+#
+lines = env['sale.order.line'].search([])
+for l in lines:
+    l.tms_factor = 1
+
+trucking_lines = lines.filtered(lambda L:
+    L.trucking_trip_id and
+    not L.order_id.pricelist_id and
+    L.price_unit == 1
+)
+for l in trucking_lines:
+    l.price_unit = l.product_id.list_price
+
+env.cr.commit()
 
 # Reimportar las listas de precios.
 #
