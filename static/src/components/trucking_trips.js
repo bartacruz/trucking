@@ -56,6 +56,10 @@ export class TruckingTripsField extends Component {
         const idx = data._currentIds.indexOf(trip_id);
         //console.debug("PAJAR",trip_id,data,idx);
         const record = data.records[idx];
+        if (!record) {
+            console.debug("Trip",trip_id,"don't have record");
+            return;
+        }
         //console.debug("AGUJA",record);
         const response = await record.load();
         const record2 = this.props.record.data[this.props.name].records[idx];
