@@ -564,7 +564,7 @@ class TruckingTrip(models.Model):
         channel = partner_id._whatsapp_get_channel(number_field_name, gateway_id)
         message = channel.with_context(context).message_post(
             body=body, subtype_xmlid="mail.mt_comment", message_type="comment")
-        message.tms_order_id = self.id
+        message.trucking_trip_id = self.id
         _logger.info("WA %s sent to %s:  %s",self.name,partner_id.name,message)
             
     def action_send_whatsapp_request(self):
