@@ -24,6 +24,13 @@
         sequence="5"
     /> 
     <menuitem
+        id="menu_trucking_data_cpe"
+        name="CPEs"
+        action="l10n_ar_afip_cpe.action_afip_cpe_view"
+        parent="data"
+        sequence="7"
+    /> 
+    <menuitem
         id="menu_trucking_data_product"
         name="Trip Products"
         action="action_trucking_data_product"
@@ -37,6 +44,8 @@
         parent="data"
         sequence="15"
     /> 
+    
+    
     
 
 
