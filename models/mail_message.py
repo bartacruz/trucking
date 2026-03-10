@@ -157,7 +157,7 @@ class MailMessage(models.Model):
             if not trip:
                 return
             _logger.warning('WA write: la orden es %s',trip)
-            trip.message_post(**self._get_gateway_thread_message_vals())
+            trip.message_post(**self._get_gateway_thread_message_vals(), author_id=self.author_id)
             if "Confirmar" in self.body:
                 trip.driver_response = 'confirmed'
                 body = 'Confirmación recibida.\nNos estaremos contactando para mas detalles.'
