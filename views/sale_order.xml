@@ -18,6 +18,7 @@
                 <field name="trucking_trip_ids" />
                 <field name="tag_ids" />
                 <field name="trucking_trip_active" />
+                
                 <header>
                     <button name="%(trucking.actrion_create_so)d"
                         type="action"
@@ -188,6 +189,7 @@
         <field name="context">
             {
             "search_default_filter_week_creation":True,
+            'remember_filters': True,
             }
         </field>
         <field name="domain">[('has_trucking_trips','=',True)]</field>
