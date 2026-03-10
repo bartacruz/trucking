@@ -11,13 +11,14 @@
     'author': "Julio Santa Cruz",
     'website': "https://www.bartatech.com",
     'category': 'TMS',
-    "version": "17.0.2.0.0",
+    "version": "17.0.2.0.1",
     "license": "AGPL-3",
 
     'depends': ['base','fleet', 'sale','l10n_ar_afip_cpe','mail','mail_gateway_whatsapp','tms_sale','tms_shipment'],
     "assets": {
         "web.assets_backend": [
             'trucking/static/src/components/*',
+            'trucking/static/src/js/*',
         ],
     },
     'data': [
@@ -31,6 +32,7 @@
         'views/sale_order.xml',
         'views/trucking_trip.xml',
         'views/menu.xml',
+        'views/report_invoice.xml'
     ],
     "maintainers": ["bartacruz"],
     "application": True,

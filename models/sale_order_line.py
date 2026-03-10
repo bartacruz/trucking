@@ -11,6 +11,7 @@ class SaleOrderLine(models.Model):
         ondelete='cascade',
     )
     trucking_trip_state = fields.Selection(related="trucking_trip_id.state")
+    has_trucking_product = fields.Boolean(compute='_compute_has_trucking_product')
     cloned_line_id = fields.Many2one('sale.order.line')
     distance = fields.Float(string="Distance (km)")
 
@@ -50,6 +51,11 @@ class SaleOrderLine(models.Model):
             print("creating trip",record, record.order_id,vals)
             trip = record.trucking_trip_id.create([vals])
             record.order_id._post_trip_message(trip)
+    
+    @api.depends('product_id')
+    def _compute_has_trucking_product(self):
+        for record in self:
+            record.has_trucking_product = record.product_id.trucking_trip
     
     @api.depends('state', 'product_uom_qty', 'qty_delivered', 'qty_to_invoice', 'qty_invoiced', 'trucking_trip_id.state')
     def _compute_invoice_status(self):
@@ -108,6 +114,16 @@ class SaleOrderLine(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+    ### Invoicing methods ###
+    
+    def _prepare_invoice_line(self, **optional_values):
+        ret = super()._prepare_invoice_line(**optional_values)
+        print("_prepare_invoice_line",self,self.has_trucking_product,self.trucking_trip_id)
+        if self.has_trucking_product and self.trucking_trip_id.cpe_id:
+            trip = self.trucking_trip_id
+            ret['name']=f'{trip.cpe_id.name}  {trip.origin_locality_id.name.title()} - {trip.destination_locality_id.name.title()}'
+        return ret
+    
     
     ### Purchase methods ###
     def _purchase_service_generation(self):

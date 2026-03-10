@@ -1,1 +1,1 @@
-from . import afip_cpe, mail_message,fleet_vehicle,product_pricelist, product_template, res_partner, sale_order_line, sale_order, trucking_trip
+from . import account_invoice_line,afip_cpe, mail_message,fleet_vehicle,product_pricelist, product_template, res_partner, sale_order_line, sale_order, trucking_trip
