@@ -112,12 +112,29 @@ class TruckingTrip(models.Model):
     cpe_pdf = fields.Many2one('ir.attachment', related='cpe_id.pdf3')
     cpe_status_date = fields.Datetime(_("CPE Last Update",copy=False))
     cpe_mismatch = fields.Boolean(_("CPE Driver Mismatch"),copy=False, default=False)
+    cpe_mismatch = fields.Boolean(_("CPE Driver Mismatch"),copy=False, default=False)
     
     driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ], tracking=True)
     
-    warnings = fields.Char()
+    warnings = fields.Char(compute="_compute_warnings")
     
     ### Compute methods
+    
+    @api.depends('cpe_mismatch','driver_id','driver_id.vehicle_id','driver_id.active_trucking_trip_id','is_active','cpe_mismatch')
+    def _compute_warnings(self):
+        for record in self:
+            record.warnings = ''
+            if record.is_active  and record.driver_id and not record.driver_id.vehicle_id:
+                record.warnings += "El conductor no tiene vehículo asignado\n"
+            if record.is_active and record.driver_id:
+                if record.driver_id.active_trucking_trip_id != record:
+                    print("warn assigned",record, record.name, record.driver_id.active_trucking_trip_id)
+                    record.warnings += "El conductor está asignado en otra orden (%s)\n" % record.driver_id.active_trucking_trip_id.name
+            if record.cpe_mismatch:
+                record.warnings += "Los datos de la CPE no coinciden con la orden\n"
+            if record.driver_id and record.driver_response == 'rejected':
+                record.warnings += "El conductor rechazó la orden\n"
+            
         
     @api.depends('cancelled','end_date','start_date','driver_id','driver_response','sale_id.state')
     def _compute_state(self):
