@@ -14,7 +14,7 @@
     "version": "17.0.2.0.2",
     "license": "AGPL-3",
 
-    'depends': ['base','fleet', 'sale','l10n_ar_afip_cpe','mail','mail_gateway_whatsapp','tms_sale','tms_shipment'],
+    'depends': ['base','account','fleet', 'sale', 'purchase','l10n_ar_afip_cpe','mail','mail_gateway_whatsapp','tms_sale','tms_shipment'],
     "assets": {
         "web.assets_backend": [
             'trucking/static/src/components/*',

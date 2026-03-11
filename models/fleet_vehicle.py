@@ -11,7 +11,9 @@ class FleetVehicleModel(models.Model):
 
 class FleetVehicle(models.Model):
     _inherit = 'fleet.vehicle'
-
+    
+    vehicle_type = fields.Selection(related='model_id.vehicle_type', store=True)
+    
     # Relación: Camión -> Trailer
     trailer_id = fields.Many2one(
         'fleet.vehicle', 
@@ -27,6 +29,8 @@ class FleetVehicle(models.Model):
         compute="_compute_truck_id",
         store=True,
     )
+    
+    truck_driver_id = fields.Many2one('res.partner', related="truck_id.driver_id", store=True)
 
     _sql_constraints = [
         ('trailer_unique', 'unique(trailer_id)', '¡Este trailer ya está asignado a otro camión!'),
