@@ -418,7 +418,7 @@ class TruckingTrip(models.Model):
                 self.cpe_status_date = False
                 return False
                     
-                
+            self.cpe_mismatch = True    
             self.driver_id = driver_id                
             self.vehicle_id = transport.vehicle_id
             self.trailer_id = transport.trailer_id
