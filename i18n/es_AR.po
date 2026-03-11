@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-07 07:45+0000\n"
-"PO-Revision-Date: 2026-03-07 07:45+0000\n"
+"POT-Creation-Date: 2026-03-11 07:08+0000\n"
+"PO-Revision-Date: 2026-03-11 07:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr "30 días"
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_sale_order_trucking_search
 msgid "7 days"
-msgstr "7 dias"
+msgstr "7 días"
 
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.sale_order_trucking_view_kanban
@@ -68,6 +68,11 @@ msgstr ""
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
 msgid "<span class=\"ms-1\">Kms</span>"
+msgstr ""
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.cpe_view_form_inherit
+msgid "<span class=\"o_stat_text\">Orden de Transporte</span>"
 msgstr ""
 
 #. module: trucking
@@ -99,6 +104,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:trucking.sale_order_trucking_view_kanban
 msgid "<span>For:</span>"
 msgstr "<span>Para:</span>"
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.report_invoice_document_inherit_trucking
+msgid "<span>Product</span>"
+msgstr "<span>Producto</span>"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_needaction
@@ -163,11 +173,6 @@ msgid "Agrupar por..."
 msgstr ""
 
 #. module: trucking
-#: model:ir.ui.menu,name:trucking.menu_trucking_all_trips
-msgid "All Trips"
-msgstr "Todos los Viajes"
-
-#. module: trucking
 #. odoo-javascript
 #: code:addons/trucking/static/src/components/attachment_link_widget.xml:0
 #, python-format
@@ -190,6 +195,11 @@ msgid "Arrived Date"
 msgstr "Fecha de Arribo"
 
 #. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Ask Confirmation"
+msgstr "Pedir Confirmación"
+
+#. module: trucking
 #. odoo-javascript
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
@@ -200,6 +210,11 @@ msgstr "Fecha de Arribo"
 #, python-format
 msgid "Assigned"
 msgstr "Asignado"
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_ir_attachment
+msgid "Attachment"
+msgstr "Archivo adjunto"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_attachment_count
@@ -234,6 +249,41 @@ msgid "CPE"
 msgstr ""
 
 #. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "CPE %s is already assigned to trip %s"
+msgstr "La CPE %s ya está asignada al viaje %s"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_mismatch
+#, python-format
+msgid "CPE Driver Mismatch"
+msgstr "CPE No Coincide"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_status_date
+#, python-format
+msgid "CPE Last Update"
+msgstr "Fecha de Estado"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "CPE ya asignada"
+msgstr ""
+
+#. module: trucking
+#: model:ir.ui.menu,name:trucking.menu_trucking_data_cpe
+msgid "CPEs"
+msgstr ""
+
+#. module: trucking
 #: model:ir.model.fields.selection,name:trucking.selection__fleet_vehicle_model__vehicle_type__truck
 msgid "Camión"
 msgstr ""
@@ -261,6 +311,18 @@ msgstr "Cancelado"
 #: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
 msgid "Carta de Porte"
 msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/mail_message.py:0
+#, python-format
+msgid "Carta de porte %s recibida por QR"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,help:trucking.field_account_move_line__product_category_id
+msgid "Category of the product"
+msgstr "Categoría del Producto"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_sale_order_line__cloned_line_id
@@ -299,9 +361,9 @@ msgid "Completed"
 msgstr "Completado"
 
 #. module: trucking
-#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
-msgid "Conductor"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Confirm"
+msgstr "Confirmar"
 
 #. module: trucking
 #. odoo-javascript
@@ -327,9 +389,14 @@ msgid "Contact Phone"
 msgstr "Teléfono de Contacto"
 
 #. module: trucking
-#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_mismatch
-msgid "Cpe Mismatch"
-msgstr "CPE No Coincide"
+#. odoo-python
+#: code:addons/trucking/models/sale_order_line.py:0
+#, python-format
+msgid ""
+"Could not generate a trucking purchase for %s since it doesn't have a driver"
+" assigned."
+msgstr ""
+"No se puede generar una ordenb de compra para %s porque no tiene un conductor asignado."
 
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
@@ -470,6 +537,7 @@ msgstr "Borrador"
 #. odoo-python
 #: code:addons/trucking/models/trucking_trip.py:0
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__driver_id
+#: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
 #, python-format
 msgid "Driver"
@@ -489,8 +557,9 @@ msgstr "El conductor %s está assignado a la orden activa %s\n"
 msgid ""
 "Driver %s from CPE %s mismatches the one in the order (%s). The order was "
 "not updated."
-msgstr "Conductor %s en la CPE no concuerda con el de la orden (%s). La orden "
-"no fué actualizada"
+msgstr ""
+"El conductor %s de la CPE %s no concuerda con el de la orden (%s). La orden "
+"no fué actualizada."
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__driver_phone
@@ -515,7 +584,7 @@ msgid "Driver assigned: %s"
 msgstr "Conductor asignado: %s"
 
 #. module: trucking
-#: model:ir.ui.menu,name:trucking.menu_trucking_data_driver
+#: model:ir.ui.menu,name:trucking.drivers
 msgid "Drivers"
 msgstr "Conductores"
 
@@ -614,6 +683,11 @@ msgid "Has Message"
 msgstr "Tiene Mensajes"
 
 #. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_sale_order_line__has_trucking_product
+msgid "Has Trucking Product"
+msgstr "Tiene Productos de Camiones"
+
+#. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_sale_order__has_trucking_trips
 msgid "Has Trucking Trips"
 msgstr "Tiene Viajes"
@@ -663,6 +737,18 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: trucking
+#: model:ir.model,name:trucking.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "La Carta de Porte ya está asignada a otro viaje."
+msgstr ""
+
+#. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_create_so__write_uid
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__write_uid
 msgid "Last Updated by"
@@ -685,6 +771,11 @@ msgstr "La linea %s no tiene una orden TMS"
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__sale_line_id
 msgid "Línea de Pedido"
 msgstr ""
+
+#. module: trucking
+#: model:ir.model,name:trucking.model_mail_message
+msgid "Message"
+msgstr "Mensaje"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__message_has_error
@@ -713,6 +804,7 @@ msgstr "Mis Ordenes"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__name
+#: model_terms:ir.ui.view,arch_db:trucking.iew_afip_cpe_search_inherit
 msgid "Name"
 msgstr "Nombre"
 
@@ -776,13 +868,6 @@ msgid "Open Trip"
 msgstr "Abrir Viaje"
 
 #. module: trucking
-#. odoo-python
-#: code:addons/trucking/models/trucking_trip.py:0
-#, python-format
-msgid "Orden actualizada desde la carta de porte: %s"
-msgstr ""
-
-#. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_create_so__order_id
 msgid "Order"
 msgstr "Orden"
@@ -807,7 +892,6 @@ msgstr "Referencia de la Orden"
 
 #. module: trucking
 #: model:ir.actions.act_window,name:trucking.action_trucking_dash_sale
-#: model:ir.ui.menu,name:trucking.menu_trucking_dash_sale
 msgid "Orders"
 msgstr "Ordenes"
 
@@ -846,21 +930,50 @@ msgid "Pdf3"
 msgstr ""
 
 #. module: trucking
-#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
-msgid "Pedir Confirmación"
-msgstr ""
-
-#. module: trucking
 #: model:ir.model,name:trucking.model_product_pricelist
 #: model:ir.model.fields,field_description:trucking.field_trucking_create_so__pricelist_id
 msgid "Pricelist"
 msgstr "Lista de precios"
 
 #. module: trucking
+#: model:ir.ui.menu,name:trucking.menu_trucking_data_pricelist
+msgid "Pricelists"
+msgstr "Listas de Precios"
+
+#. module: trucking
 #: model:ir.model,name:trucking.model_product_template
 #: model:ir.model.fields,field_description:trucking.field_trucking_create_so__product_id
 msgid "Product"
 msgstr "Producto"
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_account_move_line__product_category_id
+msgid "Product Category"
+msgstr "Categoría"
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_mail_mail__qr_code_ids
+#: model:ir.model.fields,field_description:trucking.field_mail_message__qr_code_ids
+msgid "Qr Code"
+msgstr "Código QR"
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_ir_attachment__qr_codes
+#: model:ir.model.fields,field_description:trucking.field_product_document__qr_codes
+msgid "Qr Codes"
+msgstr "Códigos QR"
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_mail_mail__qr_codes_count
+#: model:ir.model.fields,field_description:trucking.field_mail_message__qr_codes_count
+msgid "Qr Codes Count"
+msgstr ""
+
+#. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_ir_attachment__qr_scanned
+#: model:ir.model.fields,field_description:trucking.field_product_document__qr_scanned
+msgid "Qr Scanned"
+msgstr ""
 
 #. module: trucking
 #. odoo-python
@@ -881,12 +994,27 @@ msgid "Rate"
 msgstr "Tarifa"
 
 #. module: trucking
+#: model:ir.model.fields,field_description:trucking.field_mail_mail__partner_ids
+#: model:ir.model.fields,field_description:trucking.field_mail_message__partner_ids
+msgid "Recipients"
+msgstr "Destinatarios"
+
+#. module: trucking
 #. odoo-python
 #: code:addons/trucking/models/trucking_trip.py:0
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__driver_response__rejected
 #, python-format
 msgid "Rejected"
 msgstr "Rechazado"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/mail_message.py:0
+#: model:ir.model.fields,field_description:trucking.field_mail_mail__trucking_trip_id
+#: model:ir.model.fields,field_description:trucking.field_mail_message__trucking_trip_id
+#, python-format
+msgid "Related Trucking Trip"
+msgstr "Viaje Relacionado"
 
 #. module: trucking
 #. odoo-python
@@ -978,8 +1106,8 @@ msgid ""
 "Sets this sale order's state to 'Draft' so it can be edited further\\n\\nIt "
 "doesn't affect trips."
 msgstr ""
-"Pone esta orden en estado 'Borrador' para que pueda ser editada."
-"No afecta a los datos de los viajes."
+"Pone a esta orden como 'Borrador' para que pueda ser editada. "
+"No afercta a los viajes."
 
 #. module: trucking
 #: model:ir.ui.menu,name:trucking.settings
@@ -1006,7 +1134,7 @@ msgstr "Fecha de Inicio"
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
 msgid "Start Trip"
-msgstr "Iniciar"
+msgstr "Iniciado El"
 
 #. module: trucking
 #. odoo-javascript
@@ -1028,11 +1156,6 @@ msgid "State"
 msgstr "Estado"
 
 #. module: trucking
-#: model:ir.model.fields,field_description:trucking.field_trucking_trip__cpe_status_date
-msgid "Status Date"
-msgstr "Fecha de Estado"
-
-#. module: trucking
 #: model:ir.model.fields,help:trucking.field_trucking_trip__activity_state
 msgid ""
 "Status based on activities\n"
@@ -1042,9 +1165,23 @@ msgid ""
 msgstr ""
 
 #. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Success!"
+msgstr "¡Exito!"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "The trip was successfully updated from the CPE"
+msgstr "El viaje fue actualizado correctamente desde la CPE"
+
+#. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_sale_order_trucking_search
 msgid "To Assign"
-msgstr "Sin Asignar"
+msgstr "Por asignar"
 
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
@@ -1087,6 +1224,7 @@ msgstr "Ordenes TMS asociadas a esta venta"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_sale_order_line__trucking_trip_id
+#: model_terms:ir.ui.view,arch_db:trucking.iew_afip_cpe_search_inherit
 msgid "Trip"
 msgstr "Viaje"
 
@@ -1102,7 +1240,7 @@ msgstr "Viajes"
 #: code:addons/trucking/models/trucking_trip.py:0
 #, python-format
 msgid "Trip Details"
-msgstr "Detalles del Viaje"
+msgstr "Detalle del Viaje"
 
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
@@ -1135,6 +1273,20 @@ msgstr "Viaje clonado de %s"
 #: model:ir.actions.act_window,name:trucking.actrion_create_so
 msgid "Trip information"
 msgstr "Información del Viaje"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Trip updated from CPE %s"
+msgstr "Viaje actualizado desde la CPE %s"
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Trip was not updated"
+msgstr "El viaje no fue actualizado"
 
 #. module: trucking
 #: model:ir.actions.act_window,name:trucking.action_trucking_trips
@@ -1174,11 +1326,6 @@ msgstr "Camiones"
 #: model:ir.actions.server,name:trucking.ir_action_server_action_trucking_clone_tms
 msgid "Trucking Clone"
 msgstr "Clon de Trucking"
-
-#. module: trucking
-#: model:ir.model.fields,field_description:trucking.field_afip_cpe__trucking_has_trip
-msgid "Trucking Has Trip"
-msgstr "Tiene Viaje"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_res_partner__trucking_is_active
@@ -1238,7 +1385,7 @@ msgstr "Cantidad de Viajes"
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_sale_order__trucking_trips_to_assign
 msgid "Trucking Trips To Assign"
-msgstr "Viajes sin Asignar"
+msgstr "Viajes a Asignar"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_product_product__trucking_trip
@@ -1297,6 +1444,11 @@ msgid "Vehicle Type"
 msgstr "Tipo de vehículo"
 
 #. module: trucking
+#: model:ir.ui.menu,name:trucking.menu_trucking_data_vehicle
+msgid "Vehicles"
+msgstr "Vehículos"
+
+#. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_res_partner__vehicle_id
 #: model:ir.model.fields,field_description:trucking.field_res_users__vehicle_id
 msgid "Vehículo Asignado"
@@ -1306,6 +1458,18 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
 msgid "Viajes"
 msgstr ""
+
+#. module: trucking
+#. odoo-python
+#: code:addons/trucking/models/trucking_trip.py:0
+#, python-format
+msgid "Warning"
+msgstr "Alerta"
+
+#. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_form
+msgid "Warning: Vehicle from CPE mismatches the one in the order."
+msgstr "Alerta: El vehiculo de la CPE no coincide con el de la orden"
 
 #. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__warnings
@@ -1323,6 +1487,11 @@ msgid "Website communication history"
 msgstr ""
 
 #. module: trucking
+#: model_terms:ir.ui.view,arch_db:trucking.iew_afip_cpe_search_inherit
+msgid "With Trip"
+msgstr "Con Viaje"
+
+#. module: trucking
 #. odoo-python
 #: code:addons/trucking/models/trucking_trip.py:0
 #, python-format
@@ -1330,8 +1499,9 @@ msgid ""
 "You can't delete a trip with informationTrip %s has information that can't "
 "be deleted. You can cancel the trip or set it to draft and then delete it."
 msgstr ""
-"No puedes borrar un viaje con información. El viaje %s tiene información que no "
-"puede ser borrada. Puedes cancelar el viaje o ponerlo en Borrador, y despues borrarlo."
+"No puedes eliminar un viaje con información. El viaje %s tiene información "
+"que no puede ser eliminada. Puedes cancelarlo o ponerlo como borrador y despues borrarlo."
+
 #. module: trucking
 #: model:ir.model,name:trucking.model_afip_locality
 msgid "afip.locality"
