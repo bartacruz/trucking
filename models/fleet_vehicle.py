@@ -37,12 +37,12 @@ class FleetVehicle(models.Model):
     def _compute_truck_id(self):
         for record in self:
             if record.trailer_id:
-                old_trucks = self.search([('trailer_id', '=', record.trailer_id.id),('id', '!=', self._origin.id)])
+                old_trucks = record.search([('trailer_id', '=', record.trailer_id.id),('id', '!=', record._origin.id)])
                 old_trucks.trailer_id = False
                 print("updating trailer",record.name,record.trailer_id.name,old_trucks.mapped('name'))
                 record.trailer_id.truck_id = record
             else:
-                old_trailers = self.search([('truck_id', '=', record.id)])
+                old_trailers = record.search([('truck_id', '=', record.id)])
                 print("deleting trailer",record.name,old_trailers.mapped('name'))
                 old_trailers.truck_id = False
                 
