@@ -103,6 +103,7 @@ class SaleOrderLine(models.Model):
             "origin_locality_id": self.order_id.origin_locality_id.id or None,
             "destination_locality_id": self.order_id.destination_locality_id.id or None,
             "commitment_date": self.order_id.commitment_date,
+            "distance": self.distance,
         }
     
     def action_open_trucking_trip(self):
