@@ -25,6 +25,7 @@
         'wizard/trucking_create_so.xml',
         'data/ir_sequence_data.xml',
         "security/ir.model.access.csv",
+        'views/afip_cpe.xml',
         'views/fleet_vehicle.xml',
         'views/product_pricelist.xml',
         'views/product_template.xml',

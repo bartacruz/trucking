@@ -41,6 +41,8 @@
         <field name="arch" type="xml">
             <form string="">
                 <field name="is_active" invisible="1" />
+                <field name="cpe_mismatch" invisible="1" />
+                <div class="alert alert-warning" role="alert" invisible="not cpe_mismatch" >Warning: Vehicle from CPE mismatches the one in the order.</div>
                 <header>
                     <button
                         name="action_cancel_trip"

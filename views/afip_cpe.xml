@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="cpe_view_form_inherit" model="ir.ui.view">
+        <field name="name">afip.cpe.view.form</field>
+        <field name="model">afip.cpe</field>
+        <field name="inherit_id" ref="l10n_ar_afip_cpe.cpe_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button
+                    name="action_view_trucking_trip"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-truck"
+                    invisible="not tms_order_id"
+                >
+                    <span class="o_stat_text">Orden de Transporte</span>
+                    <field name="trucking_trip_id" invisible="1" />
+                </button>
+            </xpath>
+
+        </field>
+    </record>
+    <record id="cpe_view_tree_inherit" model="ir.ui.view">
+        <field name="name">afip.cpe.view.tree</field>
+        <field name="model">afip.cpe</field>
+        <field name="inherit_id" ref="l10n_ar_afip_cpe.cpe_view_tree" />
+        <field name="arch" type="xml">
+            <field name="status" position="after">
+                <field name="trucking_trip_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="iew_afip_cpe_search_inherit" model="ir.ui.view">
+        <field name="name">afip.cpe.view.search</field>
+        <field name="model">afip.cpe</field>
+        <field name="inherit_id" ref="l10n_ar_afip_cpe.view_afip_cpe_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="trucking_trip_id" string="Trip"/>
+                <field name="name" string="Name"/>
+                <filter name="with_trucking_trip" string="With Trip" domain="[('trucking_trip_id','!=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
