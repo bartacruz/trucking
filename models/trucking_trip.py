@@ -112,7 +112,6 @@ class TruckingTrip(models.Model):
     cpe_pdf = fields.Many2one('ir.attachment', related='cpe_id.pdf3')
     cpe_status_date = fields.Datetime(_("CPE Last Update",copy=False))
     cpe_mismatch = fields.Boolean(_("CPE Driver Mismatch"),copy=False, default=False)
-    cpe_mismatch = fields.Boolean(_("CPE Driver Mismatch"),copy=False, default=False)
     
     driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ], tracking=True)
     
@@ -120,7 +119,7 @@ class TruckingTrip(models.Model):
     
     ### Compute methods
     
-    @api.depends('cpe_mismatch','driver_id','driver_id.vehicle_id','driver_id.active_trucking_trip_id','is_active','cpe_mismatch')
+    @api.depends('cpe_mismatch','driver_id','driver_id.vehicle_id','driver_id.active_trucking_trip_id','is_active')
     def _compute_warnings(self):
         for record in self:
             record.warnings = ''
@@ -435,7 +434,7 @@ class TruckingTrip(models.Model):
                 self.cpe_status_date = False
                 return False
                     
-            self.cpe_mismatch = True    
+            self.cpe_mismatch = False    
             self.driver_id = driver_id                
             self.vehicle_id = transport.vehicle_id
             self.trailer_id = transport.trailer_id
