@@ -70,10 +70,14 @@ class SaleOrderLine(models.Model):
                 if not line.purchase_line_count:
                     line._purchase_service_generation()
                 
-    @api.depends('order_id.pricelist_id','product_uom_qty', 'distance')
+    @api.depends('pricelist_item_id','order_id.pricelist_discount', 'product_uom_qty', 'distance')
     def _compute_price_unit(self):
         super()._compute_price_unit()
-        print("computed price_unit of ",self,self.mapped('price_unit'))
+        for line in self:
+            if line.pricelist_item_id and line.order_id.pricelist_discount != 0:
+                discount = 1 - (line.order_id.pricelist_discount/100)
+                line.price_unit = line.price_unit * discount
+                print("computed price_unit of ",line,line.price_unit,"with discount",line.order_id.pricelist_discount)
         
         
     @api.depends('order_id.pricelist_id', 'distance', 'product_uom_qty')
@@ -136,8 +140,29 @@ class SaleOrderLine(models.Model):
     
     def _purchase_service_create(self, quantity=False):
         print("_purchase_service_create",quantity)
-        return super()._purchase_service_create(quantity)
-    
+        sale_line_purchase_map = {}
+        for line in self:
+            sale_line_purchase_map.setdefault(line, line.env['purchase.order.line'])
+            p_line = line.purchase_line_ids.filtered(lambda x: x.product_id.trucking_trip)
+            if p_line and line.trucking_trip_id:
+                trip = line.trucking_trip_id
+                name = f'{trip.cpe_id.ctg_number or trip.name} {trip.origin_locality_id.name} - {trip.destination_locality_id.name}' 
+                vals = {
+                    'name': name,
+                    'product_id': line.product_id.id,
+                    'product_qty': quantity or line.product_uom_qty,
+                    'price_unit': line.price_unit,
+                    'discount': line.discount,
+                }
+                print("_purchase_service_create",line,"updating",p_line,vals)
+                p_line.write(vals)
+                sale_line_purchase_map[line] |= p_line
+            else:
+                print("_purchase_service_create",line,"calling super")
+                sale_line_purchase_map[line] |= super(SaleOrderLine, line)._purchase_service_create(quantity=quantity)
+                
+        return sale_line_purchase_map
+
     def _purchase_service_match_supplier(self, warning=True):
         print("_purchase_service_match_supplier",self, self.trucking_trip_id)
         if self.product_id.trucking_trip and self.trucking_trip_id:

@@ -20,6 +20,7 @@ class TruckingCreateSO(models.TransientModel):
     product_id = fields.Many2one('product.product', default=lambda self: self._default_product())
     pricelist_id = fields.Many2one('product.pricelist')
     price_unit = fields.Monetary(_("Rate"), 'currency_id' )
+    pricelist_discount = fields.Float(string="Pricelist discount")
     
     origin_locality = fields.Many2one('afip.locality')
     destination_locality = fields.Many2one('afip.locality')
@@ -57,7 +58,9 @@ class TruckingCreateSO(models.TransientModel):
             'origin_locality_id':self.origin_locality.id,
             'destination_locality_id':self.destination_locality.id,
             'pricelist_id': self.pricelist_id.id,
+            'pricelist_discount': self.pricelist_discount,
             "order_line": order_line*self.qty,
+            'trucking_wizard_distance': self.distance, # save for adding new lines
         } ]
         print("vals",vals_list)
         self.env["sale.order"].create(vals_list)

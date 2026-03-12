@@ -10,6 +10,7 @@
                 group_edit="False"
                 create="0"
                 js_class="trucking_kanban"
+                default_order="commitment_date desc"
             >
                 <field name="partner_id" />
                 <field name="partner_invoice_id" />
@@ -18,7 +19,7 @@
                 <field name="trucking_trip_ids" />
                 <field name="tag_ids" />
                 <field name="trucking_trip_active" />
-                
+
                 <header>
                     <button name="%(trucking.actrion_create_so)d"
                         type="action"
@@ -97,15 +98,32 @@
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <header position="inside">
-                <button type="object" name="action_to_draft" string="To Draft" class="btn btn-warning" invisible="state != 'sale'" 
-                    help="Sets this sale order's state to 'Draft' so it can be edited further\n\nIt doesn't affect trips."/>
+                <button type="object" name="action_to_draft" string="To Draft" class="btn btn-warning" invisible="state != 'sale'"
+                    help="Sets this sale order's state to 'Draft' so it can be edited further\n\nIt doesn't affect trips." />
                 <field name="trucking_trips_count" invisible="1" />
                 <field name="has_trucking_trips" invisible="1" />
             </header>
             <xpath expr="//field[@name='has_active_pricelist']" position="before">
-                <field name="commitment_date" invisible="not has_trucking_trips"/>
-
+                <field name="commitment_date" invisible="not has_trucking_trips" />
             </xpath>
+            <div groups="product.group_product_pricelist"
+                position="after">
+                <label for="pricelist_discount"
+                    string="Descuento Tarifa"
+                    invisible="not pricelist_id" />
+                <div class="d-flex w-25"
+                    invisible="not pricelist_id"
+                    help="Porcentaje de descuento que se aplica sobre la tarifa base.">
+                    <span class="text-danger fw-bold">-</span>
+                    <field name="pricelist_discount"
+                        class="oe_inline"
+                        style="width: 60px !important; flex: none;"
+                        placeholder="0.00" />
+                    <span class="fw-bold">%</span>
+                </div>
+            </div>
+
+
             <xpath expr="//page[@name='order_lines']" position="after">
                 <page string="Viajes" name="trucking_trips" invisible='not has_trucking_trips' icon="fa-truck">
                     <group>
@@ -117,24 +135,25 @@
                         </group>
                     </group>
                     <button type="object" name="action_new_trip_sale" class="btn btn-primary btn-sm" string="New Trip" />
-                    <field name="trucking_trip_ids" context="{'show_trip_open_button': True, 'default_order': 'is_active desc, id desc'}" />
+                    <field name="trucking_trip_ids"
+                        context="{'show_trip_open_button': True, 'default_order': 'is_active desc, id desc'}" />
                 </page>
             </xpath>
             <xpath expr="//tree//field[@name='name']" position="after">
                 <field name="trucking_trip_id" column_invisible="not parent.has_trucking_trips" optional="hide" />
-                
-                
+
+
                 <field name="trucking_trip_state" widget="badge"
-                    decoration-primary="trucking_trip_state in ['assigned','confirmed','started','arrived']" 
-                    decoration-success="trucking_trip_state == 'completed'" 
-                    decoration-danger="trucking_trip_state == 'cancelled'" 
+                    decoration-primary="trucking_trip_state in ['assigned','confirmed','started','arrived']"
+                    decoration-success="trucking_trip_state == 'completed'"
+                    decoration-danger="trucking_trip_state == 'cancelled'"
                     decoration-info="trucking_trip_state=='draft'"
                     optional="show"
-                    />
-                    
-                
+                />
+
+
                 <field name="distance" column_invisible="not parent.has_trucking_trips" optional="show" />
-                
+
             </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button
@@ -177,7 +196,7 @@
                         domain="[('create_date','&gt;', (context_today() - datetime.timedelta(months=1)).strftime('%Y-%m-%d'))]" />
                 </group>
                 <filter string="Active" name="trucking_actives" domain="[('trucking_trip_active', '=', True)]" />
-                <filter string="To Assign" name="trucking_to_assign" domain="[('trucking_trips_to_assign', '&gt;', 0)]" /> 
+                <filter string="To Assign" name="trucking_to_assign" domain="[('trucking_trips_to_assign', '&gt;', 0)]" />
             </search>
         </field>
     </record>

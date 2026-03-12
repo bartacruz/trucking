@@ -9,9 +9,13 @@ class SaleOrder(models.Model):
     trucking_trip_active = fields.Boolean(compute='_compute_trucking_trips',store=True)
     trucking_trips_count = fields.Integer(compute='_compute_trucking_trips')
     trucking_trips_to_assign = fields.Integer(compute='_compute_trucking_trips', store=True)
+    
     origin_locality_id = fields.Many2one('afip.locality',tracking=True)
     destination_locality_id = fields.Many2one('afip.locality',tracking=True)
-        
+    trucking_wizard_distance = fields.Integer()
+    
+    pricelist_discount = fields.Float(string="Pricelist discount")
+    
     cloned_tms_order_ids = fields.Many2many(
         "tms.order",
         compute="_compute_cloned_tms_order_ids",
@@ -68,12 +72,18 @@ class SaleOrder(models.Model):
             self.message_post(body=message)
 
     def action_new_trip_sale(self):
-        product_id = self.env['product.product'].search([ ('trucking_trip','=',True) ], limit=1)
+        product_id = self.order_line.mapped('product_id').filtered(lambda P: P.trucking_trip)
+        if not product_id:
+            raise UserWarning(_('This order does not have a trip product'))
+        product_id = product_id[0]
+        
+        qty = product_id.uom_id.category_id == self.env.ref('uom.product_uom_categ_unit') and 1 or 0
         vals = {
             'order_id': self.id,
             'product_id': product_id.id,
-            "product_uom_qty": 1,
+            "product_uom_qty": qty,
             "product_uom": product_id.uom_id.id,
+            'distance': self.trucking_wizard_distance,
         }
         self.order_line.create([vals])
         return True
