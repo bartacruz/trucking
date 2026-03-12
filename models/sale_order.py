@@ -31,7 +31,7 @@ class SaleOrder(models.Model):
             )
             sale.cloned_tms_order_ids = tms
     
-    @api.depends('order_line.product_id','trucking_trip_ids')
+    @api.depends('order_line.product_id','trucking_trip_ids','trucking_trip_ids.state')
     def _compute_trucking_trips(self):
         for record in self:
             lines_with_trips = record.order_line.filtered(lambda L: L.product_id.trucking_trip)
