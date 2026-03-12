@@ -74,6 +74,17 @@ class ResPartner(models.Model):
         index=True  # Indexado para que el order sea rapidísimo
     )
     
+    invoice_partner_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Invoicing Representative',
+        help='The partner who issues the invoice for this partner.'
+    )
+    invoice_partner_ids = fields.One2many(
+        comodel_name='res.partner',
+        inverse_name='invoice_partner_id',
+        string='Partners who we invoice for.'
+    )
+    
     @api.model
     def truck_drivers(self):
         return self.search([('truck_driver','=',True)],order='name')

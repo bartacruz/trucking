@@ -144,7 +144,8 @@ class SaleOrderLine(models.Model):
             if self.trucking_trip_id.driver_id:
                 print("_purchase_service_match_supplier generating",self.order_id,self.trucking_trip_id.name,self.trucking_trip_id.driver_id)
                 driver_id = self.trucking_trip_id.driver_id
-                partner_id = driver_id.parent_id or driver_id
+                # Select purchase and invoicing partner, via parent, invoice partner or driver
+                partner_id = driver_id.parent_id or driver_id.invoice_partner_id or driver_id
                 vals = [{
                  'partner_id': partner_id.id,
                  'product_id': self.product_id.id,

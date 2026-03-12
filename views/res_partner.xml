@@ -152,10 +152,47 @@
             </xpath>
 
             <xpath expr="//group/group" position="inside">
+                <field name="invoice_partner_id" />
                 <field name="category_id" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"
                     placeholder='e.g. "B2B", "VIP", "Consulting", ...' />
             </xpath>
-
+            <!-- <xpath expr="//notebook" position="inside"> -->
+                <xpath expr="//page[@name='contact_addresses']" position="before">
+                <page string="Invoice Partners" name="invoice_partners">
+                    <field name="invoice_partner_ids" widget="many2many"
+                        mode="kanban"
+                        context="{'default_invoice_partner_id': active_id, 'search_view_ref': 'base.view_res_partner_filter'}">
+                        <kanban>
+                            <field name="id" />
+                            <field name="display_name" />
+                            <field name="vat" />
+                            <field name="l10n_ar_formatted_vat" />
+                            <field name="phone" />
+                            <field name="mobile" />
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <div class="oe_kanban_details">
+                                            <strong class="o_kanban_record_title">
+                                                <field name="display_name" />
+                                            </strong>
+                                            <div t-if="record.l10n_ar_formatted_vat.value">
+                                                <t t-esc="record.l10n_ar_formatted_vat.value" />
+                                            </div>
+                                            <div t-if="record.phone.value">
+                                                <field name="phone" widget="phone" />
+                                            </div>
+                                            <div t-if="record.mobile.value">
+                                                <field name="mobile" widget="phone" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </page>
+            </xpath>
 
             <!-- <xpath expr="//page[@name='contact_addresses']" position="attributes">
                 <attribute name="autofocus" position="replace/" />
