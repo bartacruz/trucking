@@ -14,7 +14,7 @@
     "version": "17.0.2.0.2",
     "license": "AGPL-3",
 
-    'depends': ['base','account','fleet', 'sale', 'purchase','l10n_ar_afip_cpe','mail','mail_gateway_whatsapp','tms_sale','tms_shipment'],
+    'depends': ['base','account','fleet', 'sale', 'sale_order_line_menu','purchase','l10n_ar_afip_cpe','mail','mail_gateway_whatsapp','tms_sale','tms_shipment'],
     "assets": {
         "web.assets_backend": [
             'trucking/static/src/components/*',
@@ -31,6 +31,7 @@
         'views/product_template.xml',
         'views/res_partner.xml',
         'views/sale_order.xml',
+        'views/sale_order_line.xml',
         'views/trucking_trip.xml',
         'views/menu.xml',
         'views/report_invoice.xml'

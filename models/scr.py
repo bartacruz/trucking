@@ -1,4 +1,11 @@
-#
+# Purchase
+
+
+
+
+
+
+# MIGRATE FROM TMS
 # Agregar los repos
 # /opt/odoo-17/repos/sale-workflow,/opt/odoo-17/repos/purchase-workflow,/opt/odoo-17/repos/account-financial-tools
 #
@@ -35,6 +42,7 @@ for o in env['sale.order'].search([ ('has_tms_order','=',True),('has_trucking_tr
 # Eliminar las referencias a la orden de venta en tms.order
 for tms in env['tms.order'].search([]):
     tms.tms_clone()
+    
 env.cr.commit()
     
 # Cambiar el estado de las ordenes de venta segun el estado de los viajes
@@ -43,6 +51,7 @@ completed = sales.filtered(lambda s: s.state != 'cancel').filtered(lambda s: all
 
 for o in completed.filtered(lambda O: O.state != 'sale'):
     o.state = 'sale'
+    
 env.cr.commit()
     
 draft = sales.filtered(lambda s: s.state != 'cancel').filtered(lambda s: all(t.state in ['draft','assigned','cancelled'] for t in s.trucking_trip_ids))
@@ -126,3 +135,16 @@ available =  available.sorted(lambda a: datetime.now() - a.trucking_trip_ids[0].
 
 
 [datetime.now() - x.trucking_trip_ids[0].commitment_date for x in inactive if x.trucking_trip_ids]
+
+
+drivers = env['res.partner'].search([]).filtered(lambda d: d.truck_driver)
+drivers.filtered(lambda d: d.tms_driver_id and d.vehicle_id != d.tms_driver_id.vehicle_id)
+vehicles = env['fleet.vehicle'].search([]).filtered(lambda v: v.tms_driver_id and not v.driver_id)
+
+
+for partner in env['res.partner'].search([]).filtered(lambda L: L.l10n_latam_identification_type_id.id == 1):
+...     try:
+...         partner.l10n_latam_identification_type_id = 4
+...         env.cr.commit()
+...     except:
+...         print("ERR",partner)

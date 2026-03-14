@@ -27,7 +27,7 @@
                         <field name="product_id" domain="[('trucking_trip','=',True)]"/>
                         <field name="pricelist_id"/>
                         <field name="pricelist_discount"/>
-                        <field name="price_unit"/>
+                        <field name="fixed_price"/>
                         
                     </group>
                     <group>

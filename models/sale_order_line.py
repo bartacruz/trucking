@@ -14,6 +14,7 @@ class SaleOrderLine(models.Model):
     has_trucking_product = fields.Boolean(compute='_compute_has_trucking_product')
     cloned_line_id = fields.Many2one('sale.order.line')
     distance = fields.Float(string="Distance (km)")
+    cpe = fields.Char(string="CPE", related="trucking_trip_id.cpe_id.name")
 
     cloned_tms_order_ids = fields.One2many(
         "tms.order",
@@ -42,6 +43,8 @@ class SaleOrderLine(models.Model):
                     line.trucking_trip_id.unlink()
                 elif line.product_id.trucking_trip and not line.trucking_trip_id:
                     line._create_associated_trip()
+        # check trips > confirmed vs PO and PO lines.
+        self.filtered(lambda L : L.trucking_trip_id)._check_purchase_order()
         return res
     
     def _create_associated_trip(self):
@@ -74,15 +77,18 @@ class SaleOrderLine(models.Model):
     def _compute_price_unit(self):
         super()._compute_price_unit()
         for line in self:
-            if line.pricelist_item_id and line.order_id.pricelist_discount != 0:
+            if line.order_id.trucking_fixed_price:
+                line.price_unit = line.order_id.trucking_fixed_price
+            elif line.pricelist_item_id and line.order_id.pricelist_discount != 0:
                 discount = 1 - (line.order_id.pricelist_discount/100)
                 line.price_unit = line.price_unit * discount
                 print("computed price_unit of ",line,line.price_unit,"with discount",line.order_id.pricelist_discount)
+            
         
         
     @api.depends('order_id.pricelist_id', 'distance', 'product_uom_qty')
     def _compute_pricelist_item_id(self):
-        
+        self.env['l10n_latam.identification.type']
         for line in self:
             qty_field=line.order_id.pricelist_id.qty_field or 'product_uom_qty'
             quantity = getattr(line, qty_field ) or 1
@@ -131,6 +137,47 @@ class SaleOrderLine(models.Model):
     
     
     ### Purchase methods ###
+    
+    def _check_purchase_order(self):
+        # Si no tengo trip, salgo
+        # si tengo trip pero está < confirmed, no tengo que tener PO.
+        # Si el trip esta >= confirmed Deberia tener 1 PO al driver (o invoice_partner) 
+        # con 1 linea con los datos del servicio.
+        # Si la orden está completada, confirmar la PO
+        #
+        for line in self:
+            if not line.trucking_trip_id:
+                continue
+            trip = line.trucking_trip_id
+            if trip.state in ['draft','assigned','cancelled']:
+                line.purchase_line_ids.unlink()
+                continue
+        
+            if line.purchase_line_count == 0:
+                # NO. O chequear subcontract
+                print("ACA CREARIA LA LINEA??",line)
+                continue
+            
+            p_line = line.purchase_line_ids[0]
+            # remove excess lines
+            (line.purchase_line_ids - p_line).unlink()
+            name = f'{trip.cpe_id.ctg_number or trip.name} {trip.origin_locality_id.name} - {trip.destination_locality_id.name}' 
+                
+            vals = {
+                    'name': name,
+                    'product_id': line.product_id.id,
+                    'product_qty': line.product_uom_qty,
+                    'price_unit': line.price_unit,
+                }
+            print('++++++_check_purchase_order', line, "updating",p_line,vals)
+            p_line.write(vals)
+            if line.trucking_trip_id.state == 'completed':
+                p_line.qty_received = p_line.product_uom_qty
+                # if p_line.order_id.state not in ['purchase','']:
+                #     p_line.order_id.order_line.filtered(lambda L: L.sta)
+                
+            
+                
     def _purchase_service_generation(self):
         # Remove lines with trucking trip that don't have the driver confirmed.
         lines_with_trip_unconfirmed = self.filtered(lambda l: l.trucking_trip_id and not l.trucking_trip_id.state in ['confirmed','started','arrived','completed'])
@@ -153,34 +200,50 @@ class SaleOrderLine(models.Model):
                     'product_qty': quantity or line.product_uom_qty,
                     'price_unit': line.price_unit,
                     'discount': line.discount,
+                    'trucking_trip_id': line.trucking_trip_id.id
                 }
                 print("_purchase_service_create",line,"updating",p_line,vals)
                 p_line.write(vals)
                 sale_line_purchase_map[line] |= p_line
             else:
                 print("_purchase_service_create",line,"calling super")
-                sale_line_purchase_map[line] |= super(SaleOrderLine, line)._purchase_service_create(quantity=quantity)
+                sale_line_purchase_map |= super(SaleOrderLine, line)._purchase_service_create(quantity=quantity)
                 
         return sale_line_purchase_map
+    
+    def _purchase_service_match_purchase_order(self, partner, company=False):
+        return super()._purchase_service_match_purchase_order(partner, company)
 
     def _purchase_service_match_supplier(self, warning=True):
-        print("_purchase_service_match_supplier",self, self.trucking_trip_id)
+        #print("_purchase_service_match_supplier",self, self.trucking_trip_id)
         if self.product_id.trucking_trip and self.trucking_trip_id:
             if self.trucking_trip_id.driver_id:
-                print("_purchase_service_match_supplier generating",self.order_id,self.trucking_trip_id.name,self.trucking_trip_id.driver_id)
+                #print("_purchase_service_match_supplier generating",self.order_id,self.trucking_trip_id.name,self.trucking_trip_id.driver_id)
                 driver_id = self.trucking_trip_id.driver_id
                 # Select purchase and invoicing partner, via parent, invoice partner or driver
                 partner_id = driver_id.parent_id or driver_id.invoice_partner_id or driver_id
-                vals = [{
-                 'partner_id': partner_id.id,
-                 'product_id': self.product_id.id,
-                 'product_tmpl_id': self.product_template_id.id,
-                 'price': self.price_unit,
-                 'min_qty':0,
-                }]
-                print("_purchase_service_match_supplier creating",self.order_id,partner_id,vals)
-                supplier_info =self.env['product.supplierinfo'].create(vals)
-                print("_purchase_service_match_supplier created",supplier_info.partner_id,supplier_info.price)
+                supplier_info = self.env['product.supplierinfo'].search([('product_tmpl_id','=',self.product_template_id.id),('partner_id','=',partner_id.id)])
+                vals = {
+                    'partner_id': partner_id.id,
+                    'product_id': self.product_id.id,
+                    'product_tmpl_id': self.product_template_id.id,
+                    'price': self.price_unit,
+                    'min_qty':0,
+                    'discount': partner_id.purchase_general_discount
+                    }
+                if supplier_info:
+                    # Clean garbage
+                    if len(supplier_info) > 1:
+                        print("cleaning supplier info garbage",supplier_info)
+                        supplier_info[1:].unlink()
+                        supplier_info = supplier_info[0]
+                
+                    supplier_info.write(vals)
+                    #print("_purchase_service_match_supplier creating",self.order_id,partner_id,vals)
+                else:
+                    supplier_info =self.env['product.supplierinfo'].create([vals])
+                
+                print("_purchase_service_match_supplier returning",self,supplier_info.partner_id,supplier_info.price)
                 return supplier_info
             print("_purchase_service_match_supplier MOFO FAILIN'",self.order_id)
             raise UserError(_(
@@ -192,6 +255,8 @@ class SaleOrderLine(models.Model):
     
     def _purchase_service_prepare_line_values(self, purchase_order, quantity=False):
         ret = super()._purchase_service_prepare_line_values(purchase_order, quantity)
-        print("_purchase_service_prepare_line_values", ret)
+        ret |= {'trucking_trip_id': self.trucking_trip_id.id}
+        
+        print("_purchase_service_prepare_line_values", self, ret)
         return ret
         

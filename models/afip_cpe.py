@@ -8,8 +8,11 @@ class AfipCPE(models.Model):
     @api.depends('trucking_trip_ids')
     def _compute_trucking_trip_id(self):
         for record in self:
-            record.trucking_trip_id = self.trucking_trip_ids and self.trucking_trip_ids[0] or False
+            # clean
+            trip = record.trucking_trip_ids.filtered(lambda t: t.cpe_id == record)
+            record.trucking_trip_id = trip and trip[0] or False
             if record.trucking_trip_id:
+                # is this necesary?
                 record.trucking_trip_id._update_from_cpe()
     
     def _get_driver(self, cuit, name=None):

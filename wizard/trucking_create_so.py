@@ -19,7 +19,7 @@ class TruckingCreateSO(models.TransientModel):
     
     product_id = fields.Many2one('product.product', default=lambda self: self._default_product())
     pricelist_id = fields.Many2one('product.pricelist')
-    price_unit = fields.Monetary(_("Rate"), 'currency_id' )
+    fixed_price = fields.Monetary(_("Rate"), 'currency_id' )
     pricelist_discount = fields.Float(string="Pricelist discount")
     
     origin_locality = fields.Many2one('afip.locality')
@@ -47,7 +47,7 @@ class TruckingCreateSO(models.TransientModel):
                     "product_uom_qty": qty,
                     "product_uom": self.product_id.uom_id.id,
                     'distance': self.distance,
-                    'price_unit': self.price_unit or self.product_id.list_price
+                    'price_unit': self.fixed_price or self.product_id.list_price
                     }
                 ) 
         ]
@@ -61,6 +61,7 @@ class TruckingCreateSO(models.TransientModel):
             'pricelist_discount': self.pricelist_discount,
             "order_line": order_line*self.qty,
             'trucking_wizard_distance': self.distance, # save for adding new lines
+            'trucking_fixed_price': self.fixed_price
         } ]
         print("vals",vals_list)
         self.env["sale.order"].create(vals_list)

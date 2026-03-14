@@ -121,6 +121,7 @@
                         placeholder="0.00" />
                     <span class="fw-bold">%</span>
                 </div>
+                <field name="trucking_fixed_price" invisible="pricelist_id" />
             </div>
 
 
@@ -231,6 +232,34 @@
         <field name="state">code</field>
         <field name="code">
             action = record.action_trucking_clone_tms()
+        </field>
+    </record>
+    <record id="action_export_sol_with_trips" model="ir.actions.server">
+        <field name="name">Exportar Líneas (con Viajes)</field>
+        <field name="model_id" ref="sale.model_sale_order" />
+        <field name="binding_model_id" ref="sale.model_sale_order" />
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+# Verificamos que haya líneas para exportar
+if not record.order_line:
+    raise UserError("La orden no tiene líneas para exportar.")
+
+# Retornamos la acción para abrir el wizard de exportación directamente
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Exportar Líneas con Viajes',
+    'res_model': 'base.export',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {
+        'active_model': 'sale.order.line',
+        'active_ids': record.order_line.ids,
+        # Opcional: pre-cargar una configuración de exportación si ya tienes una
+        # 'export_id': env.ref('tu_modulo.id_de_tu_plantilla').id,
+    },
+}
+
         </field>
     </record>
 

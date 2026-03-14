@@ -13,6 +13,7 @@ class SaleOrder(models.Model):
     origin_locality_id = fields.Many2one('afip.locality',tracking=True)
     destination_locality_id = fields.Many2one('afip.locality',tracking=True)
     trucking_wizard_distance = fields.Integer()
+    trucking_fixed_price = fields.Monetary(currency_field='currency_id')
     
     pricelist_discount = fields.Float(string="Pricelist discount")
     

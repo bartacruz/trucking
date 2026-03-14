@@ -84,6 +84,56 @@ class ResPartner(models.Model):
         inverse_name='invoice_partner_id',
         string='Partners who we invoice for.'
     )
+    is_duplicate = fields.Boolean(
+        string="Is Duplicate",
+        compute="_compute_is_duplicate", search="_search_is_duplicate"
+    )
+    
+    @api.depends('vat')
+    def _compute_is_duplicate(self):
+        # Optimizamos: Una sola consulta para todos los registros cargados en pantalla
+        vats = self.mapped('vat')
+        duplicates = self.env['res.partner']._read_group(
+            [('vat', 'in', [v for v in vats if v]), ('vat', '!=', False)],
+            ['vat'],
+            having=[("__count", ">", 1)],
+        )
+        print("_compute_is_duplicate", duplicates)
+        duplicate_vats = [d[0] for d in duplicates]
+        for record in self:
+            record.is_duplicate = record.vat in duplicate_vats
+    def _search_is_duplicate(self, operator, value):
+        # Soporte para buscar tanto True (duplicados) como False (únicos)
+        if operator not in ('=', '!='):
+            return []
+
+        # Determinar si queremos los que están en la lista de duplicados o no
+        # (Si value es False y op es '=', queremos los NO duplicados)
+        is_positive = (operator == '=' and value) or (operator == '!=' and not value)
+
+        duplicates = self.env['res.partner']._read_group(
+            [('vat', '!=', False)],
+            ['vat'],
+            having=[("__count", ">", 1)],
+        )
+        duplicate_vats = [d[0] for d in duplicates]
+
+        return [('vat', 'in' if is_positive else 'not in', duplicate_vats)]
+    # def _search_is_duplicate(self, operator, value):
+        
+    #     if operator in ('=', '!=') and value is True:
+    #         print("searching duplicates",self)
+    #         duplicates = self.env['res.partner']._read_group(
+    #             [('vat', '!=', False)],
+    #             ['vat'],
+    #             ['vat'],
+    #             having=[("__count", ">", 1)],
+    #         )
+    #         duplicate_vats = [d['vat'] for d in duplicates]
+    #         print("_search_is_duplicate", operator, value,duplicate_vats)
+    #         return [('vat', 'in' if operator == '=' else 'not in', duplicate_vats)]
+    #     else:
+    #         return [('id', '!=', False)]  # No filter, return all records
     
     @api.model
     def truck_drivers(self):
