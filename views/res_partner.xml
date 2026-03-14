@@ -89,6 +89,17 @@
             </button>
         </field>
     </record>
+
+    <record id="res_partner_view_purchase_buttons_inherit" model="ir.ui.view">
+        <field name="name">res.partner.purchase.form.inherit.tms</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="purchase_stock.res_partner_view_purchase_buttons_inherit" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='%(purchase_stock.action_purchase_vendor_delay_report)d']" position="replace"/>    
+        </field>
+    </record>
+
+
     <record id="res_partner_view_account_buttons" model="ir.ui.view">
         <field name="name">partner.view.buttons</field>
         <field name="model">res.partner</field>
@@ -126,6 +137,18 @@
                         </div>
                     </div>
                 </button>
+
+                <button name="action_view_sale_lines"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-list-ul"
+                    invisible="sale_order_line_count == 0">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Lineas de Venta</span>
+                        <field name="sale_order_line_count" class="o_stat_value" />
+                    </div>
+                </button>
+
             </div>
         </field>
     </record>
@@ -156,7 +179,7 @@
                 <field name="category_id" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"
                     placeholder='e.g. "B2B", "VIP", "Consulting", ...' />
             </xpath>
-            <!-- <xpath expr="//notebook" position="inside"> -->
+            
                 <xpath expr="//page[@name='contact_addresses']" position="before">
                 <page string="Invoice Partners" name="invoice_partners">
                     <field name="invoice_partner_ids" widget="many2many"

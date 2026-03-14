@@ -89,6 +89,21 @@ class ResPartner(models.Model):
         compute="_compute_is_duplicate", search="_search_is_duplicate"
     )
     
+    sale_order_line_ids = fields.One2many(
+        'sale.order.line',
+        'order_partner_invoice_id',
+        string="Sale Order Lines" )
+    
+    sale_order_line_count = fields.Integer(
+        string="Sale Order Line Count",
+        compute="_compute_sale_order_line_count"
+    )
+    
+    @api.depends('sale_order_line_ids')
+    def _compute_sale_order_line_count(self):
+        for record in self:
+            record.sale_order_line_count = len(record.sale_order_line_ids)
+    
     @api.depends('vat')
     def _compute_is_duplicate(self):
         # Optimizamos: Una sola consulta para todos los registros cargados en pantalla
@@ -266,3 +281,11 @@ class ResPartner(models.Model):
                 'default_order': 'is_active desc, id desc'
             },
         }
+
+    def action_view_sale_lines(self):
+        self.ensure_one()
+        action = self.env.ref('sale_order_line_menu.action_orders_lines').read()[0]
+        action.update({
+            'domain': [('order_partner_invoice_id', '=', self.id)],
+        })
+        return action

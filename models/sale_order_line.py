@@ -15,7 +15,8 @@ class SaleOrderLine(models.Model):
     cloned_line_id = fields.Many2one('sale.order.line')
     distance = fields.Float(string="Distance (km)")
     cpe = fields.Char(string="CPE", related="trucking_trip_id.cpe_id.name")
-
+    order_partner_invoice_id = fields.Many2one('res.partner', related="order_id.partner_invoice_id")
+    
     cloned_tms_order_ids = fields.One2many(
         "tms.order",
         "cloned_sale_line_id",
@@ -134,6 +135,46 @@ class SaleOrderLine(models.Model):
             trip = self.trucking_trip_id
             ret['name']=f'{trip.cpe_id.name}  {trip.origin_locality_id.name.title()} - {trip.destination_locality_id.name.title()}'
         return ret
+    
+    def action_invoice_selected_lines(self):
+        
+        non_billable = self.filtered(lambda l: l.invoice_status != 'to invoice')
+        if non_billable:
+            pedidos = ", ".join(non_billable.mapped('order_id.name'))
+            raise UserError(_("Hay líneas que no están listas para facturar (Pedidos: %s).") % pedidos)
+
+        # 2. Validar que todas tengan el mismo Partner de Factura
+        invoice_partners = self.mapped('order_id.partner_invoice_id')
+        if len(invoice_partners) > 1:
+            raise UserError(_("No podés consolidar líneas de distintos clientes de factura."))
+
+        partner = invoice_partners[0]
+        
+        # 3. Preparar cabecera de la factura
+        invoice_vals = {
+            'move_type': 'out_invoice',
+            'partner_id': partner.id,
+            'invoice_origin': ", ".join(list(set(self.mapped('order_id.name')))),
+            'invoice_line_ids': [],
+        }
+
+        # 4. Generar líneas usando tu método _prepare_invoice_line() ya personalizado
+        for line in self:
+            vals = line._prepare_invoice_line()
+            invoice_vals['invoice_line_ids'].append((0, 0, vals))
+
+        # 5. Crear la factura en borrador
+        new_invoice = self.env['account.move'].create(invoice_vals)
+
+        # 6. Abrir la factura creada para que el usuario la revise
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'res_id': new_invoice.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     
     
     ### Purchase methods ###

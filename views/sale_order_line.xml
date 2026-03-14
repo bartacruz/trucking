@@ -25,4 +25,13 @@
             </field>
         </field>
     </record>
+    <record id="model_sale_order_line_action_invoice" model="ir.actions.server">
+        <field name="name">Crear Factura Consolidada</field>
+        <field name="model_id" ref="sale.model_sale_order_line" />
+        <field name="binding_model_id" ref="sale.model_sale_order_line" />
+        <field name="state">code</field>
+        <field name="code">
+            action = records.action_invoice_selected_lines()
+        </field>
+    </record>
 </odoo>
