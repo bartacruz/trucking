@@ -284,7 +284,7 @@ class ResPartner(models.Model):
 
     def action_view_sale_lines(self):
         self.ensure_one()
-        action = self.env.ref('sale_order_line_menu.action_orders_lines').read()[0]
+        action = self.sudo().env.ref('sale_order_line_menu.action_orders_lines').read()[0]
         action.update({
             'domain': [('order_partner_invoice_id', '=', self.id)],
         })
