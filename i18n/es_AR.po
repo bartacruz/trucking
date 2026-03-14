@@ -10,6 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2026-03-11 07:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: es_AR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -84,6 +85,14 @@ msgstr "<span class=\"o_stat_text\">Orden de Venta</span>"
 #: model_terms:ir.ui.view,arch_db:trucking.view_order_form_inherit
 msgid "<span class=\"o_stat_text\">Trips</span>"
 msgstr "<span class=\"o_stat_text\">Viajes</span>"
+
+#. module: trucking
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/trucking_trips.js:0
+#: code:addons/trucking/static/src/components/trucking_trips.js:0
+#, python-format
+msgid "DraftO"
+msgstr "Borrador"
 
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_partner_form_inherit
@@ -317,7 +326,7 @@ msgstr ""
 #: code:addons/trucking/models/mail_message.py:0
 #, python-format
 msgid "Carta de porte %s recibida por QR"
-msgstr ""
+msgstr "Carta de porte %s recibida por QR"
 
 #. module: trucking
 #: model:ir.model.fields,help:trucking.field_account_move_line__product_category_id
@@ -396,7 +405,7 @@ msgid ""
 "Could not generate a trucking purchase for %s since it doesn't have a driver"
 " assigned."
 msgstr ""
-"No se puede generar una ordenb de compra para %s porque no tiene un conductor asignado."
+"No se puede generar una orden de compra para %s porque no tiene un conductor asignado."
 
 #. module: trucking
 #: model_terms:ir.ui.view,arch_db:trucking.trucking_create_so_form
@@ -523,14 +532,6 @@ msgstr "Distancia (km)"
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__draft
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
 msgid "Draft"
-msgstr "Borrador"
-
-#. module: trucking
-#. odoo-javascript
-#: code:addons/trucking/static/src/components/trucking_trips.js:0
-#: code:addons/trucking/static/src/components/trucking_trips.js:0
-#, python-format
-msgid "DraftO"
 msgstr "Borrador"
 
 #. module: trucking
