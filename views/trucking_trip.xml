@@ -221,7 +221,8 @@
                 <field name="cpe_id" string="CPE" />
                 <field name="sale_id" string="Sale Order" />
                 <field name="vehicle_id" string="Vehicle" />
-        
+                <field name="commitment_date"/>
+                <field name="end_date" filter_domain="[('end_date', '&gt;=', self), ('end_date', '&lt;=', self)]"/>
                 <separator />
 
                 <filter string="Active Trips" name="active" domain="[('is_active', '=', True)]" />
@@ -238,6 +239,7 @@
 
                 <filter string="Fecha de la orden" name="commitment_filter" date="commitment_date" />
                 <filter string="Fecha de Inicio" name="start_date_filter" date="start_date" />
+                <filter string="Fecha de Finalización" name="end_date_filter" date="end_date" />
                 <filter string="Today" name="today"
                     domain="[('commitment_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('commitment_date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]" />
 
@@ -261,6 +263,7 @@
         <field name="res_model">trucking.trip</field>
         <field name="view_mode">tree,form,kanban</field>
         <field name="search_view_id" ref="view_trucking_trip_search" />
+        <field name="context">{'remember_filters': True}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first trucking trip

@@ -188,7 +188,10 @@
                 <field name="destination_locality_id" />
 
                 <filter string="My Orders" domain="[('user_id', '=', uid)]" name="my_trucking_sale_orders_filter" />
+                
+                
                 <group name="sale_dates" string="Fecha">
+                    <filter string="Fecha de la orden" name="commitment_filter" date="commitment_date" />
                     <filter string="Today" name="filter_today_creation"
                         domain="[('create_date','&gt;', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]" />
                     <filter string="7 days" name="filter_week_creation"
@@ -241,11 +244,9 @@
         <field name="binding_view_types">form</field>
         <field name="state">code</field>
         <field name="code">
-# Verificamos que haya líneas para exportar
 if not record.order_line:
     raise UserError("La orden no tiene líneas para exportar.")
 
-# Retornamos la acción para abrir el wizard de exportación directamente
 action = {
     'type': 'ir.actions.act_window',
     'name': 'Exportar Líneas con Viajes',
@@ -255,7 +256,6 @@ action = {
     'context': {
         'active_model': 'sale.order.line',
         'active_ids': record.order_line.ids,
-        # Opcional: pre-cargar una configuración de exportación si ya tienes una
         # 'export_id': env.ref('tu_modulo.id_de_tu_plantilla').id,
     },
 }

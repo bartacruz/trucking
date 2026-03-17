@@ -15,6 +15,7 @@
 
 
     </record>
+    
     <record id="sale_order_line_search" model="ir.ui.view">
         <field name="name">sale.order.line.search</field>
         <field name="model">sale.order.line</field>
@@ -25,6 +26,7 @@
             </field>
         </field>
     </record>
+
     <record id="model_sale_order_line_action_invoice" model="ir.actions.server">
         <field name="name">Crear Factura Consolidada</field>
         <field name="model_id" ref="sale.model_sale_order_line" />
