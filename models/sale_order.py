@@ -17,24 +17,24 @@ class SaleOrder(models.Model):
     
     pricelist_discount = fields.Float(string="Pricelist discount")
     
-    cloned_tms_order_ids = fields.Many2many(
-        "tms.order",
-        compute="_compute_cloned_tms_order_ids",
-        string="Transport orders associated to this sale",
-        copy=False,
-    )
+    # cloned_tms_order_ids = fields.Many2many(
+    #     "tms.order",
+    #     compute="_compute_cloned_tms_order_ids",
+    #     string="Transport orders associated to this sale",
+    #     copy=False,
+    # )
     
-    def _compute_cloned_tms_order_ids(self):
-        for sale in self:
-            print("cCtmo",sale)
-            tms = self.env["tms.order"].search(
-                [
-                    "|",
-                    ("cloned_sale_id", "=", sale.id),
-                    ("cloned_sale_line_id", "in", sale.order_line.ids),
-                ]
-            )
-            sale.cloned_tms_order_ids = tms
+    # def _compute_cloned_tms_order_ids(self):
+    #     for sale in self:
+    #         print("cCtmo",sale)
+    #         tms = self.env["tms.order"].search(
+    #             [
+    #                 "|",
+    #                 ("cloned_sale_id", "=", sale.id),
+    #                 ("cloned_sale_line_id", "in", sale.order_line.ids),
+    #             ]
+    #         )
+    #         sale.cloned_tms_order_ids = tms
     
     @api.depends('order_line.product_id','trucking_trip_ids','trucking_trip_ids.state')
     def _compute_trucking_trips(self):

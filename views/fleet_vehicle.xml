@@ -10,14 +10,9 @@
             </field>
             <xpath expr="//group" position="inside">
                 <group string="Equipment" name="trailer_rel_group">
-                    <field name="trailer_id"
-                        invisible="vehicle_type != 'truck'" />
+                    <field name="trailer_id" invisible="vehicle_type != 'truck'" />
+                    <field name="truck_id" invisible="vehicle_type != 'trailer'" />
 
-                    <!-- Se muestra solo si el modelo es tipo Trailer -->
-                    <field name="truck_id"
-                        invisible="vehicle_type != 'trailer'"
-                        readonly="1" />
-                    
                 </group>
             </xpath>
 
@@ -31,7 +26,9 @@
         <field name="model">fleet.vehicle</field>
         <field name="inherit_id" ref="tms.fleet_vehicle_inherit_view_form" />
         <field name="arch" type="xml">
-            <field name="tms_driver_id" position="replace" />
+            <field name="tms_driver_id" position="replace">
+                <field name="driver_id" />
+            </field>
         </field>
     </record>
 
@@ -42,12 +39,29 @@
         <field name="arch" type="xml">
             <kanban position="attributes">
                 <attribute name="default_group_by" position="replace" />
-                <attribute name="default_groupby_vehicle_type" >1</attribute>
+                <attribute name="default_groupby_vehicle_type">1</attribute>
             </kanban>
+            <div class="o_kanban_record_bottom" position="before">
+                <t t-if="record.vehicle_type.raw_value == 'truck' and record.trailer_id.raw_value">
+                    <div class="d-flex align-items-baseline">
+                        <i class="fa fa-chevron-circle-left me-1"/>
+                        <field name="trailer_id" />
+                    </div>
+                </t>
+                <t t-if="record.vehicle_type.raw_value == 'trailer' and record.truck_id.raw_value">
+                    <div class="d-flex align-items-baseline">
+                        <i class="fa fa-truck me-1"/>
+                        <field name="truck_id" />
+                    </div>
+                </t>
+            </div>
             <field name="id" position="after">
                 <field name="vehicle_type" />
                 <field name="truck_driver_id" />
+                <field name="truck_id" />
+                <field name="trailer_id" />
             </field>
+
             <xpath expr="//t[@t-if='record.driver_id.raw_value']" position="after">
                 <t t-if="record.truck_driver_id.raw_value">
                     <field name="truck_driver_id" widget="many2one_avatar" options="{'display_avatar_name': True}" />
@@ -70,7 +84,8 @@
             <xpath expr="//filter[@name='bikes']" position="replace" />
             <xpath expr="//filter[@name='trailer_hook']" position="replace"></xpath>
             <filter name="available" position="replace">
-                <filter string="Assigned" name="assigned" domain="['|',('driver_id', '!=', False),('truck_driver_id', '!=', False)]" />
+                <filter string="Assigned" name="assigned"
+                    domain="['|',('driver_id', '!=', False),('truck_driver_id', '!=', False)]" />
                 <filter string="Unassigned" name="unassigned" domain="[('driver_id', '=', False),('truck_driver_id', '=', False)]" />
             </filter>
             <filter name="planned" position="replace" />
