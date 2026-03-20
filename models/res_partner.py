@@ -64,14 +64,21 @@ class ResPartner(models.Model):
     )
     
     # For kanban sorting
-    trucking_sequence = fields.Integer(string="Sequence", default=10, copy=False)
+    trucking_sequence = fields.Integer(
+        string="Sequence", 
+        copy=False,
+        compute='_compute_trucking_sequence',
+        readonly=False,
+        store=True,
+        index=True,
+        )
     
     # For drivers list sorting
     trucking_state_sequence = fields.Integer(
         string="Secuencia de Estado",
         compute='_compute_trucking_state_sequence',
         store=True,
-        index=True  # Indexado para que el order sea rapidísimo
+        index=True 
     )
     
     invoice_partner_id = fields.Many2one(
@@ -117,6 +124,7 @@ class ResPartner(models.Model):
         duplicate_vats = [d[0] for d in duplicates]
         for record in self:
             record.is_duplicate = record.vat in duplicate_vats
+        
     def _search_is_duplicate(self, operator, value):
         # Soporte para buscar tanto True (duplicados) como False (únicos)
         if operator not in ('=', '!='):
@@ -154,28 +162,18 @@ class ResPartner(models.Model):
     def truck_drivers(self):
         return self.search([('truck_driver','=',True)],order='name')
     
-    def write(self, values):
-        old_states = {p.id: p.trucking_state for p in self}
-        ret = super().write(values)
-        changed = self.filtered(lambda p: p.trucking_state != old_states.get(p.id))
-        # TODO: make _trucking_state_updated multi, and call changed._trucking_state_updated.
-        for record in changed:
-            record._trucking_state_updated()
-    
     
     @api.depends('trucking_state')
-    def _compute_trucking_state_sequence(self,force=False):
+    def _compute_trucking_state_sequence(self):
         mapping = {
             'available': 1,
             'assigned': 2,
             'unavailable': 3,
         }
         for record in self:
-            if force or record.trucking_state != record._origin.trucking_state:
-                record.trucking_state_sequence = mapping.get(record.trucking_state, 9)
-                print("partner state sequence changed",record)
-                if not force:
-                    self._notify_trucking_update()
+            record.trucking_state_sequence = mapping.get(record.trucking_state, 9)
+            print("checking partner state sequence",record,record.trucking_state,record.trucking_state_sequence)
+            self._notify_trucking_update()
 
     @api.depends('active_trucking_trip_id','trucking_trip_ids','truck_driver')
     def _compute_trucking_state(self):
@@ -189,11 +187,7 @@ class ResPartner(models.Model):
             else:
                 # keep the state if set or if it's a driver, set to unavailable
                 record.trucking_state = record.trucking_state or record.truck_driver and 'unavailable' or False
-                
-            if record.trucking_state != record._origin.trucking_state:
-                print("llamando a _trucking_state_updated",record)
-                record._trucking_state_updated()
-                
+                    
         
     @api.depends('trucking_trip_ids')
     def _compute_trucking_trip_count(self):
@@ -237,6 +231,8 @@ class ResPartner(models.Model):
     ### Notifications ###
     
     def _notify_trucking_update(self, partner_ids=False):
+        if self.env.context.get('skip_trucking_notification'):
+            return
         partners = self.browse(partner_ids or self)
         notifications = []
         for partner in partners:
@@ -251,20 +247,26 @@ class ResPartner(models.Model):
         print("_notify_trucking_update",notifications)
         self.env['bus.bus']._sendmany(notifications)
      
-    def _trucking_state_updated(self):
-        self.ensure_one()
-        try:
-            # If driver is made available, must go to the end of the queue
-            if self.trucking_state == 'available':
-                last_available = self.env['res.partner'].search([
-                    ('trucking_state', '=', 'available'),
-                    ('truck_driver', '=', True),
-                    ('id', '!=', self.id)
-                ], order='trucking_sequence desc', limit=1)
-                self.trucking_sequence = (last_available.trucking_sequence + 1) if last_available else 10
-        except:
-            _logger.exception("_trucking_state_updated %s" % self)
-        self._notify_trucking_update()
+    @api.depends('trucking_state')
+    def _compute_trucking_sequence(self):
+        for record in self:
+            try:
+                # If driver is made available, must go to the end of the queue
+                print("_compute_trucking_sequence",record,record.trucking_state)
+                if record.trucking_state == 'available':
+                    last_available = record.env['res.partner'].search([
+                        ('trucking_state', '=', 'available'),
+                        ('truck_driver', '=', True),
+                        ('id', '!=', record.id)
+                    ], order='trucking_sequence desc', limit=1)
+                    record.trucking_sequence = (last_available.trucking_sequence + 1) if last_available else 10
+                    print("_compute_trucking_sequence available",record.name,last_available.name,"=",last_available.trucking_sequence,":",record.trucking_sequence)
+                else:
+                    record.trucking_sequence = record._origin.trucking_sequence or 10
+                    print("_compute_trucking_sequence default",record.name,record.trucking_state,record._origin.trucking_sequence,record.trucking_sequence)
+            except:
+                _logger.exception("_compute_trucking_sequence %s" % record)
+            record._notify_trucking_update()
         
     ### Actions ###
     
