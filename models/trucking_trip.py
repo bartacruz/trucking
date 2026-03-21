@@ -656,6 +656,7 @@ class TruckingTrip(models.Model):
     def action_send_whatsapp_request(self):
         partner = self.driver_id
         #partner = self.env['res.partner'].browse(4185) # YO
-        self._send_whatsapp(partner,template_id=12)
+        template_id = self.env["ir.config_parameter"].sudo().get_param("trucking.whatsapp_template_driver_confirm_id")
+        self._send_whatsapp(partner,template_id=template_id)
 
     

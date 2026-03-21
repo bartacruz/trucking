@@ -1,0 +1,51 @@
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.trucking</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="40" />
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app
+                    data-string="Trucking"
+                    string="Trucking"
+                    name="trucking"
+                    groups="base.group_system"
+                >
+                    <block title="Whatsapp Templates" name="whatsapp_container">
+                        
+                        <setting id="trucking_wat_driver_confirm">
+                            <field
+                                name="whatsapp_template_driver_confirm_id"
+                                string="Driver Confirm"
+                            />
+                        </setting>
+                        <setting id="trucking_wat_driver_remember">
+                            <field
+                                name="whatsapp_template_driver_remember_cpe"
+                                string="Driver Remember CPE"
+                            />
+                        </setting>
+                        <setting id="trucking_wat_customer_notify">
+                            <field
+                                name="whatsapp_template_customer_notify"
+                                string="Customer Notify"
+                            />
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_trucking_config" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'trucking'}</field>
+    </record>
+
+
+</odoo>
