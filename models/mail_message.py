@@ -147,25 +147,31 @@ class MailMessage(models.Model):
                     a.qr_scanned=True
             record.qr_codes_count=len(record.qr_code_ids)
                 
-    def write(self, vals):
-        ret = super().write(vals)
-        if 'gateway_message_id' in vals and self.body.find("Button:"):
-            _logger.warning('WA write: %s detecte un boton %s || %s',self,vals['gateway_message_id'],self.gateway_message_id)
-            template_message = self.gateway_message_id
-            _logger.warning('WA write: el mensaje es %s',template_message)
-            trip = template_message.trucking_trip_id
-            if not trip:
-                return
-            _logger.warning('WA write: la orden es %s',trip)
-            trip_vals = self._get_gateway_thread_message_vals()
-            trip_vals['author_id']=self.author_id.id
-            trip.message_post(**trip_vals)
+    # def write(self, vals):
+    #     ret = super().write(vals)
+    #     if 'gateway_message_id' in vals and 'body' in vals and self.body.find("Button:"):
+    #         _logger.info('WA write: %s detecte un boton %s || %s',self,vals['gateway_message_id'],self.gateway_message_id)
+    #         template_message = self.gateway_message_id
+    #         _logger.info('WA write: el mensaje es %s',template_message)
+    #         trip = template_message.trucking_trip_id
+    #         if not trip:
+    #             return
+    #         _logger.info('WA write: la orden es %s',trip)
+    #         # Check if the author is still the trip driver!
+    #         if self.author_id  != trip.driver_id:
+    #             _logger.warning('WA write: el autor %s ya no es el conductor del viaje %s (ahora es %s)',self.author_id.name,trip.name,trip.driver_id.name)
+    #             return
+    #         trip_vals = self._get_gateway_thread_message_vals()
+    #         trip_vals['author_id']=self.author_id.id
             
-            if "Confirmar" in self.body:
-                trip.driver_response = 'confirmed'
-                body = 'Confirmación recibida.\nNos estaremos contactando para mas detalles.'
-            else:
-                trip.driver_response = 'rejected'
-                body = 'Cancelación recibida.'
-            trip._send_whatsapp(self.author_id,body=body)
+    #         trip.message_post(**trip_vals)
+            
+    #         if "Confirmar" in self.body:
+    #             trip.driver_response = 'confirmed'
+    #             body = 'Confirmación recibida.\nNos estaremos contactando para mas detalles.'
+    #         else:
+    #             trip.driver_response = 'rejected'
+    #             body = 'Cancelación recibida.'
+    #         trip._send_whatsapp(self.author_id,body=body)
+    #     return ret
         
