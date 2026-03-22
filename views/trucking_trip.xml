@@ -129,6 +129,14 @@
                                         invisible="state != 'assigned' or not driver_phone">
                                         Ask Confirmation
                                     </button>
+                                    <button
+                                        type="object"
+                                        name="action_send_whatsapp_remember_cpe"
+                                        class="btn btn-sm btn-warning text-nowrap mx-auto"
+                                        icon="fa-whatsapp"
+                                        invisible="cpe_id or state not in ['confirmed','started','arrived'] or not driver_phone">
+                                        Remember CPE
+                                    </button>
                                     <button 
                                         type="object" 
                                         name="action_confirm_driver" 
