@@ -11,7 +11,7 @@
     'author': "Julio Santa Cruz",
     'website': "https://www.bartatech.com",
     'category': 'TMS',
-    "version": "17.0.2.0.2",
+    "version": "17.0.2.0.4",
     "license": "AGPL-3",
 
     'depends': ['base','account','fleet', 'sale', 'sale_order_line_menu','purchase','l10n_ar_afip_cpe','mail','mail_gateway_whatsapp','tms_sale','purchase_stock'],

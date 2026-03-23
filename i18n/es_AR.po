@@ -203,6 +203,10 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
+msgid "Arrived"
+msgstr "Arribado"
+
+#. module: trucking
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__arrived
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
 #, python-format
@@ -223,6 +227,10 @@ msgstr "Pedir Confirmación"
 #. odoo-javascript
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
+msgid "Assigned"
+msgstr "Asignado"
+
+#. module: trucking
 #: model:ir.model.fields.selection,name:trucking.selection__res_partner__trucking_state__assigned
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__assigned
 #: model_terms:ir.ui.view,arch_db:trucking.fleet_vehicle_view_search_trucking
@@ -326,6 +334,10 @@ msgstr "Cancelar"
 #. odoo-javascript
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: trucking
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__cancelled
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__cancelled
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
@@ -387,6 +399,10 @@ msgstr "Empresa relacionada con esta orden"
 #. odoo-javascript
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
+msgid "Completed"
+msgstr "Completado"
+
+#. module: trucking
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__completed
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
 #, python-format
@@ -575,17 +591,16 @@ msgid "Distance (km)"
 msgstr "Distancia (km)"
 
 #. module: trucking
-#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__draft
-#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+#. odoo-javascript
+#: code:addons/trucking/static/src/components/trucking_trips.js:0
+#: code:addons/trucking/static/src/components/trucking_trips.js:0
 msgid "Draft"
 msgstr "Borrador"
 
 #. module: trucking
-#. odoo-javascript
-#: code:addons/trucking/static/src/components/trucking_trips.js:0
-#: code:addons/trucking/static/src/components/trucking_trips.js:0
-#, python-format
-msgid "DraftO"
+#: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__draft
+#: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
+msgid "Draft"
 msgstr "Borrador"
 
 #. module: trucking
@@ -595,7 +610,6 @@ msgstr "Borrador"
 #: model:ir.model.fields,field_description:trucking.field_trucking_trip__driver_id
 #: model_terms:ir.ui.view,arch_db:trucking.view_res_partner_search_trucking
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
-#, python-format
 msgid "Driver"
 msgstr "Conductor"
 
@@ -1321,9 +1335,12 @@ msgstr "Iniciado El"
 #. odoo-javascript
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
 #: code:addons/trucking/static/src/components/trucking_trips.js:0
+msgid "Started"
+msgstr "Iniciado"
+
+#. module: trucking
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__started
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
-#, python-format
 msgid "Started"
 msgstr "Iniciado"
 
