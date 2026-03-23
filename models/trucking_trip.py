@@ -135,7 +135,7 @@ class TruckingTrip(models.Model):
                 record.warnings += "El conductor rechazó la orden\n"
             
         
-    @api.depends('cancelled','end_date','start_date','driver_id','driver_response','sale_id.state')
+    @api.depends('cancelled', 'arrived_date','end_date','start_date','driver_id','driver_response','sale_id.state')
     def _compute_state(self):
         # TODO: revisar estados de CPE
         for record in self:
@@ -158,7 +158,9 @@ class TruckingTrip(models.Model):
                 record.state='cancelled'
             elif record.end_date and record.driver_id:
                 record.state = 'completed'
-            elif record.start_date:
+            elif record.arrived_date and record.driver_id:
+                record.state = 'arrived'
+            elif record.start_date and record.driver_id:
                 record.state = 'started'
             elif record.driver_id and record.driver_response=='confirmed':
                 record.state = 'confirmed'
