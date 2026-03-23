@@ -6,10 +6,18 @@ _logger = logging.getLogger(__name__)
 class WhatsappTemplateButton(models.Model):
     _inherit = "mail.whatsapp.template.button"
     
+    # action_server_ids = fields.One2many("ir.actions.server", "base_automation_id",
+    #     context={'default_usage': 'base_automation'},
+    #     string="Actions",
+    #     compute="_compute_action_server_ids",
+    #     store=True,
+    #     readonly=False,
+    # )
     def action_pressed(self, author, message):
         self.ensure_one()
-        confirm_template_id = self.env["ir.config_parameter"].sudo().get_param("trucking.whatsapp_template_driver_confirm_id")
-        if self.template_id == confirm_template_id:
+        
+        confirm_template_id = self.env["ir.config_parameter"].sudo().get_param("trucking.wat_driver_confirm")
+        if confirm_template_id  and self.template_id.id == int(confirm_template_id):
             trip = message.trucking_trip_id
             _logger.warning("Button %s pressed for trip %s, author %s, message %s",self.name,trip.name,author.name,message)
             if not trip or author.active_trucking_trip_id != trip:

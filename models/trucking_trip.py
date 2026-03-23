@@ -644,7 +644,8 @@ class TruckingTrip(models.Model):
         if template_id:
             context['whatsapp_template_id'] = template_id
             template = self.env['mail.whatsapp.template'].browse(template_id)    
-            body = template.with_context(context).render_body_message()
+            template_c = template.with_context(context)
+            body = template_c.render_body_message()
             
         number_field_name = partner_id.mobile and 'mobile' or 'phone'
         channel = partner_id._whatsapp_get_channel(number_field_name, gateway_id)
@@ -657,12 +658,12 @@ class TruckingTrip(models.Model):
         partner = self.driver_id
         #partner = self.env['res.partner'].browse(4185) # YO
         template_id = self.env["ir.config_parameter"].sudo().get_param("trucking.wat_driver_confirm")
-        self._send_whatsapp(partner,template_id=template_id)
+        self._send_whatsapp(partner,template_id=int(template_id))
     
     def action_send_whatsapp_remember_cpe(self):
         partner = self.driver_id
         #partner = self.env['res.partner'].browse(4185) # YO
         template_id = self.env["ir.config_parameter"].sudo().get_param("trucking.wat_driver_remember_cpe")
-        self._send_whatsapp(partner,template_id=template_id)
+        self._send_whatsapp(partner,template_id=int(template_id))
 
     
