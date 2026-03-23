@@ -421,14 +421,17 @@ msgstr "Confirmar"
 
 #. module: trucking
 #. odoo-javascript
+#: code:addons/trucking/static/src/components/trucking_trips.js:0
+#: code:addons/trucking/static/src/components/trucking_trips.js:0
+msgid "Confirmed"
+msgstr "Confirmado"
+
+#. module: trucking
 #. odoo-python
 #: code:addons/trucking/models/trucking_trip.py:0
-#: code:addons/trucking/static/src/components/trucking_trips.js:0
-#: code:addons/trucking/static/src/components/trucking_trips.js:0
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__driver_response__confirmed
 #: model:ir.model.fields.selection,name:trucking.selection__trucking_trip__state__confirmed
 #: model_terms:ir.ui.view,arch_db:trucking.view_trucking_trip_search
-#, python-format
 msgid "Confirmed"
 msgstr "Confirmado"
 
