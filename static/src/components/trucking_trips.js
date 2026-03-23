@@ -14,7 +14,7 @@ export class TruckingTripsField extends Component {
         ...standardFieldProps,
     }
     static tripStates = {
-        draft: _lt("DraftO"),
+        draft: _lt("Draft"),
         assigned: _lt("Assigned"),
         confirmed: _lt("Confirmed"),
         started: _lt("Started"),
@@ -161,7 +161,7 @@ export const truckingTripsField = {
             { name: "is_active", type: "bool" },
             {
                 name: "state", type: "selection", selection: [
-                    ["draft", _lt("DraftO")],
+                    ["draft", _lt("Draft")],
                     ["assigned", _lt("Assigned")],
                     ["confirmed", _lt("Confirmed")],
                     ["started", _lt("Started")],
