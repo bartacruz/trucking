@@ -17,26 +17,8 @@ class SaleOrder(models.Model):
     
     pricelist_discount = fields.Float(string="Pricelist discount")
     
-    # cloned_tms_order_ids = fields.Many2many(
-    #     "tms.order",
-    #     compute="_compute_cloned_tms_order_ids",
-    #     string="Transport orders associated to this sale",
-    #     copy=False,
-    # )
-    
-    # def _compute_cloned_tms_order_ids(self):
-    #     for sale in self:
-    #         print("cCtmo",sale)
-    #         tms = self.env["tms.order"].search(
-    #             [
-    #                 "|",
-    #                 ("cloned_sale_id", "=", sale.id),
-    #                 ("cloned_sale_line_id", "in", sale.order_line.ids),
-    #             ]
-    #         )
-    #         sale.cloned_tms_order_ids = tms
-    
-    @api.depends('order_line.product_id','trucking_trip_ids','trucking_trip_ids.state')
+
+    @api.depends('order_line.product_id', 'order_line.price_unit','trucking_trip_ids.state')
     def _compute_trucking_trips(self):
         for record in self:
             lines_with_trips = record.order_line.filtered(lambda L: L.product_id.trucking_trip)
@@ -46,6 +28,13 @@ class SaleOrder(models.Model):
             record.has_trucking_trips = len(lines_with_trips) > 0
             record.trucking_trip_active = len(lines_with_trips.filtered(lambda L: L.trucking_trip_id.state not in ['completed','cancelled']) ) >0
             print("line_with_trips",lines_with_trips)
+            trip_states = record.trucking_trip_ids.mapped('state')
+            if record.state != 'cancel' and all(x == 'cancelled' for x in trip_states):
+                record.state = 'cancel'
+            if record.state in  ['draft','sent'] and not any(x in ['draft','assigned'] for x in trip_states):
+                if not any(x == 1 for x in lines_with_trips.mapped('price_unit')):
+                    record.state = 'sale'
+    
                     
     @api.depends('order_line.invoice_status', 'order_line.trucking_trip_id.state')
     def _compute_invoice_status(self):
@@ -55,7 +44,7 @@ class SaleOrder(models.Model):
             print("invoice_status",order.name,trips_pending)
             if trips_pending:
                 order.invoice_status='no'
-    
+            
     def _post_trip_message(self, new_trucking_trips):
         """
         Post messages to the Sale Order and the newly created Trucking Trips
