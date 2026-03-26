@@ -12,6 +12,14 @@
                     name="trucking"
                     groups="base.group_system"
                 >
+                    <block title="Trips" name="trips_container">
+                        <setting id="trucking_trip_verified_to_invoice">
+                            <field
+                                name="trip_verified_to_invoice"
+                                string="Trips must be verified to be invoiced"
+                            />
+                        </setting>
+                    </block>
                     <block title="Whatsapp Templates" name="whatsapp_container">
                         
                         <setting id="trucking_wat_driver_confirm">

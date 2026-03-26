@@ -116,6 +116,7 @@ class TruckingTrip(models.Model):
     driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ], tracking=True)
     
     warnings = fields.Char(compute="_compute_warnings")
+    verified = fields.Boolean(_("Verificado"), tracking=True)
     
     ### Compute methods
     
@@ -540,7 +541,16 @@ class TruckingTrip(models.Model):
         self.ensure_one()
         # Regla: Estado draft O (Sin conductor Y sin distancia)
         return self.state == 'draft' or (not self.driver_id and self.distance == 0)
-
+    
+    def is_invoiceable(self):
+        self.ensure_one()
+        if self.state != 'completed':
+            return False
+        verified_to_invoice = self.env["ir.config_parameter"].sudo().get_param("trucking.trip_verified_to_invoice")
+        if verified_to_invoice and not self.verified:
+            return False
+        return True
+        
     def _update_sale_line(self):
         distance_uom = self.env.ref('uom.uom_categ_length')
         weight_uom = self.env.ref('uom.product_uom_categ_kgm')

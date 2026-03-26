@@ -80,6 +80,7 @@ export class TruckingTripsField extends Component {
             vehicle: vehicle,
             trailer: trailer,
             is_active: record.data.is_active,
+            verified: record.data.verified,
             state: record.data.state,
             stateLabel:stateLabel,
             warnings: record.data.warnings,
@@ -159,6 +160,7 @@ export const truckingTripsField = {
             { name: "vehicle_id", type: "many2one" },
             { name: "trailer_id", type: "many2one" },
             { name: "is_active", type: "bool" },
+            { name: "verified", type: "bool" },
             {
                 name: "state", type: "selection", selection: [
                     ["draft", _lt("Draft")],

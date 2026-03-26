@@ -40,7 +40,9 @@ class SaleOrder(models.Model):
     def _compute_invoice_status(self):
         super()._compute_invoice_status()
         for order in self:
-            trips_pending = order.order_line.filtered(lambda l: l.invoice_status =='no' )
+            if order.invoice_status == 'invoiced':
+                continue
+            trips_pending = order.order_line.filtered(lambda l: l.invoice_status =='no' and l.trucking_trip_id.state != 'cancelled' )
             print("invoice_status",order.name,trips_pending)
             if trips_pending:
                 order.invoice_status='no'

@@ -19,6 +19,7 @@
                         <span t-out="trip.text" t-if="trip.driver == false"/>
                     </div>
                     <div>
+                        <i t-if="trip.verified" title="Verificado" class="ms-1 fa fa-check text-success" />
                         <i t-if="trip.warnings" t-att-title="trip.warnings" class="ms-1 fa fa-warning text-warning" />
                         <i t-if="trip.state == 'started'" title="En curso" class="ms-1 fa fa-truck text-primary"/>
                         <i t-if="trip.cpe" t-attf-title="CPE: {{trip.cpe}}" class="ms-1 fa fa-file-text-o text-primary"/>

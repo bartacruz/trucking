@@ -19,6 +19,12 @@
                 <field name="start_date" optional="hide" />
                 <field name="end_date" optional="hide" />
                 <field name="cpe_id" optional="show" />
+                <field name="distance" optional="show" />                
+                <field name="delivered_to_invoice" optional="show" />
+                <field name="delivered_cpe" optional="hide" />
+                <field name="delivered" optional="hide" />
+                <field name="delivered_diff" optional="hide" />
+                <field name="verified" optional="show" widget="boolean_toggle" />
                 <field name="state" widget="badge"
                     decoration-primary="is_active" 
                     decoration-success="state == 'completed'" 
@@ -79,6 +85,7 @@
                     />
                 </header>
                 <sheet>
+                    <widget name="web_ribbon" title="Verificado" bg_color="text-bg-success" invisible="not verified"/>
                     <!-- Smart Buttons -->
                     <div class="oe_button_box" name="button_box">
 
@@ -201,6 +208,7 @@
                             </div>
 
                             <field name="rate_label" />
+                            <field name="verified" widget="boolean_toggle" />
                         </group>
 
                     </group>
@@ -243,6 +251,9 @@
                 <filter string="Completed" name="state_completed" domain="[('state', '=', 'completed')]" />
                 <filter string="Cancelled" name="state_cancelled" domain="[('state', '=', 'cancelled')]" />
 
+                <separator />
+                <filter string="Verificados" name="verified" domain="[('verified', '=', True)]" />
+                <filter string="No Verificados" name="unverified" domain="[('verified', '=', False)]" />
                 <separator />
 
                 <filter string="Fecha de la orden" name="commitment_filter" date="commitment_date" />

@@ -61,16 +61,20 @@ class SaleOrderLine(models.Model):
         for record in self:
             record.has_trucking_product = record.product_id.trucking_trip
     
-    @api.depends('state', 'product_uom_qty', 'qty_delivered', 'qty_to_invoice', 'qty_invoiced', 'trucking_trip_id.state')
+    @api.depends('state', 'product_uom_qty', 'qty_delivered', 'qty_to_invoice', 'qty_invoiced', 'trucking_trip_id.state','trucking_trip_id.verified')
     def _compute_invoice_status(self):
         super()._compute_invoice_status()
         for line in self:
+            # Avoid modifying already invoiced lines.
+            if line.invoice_status == "invoiced":
+                continue
             if line.trucking_trip_id:
-                if line.trucking_trip_id.state in ['completed', 'cancelled']:
+                trip = line.trucking_trip_id
+                if trip.is_invoiceable():
                     line.invoice_status = 'to invoice'
                 else:
-                    line.invoice_status = 'no'
-                print("_compute_invoice_status",line,line.trucking_trip_id.state,line.invoice_status)
+                    line.invoice_status = "no"
+                
                 if not line.purchase_line_count:
                     line._purchase_service_generation()
                 
@@ -93,7 +97,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             qty_field=line.order_id.pricelist_id.qty_field or 'product_uom_qty'
             quantity = getattr(line, qty_field ) or 1
-            print("checking pricelist_item of",line,"with",qty_field," quantity",quantity)
+            print("checking pricelist_item of",line,"with product:",line.product_id,"|",line.product_template_id,"qty_field:",qty_field," quantity:",quantity)
             line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
                 line.product_id,
                 quantity=quantity,
