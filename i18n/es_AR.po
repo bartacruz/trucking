@@ -1541,6 +1541,7 @@ msgid "Trucking Clone"
 msgstr "Clon de Trucking"
 
 #. module: trucking
+#. odoo-python
 #: model:ir.model.fields,field_description:trucking.field_sale_order__trucking_fixed_price
 msgid "Trucking Fixed Price"
 msgstr "Tarifa Fija"
