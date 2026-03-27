@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="cpe" optional="show" />
+                <field name="verified" optional="show" />
             </field>
             <field name="product_id" position="attributes">
                 <attribute name="optional">show</attribute>
@@ -15,7 +16,31 @@
 
 
     </record>
-    
+    <record id="sale_order_line_view_form_readonly" model="ir.ui.view">
+        <field name="name">sale.order.line.form.inherit</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.sale_order_line_view_form_readonly" />
+        <field name="arch" type="xml">
+            <div class="oe_title" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button
+                        name="action_view_invoices"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-usd"
+                        invisible="not invoice_ids_count"
+                    >
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Invoices</span>
+                            <field name="invoice_ids_count" class="o_stat_value" />
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+        </field>
+    </record>
+
     <record id="sale_order_line_search" model="ir.ui.view">
         <field name="name">sale.order.line.search</field>
         <field name="model">sale.order.line</field>
@@ -24,6 +49,9 @@
             <field name="order_id" position="before">
                 <field name="cpe" />
             </field>
+            <filter name="product" position="before">
+                <filter string="Customer" name="group_by_customer" domain="[]" context="{'group_by':'order_partner_invoice_id'}" />
+            </filter>
         </field>
     </record>
 
@@ -36,4 +64,28 @@
             action = records.action_invoice_selected_lines()
         </field>
     </record>
+    <record id="action_orders_lines_to_invoice" model="ir.actions.act_window">
+        <field name="name">Order Lines To Invoice</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="context">{'search_default_group_by_customer':1}</field>
+        <field
+            name="search_view_id"
+            ref="trucking.sale_order_line_search"
+        />
+        <field name="view_id" ref="sale_order_line_menu.sale_order_line_tree" />
+        <field
+            name="domain"
+        >[('display_type', 'not in', ['line_section', 'line_note']),('invoice_status','=','to invoice')]</field>
+    </record>
+
+    <menuitem
+        id="sale_order_line_to_invoice_menu"
+        name="Order Lines"
+        action="action_orders_lines_to_invoice"
+        parent="sale.menu_sale_invoicing"
+        groups="sales_team.group_sale_salesman"
+        sequence="21"
+    />
 </odoo>
