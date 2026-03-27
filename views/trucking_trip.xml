@@ -19,11 +19,12 @@
                 <field name="start_date" optional="hide" />
                 <field name="end_date" optional="hide" />
                 <field name="cpe_id" optional="show" />
+                <field name="price_unit" optional="show" />
                 <field name="distance" optional="show" />                
-                <field name="delivered_to_invoice" optional="show" />
                 <field name="delivered_cpe" optional="hide" />
                 <field name="delivered" optional="hide" />
                 <field name="delivered_diff" optional="hide" />
+                <field name="delivered_to_invoice" optional="show" />
                 <field name="verified" optional="show" widget="boolean_toggle" />
                 <field name="state" widget="badge"
                     decoration-primary="is_active" 
