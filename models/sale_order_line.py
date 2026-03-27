@@ -99,6 +99,9 @@ class SaleOrderLine(models.Model):
     def _compute_pricelist_item_id(self):
         self.env['l10n_latam.identification.type']
         for line in self:
+            if not line.product_id:
+                line.pricelist_item_id = False
+                continue
             qty_field=line.order_id.pricelist_id.qty_field or 'product_uom_qty'
             quantity = getattr(line, qty_field ) or 1
             print("checking pricelist_item of",line,"with product:",line.product_id,"|",line.product_template_id,"qty_field:",qty_field," quantity:",quantity)
