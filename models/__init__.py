@@ -1,1 +1,17 @@
-from . import account_invoice_line,afip_cpe, mail_message, mail_whatsapp_template, fleet_vehicle,purchase_order_line, product_pricelist, product_template, qr_code, res_config_settings, res_partner, sale_order_line, sale_order, trucking_trip
+from . import (
+    account_invoice_line,
+    afip_cpe,
+    discuss_channel,
+    fleet_vehicle,
+    mail_message, 
+    mail_whatsapp_template, 
+    product_pricelist, 
+    product_template, 
+    purchase_order_line, 
+    qr_code, 
+    res_config_settings, 
+    res_partner, 
+    sale_order_line, 
+    sale_order, 
+    trucking_trip
+)
