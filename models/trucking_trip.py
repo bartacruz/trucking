@@ -102,7 +102,7 @@ class TruckingTrip(models.Model):
         store=True,
         tracking=True
     )
-
+    invoice_status = fields.Selection(related='sale_line_id.invoice_status', store=True)
     sale_id = fields.Many2one('sale.order', related='sale_line_id.order_id',readonly=True,store=True)
     price_unit = fields.Float(related="sale_line_id.price_unit")
     product_uom = fields.Many2one('uom.uom', related='sale_line_id.product_uom')
