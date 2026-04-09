@@ -303,10 +303,6 @@ class TruckingTrip(models.Model):
             if vals.get("name", _("New")) == _("New"):
                 vals["name"] = self.env["ir.sequence"].next_by_code("trucking.trip")
         records = super(TruckingTrip, self).create(vals_list)
-        print("create",records)
-        for record in records:
-            if record.sale_line_id.tms_order_ids:
-                record._import_from_tms()
         return records
     
     
@@ -325,76 +321,7 @@ class TruckingTrip(models.Model):
             self._update_sale_line()
             
         return ret
-    
-    def _import_from_tms(self):
-        self.ensure_one()
-        tms_order = self.sale_line_id.tms_order_ids[0]
-        if not tms_order:
-            _logger.warning(_("Line %s doesn't have a tms_order",self.sale_line_id))
-            return
-        driver_id = tms_order.driver_id and tms_order.driver_id.partner_id or False
-        if driver_id and not driver_id.truck_driver:
-            driver_id.truck_driver = True
-            driver_id.vehicle_id = tms_order.driver_id.vehicle_id
-        self.driver_id = driver_id
-        self.vehicle_id = tms_order.vehicle_id
-        self.trailer_id = tms_order.trailer_id
-        self.commitment_date = tms_order.scheduled_date_start or self.sale_id.commitment_date
-        self.start_date = tms_order.date_start
-        self.end_date = tms_order.date_end
-        self.distance = tms_order.distance
-        self.delivered = tms_order.delivered_total
-        
-        
-        self.cpe_id = tms_order.cpe_id
-        if self.cpe_id and self.cpe_id.status != 'BR':
-            print(self,"updating from cpe")
-            self._update_from_cpe()
-            
-        message = _(
-            "Trip cloned from: %s", 
-            Markup(
-                f"""<a href=# data-oe-model=tms.order data-oe-id={tms_order.id}"""
-                f""">{tms_order.name}</a>"""
-            )
-        )
-        self.message_post(body=message)
-            
-    def _convert_from_tms(self):
-        for record in self:
 
-            if not record.sale_line_id.cloned_line_id:
-                print(record,": no tengo cloned line!")
-                return
-            
-            tms_order = record.sale_line_id.cloned_line_id.tms_order_ids[0]
-            
-            if not tms_order:
-                print(record,":",record.sale_line_id.cloned_line_id,"no tiene tms_order!")
-                return
-            
-            driver_id = tms_order.driver_id and tms_order.driver_id.partner_id or False
-            if driver_id and not driver_id.truck_driver:
-                driver_id.truck_driver = True
-                driver_id.vehicle_id = tms_order.driver_id.vehicle_id
-            record.driver_id = driver_id
-            record.cpe_id = tms_order.cpe_id
-            
-            record.commitment_date = tms_order.scheduled_date_start or record.commitment_date
-            record.start_date = tms_order.date_start
-            record.end_date = tms_order.date_end
-            record.distance = tms_order.distance
-            record.delivered = tms_order.delivered
-            record.delivered_to_invoice = tms_order.delivered_extra and tms_order.delivered + tms_order.delivered_extra
-            message = _(
-                "Trip cloned from: %s", 
-                Markup(
-                    f"""<a href=# data-oe-model=tms.order data-oe-id={tms_order.id}"""
-                    f""">{tms_order.name}</a>"""
-                )
-            )
-            record.message_post(body=message)
-            
     def _update_from_cpe(self, force=False):
         self.ensure_one()
         if not isinstance(self.id,int):

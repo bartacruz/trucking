@@ -16,7 +16,7 @@
                 
                 <group string="Route">
                     <group>
-                        <field name="origin_locality" readonly="order_confirmed" context="{'order_by':'tms_order_count desc, name'}"/>
+                        <field name="origin_locality" readonly="order_confirmed" context="{'order_by':'trucking_trip_count desc, name'}"/>
                     </group>
                     <group>
                         <field name="destination_locality" readonly="order_confirmed" />

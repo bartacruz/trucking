@@ -142,9 +142,29 @@ drivers.filtered(lambda d: d.tms_driver_id and d.vehicle_id != d.tms_driver_id.v
 vehicles = env['fleet.vehicle'].search([]).filtered(lambda v: v.tms_driver_id and not v.driver_id)
 
 
-for partner in env['res.partner'].search([]).filtered(lambda L: L.l10n_latam_identification_type_id.id == 1):
-...     try:
-...         partner.l10n_latam_identification_type_id = 4
-...         env.cr.commit()
-...     except:
-...         print("ERR",partner)
+for partner in env['res.partner'].search([('l10n_latam_identification_type_id','=',1)]):
+    try:
+        partner.l10n_latam_identification_type_id = 4
+        print("OK ",partner.name)
+        env.cr.commit()
+    except:
+        print("ERR",partner)
+
+self.name = "Obodooo"
+vehicles = env['fleet.vehicle'].with_context({'skip_trucking_notify':True})
+truck1 = vehicles.browse(3)
+truck2 = vehicles.browse(231)
+trailer = vehicles.browse(994)
+trailer2 = vehicles.browse(1237)
+truck1.trailer_id.name
+truck2.trailer_id.name
+trailer.truck_id.name
+truck1.trailer_id = trailer
+AA012MP
+GGC199
+
+Hola {{1}}, por favor confirmar el pedido del cliente {{2}} con fecha {{3}} con los siguientes datos:
+Código: {{7}}
+Origen: {{4}}
+Destino:{{5}}
+Distancia: {{6}} kms

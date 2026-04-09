@@ -91,7 +91,7 @@
     </record>
 
     <record id="res_partner_view_purchase_buttons_inherit" model="ir.ui.view">
-        <field name="name">res.partner.purchase.form.inherit.tms</field>
+        <field name="name">res.partner.purchase.form.inherit.trucking</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="purchase_stock.res_partner_view_purchase_buttons_inherit" />
         <field name="arch" type="xml">

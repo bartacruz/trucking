@@ -1,7 +1,6 @@
 from . import (
     account_invoice_line,
     afip_cpe,
-    discuss_channel,
     fleet_vehicle,
     mail_message, 
     mail_whatsapp_template, 

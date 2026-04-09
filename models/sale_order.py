@@ -83,35 +83,6 @@ class SaleOrder(models.Model):
     def action_to_draft(self):
         self.state = 'draft'
         return True
-        
-    def action_trucking_clone_tms(self):
-        product_id = self.env['product.product'].search([ ('trucking_trip','=',True) ], limit=1)
-        print("product found:",product_id)
-        if not product_id:
-            raise UserWarning('Could not find any trucking trip product')
-        for record in self:
-            # Prepare for cloning
-            record = record.with_context(trucking_clone=True)
-            orig_state = record.state
-            record.state = 'draft'
-            record.origin_locality_id = record.origin_locality_id or record.tms_origin_locality_id 
-            record.destination_locality_id = record.destination_locality_id or record.tms_destination_locality_id
-            # if not record.origin_locality_id and record.tms_order_ids:
-            #     record.origin_locality_id = record.tms_order_ids.origin_locality_id
-            # if not record.destination_locality_id and record.tms_order_ids:
-            #     record.destination_locality_id = record.tms_order_ids.destination_locality_id
-                
-            # TODO: Search localities from origin_id and destination_id
-            
-            kg_uom = record.env.ref('uom.product_uom_kgm')
-            created_orders = record.env[record._name]
-            for record in record:
-                lines = []
-                tms_lines = record.order_line.filtered(lambda L: len(L.tms_order_ids) > 0).sorted('id')
-                for line in tms_lines:
-                    print("changing line",line,"from",line.product_id.name,'to',product_id.name)
-                    line.product_id = product_id
-            record.state=orig_state
                 
     def action_view_trucking_trips(self):
         self.ensure_one()

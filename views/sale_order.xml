@@ -60,7 +60,7 @@
                                 </div>
 
                                 <div class="o_kanban_record_body">
-                                    <div class="o_tms_orders o_row w-100 mt-1">
+                                    <div class="o_trucking_orders o_row w-100 mt-1">
                                         <field name="trucking_trip_ids" widget="trucking_trips"
                                             options="{'color_field': 'color'}"
                                             class="w-100" />
@@ -72,23 +72,6 @@
                     </t>
                 </templates>
             </kanban>
-        </field>
-    </record>
-
-    <record id="sale_order_view_form_inherit" model="ir.ui.view">
-        <field name="name">sale.order.form.inherit2.trucking</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="tms_sale.sale_order_view_form" />
-        <field name="arch" type="xml">
-            <div name="button_box" position="inside">
-                <field name="has_tms_order" invisible="1" />
-            </div>
-            <field name="tms_factor" position="attributes">
-                <attribute name="column_invisible">not parent.has_tms_order</attribute>
-            </field>
-            <field name="tms_factor_uom" position="attributes">
-                <attribute name="column_invisible">not parent.has_tms_order</attribute>
-            </field>
         </field>
     </record>
 
@@ -226,17 +209,6 @@
         />
     </record>
 
-    <record id="ir_action_server_action_trucking_clone_tms" model="ir.actions.server">
-        <field name="name">Trucking Clone</field>
-        <field name="model_id" ref="sale.model_sale_order" />
-        <field name="binding_model_id" ref="sale.model_sale_order" />
-        <field name="binding_view_types">form,tree</field>
-        <field name="groups_id" eval="[Command.link(ref('base.group_system'))]" />
-        <field name="state">code</field>
-        <field name="code">
-            action = record.action_trucking_clone_tms()
-        </field>
-    </record>
     <record id="action_export_sol_with_trips" model="ir.actions.server">
         <field name="name">Exportar Líneas (con Viajes)</field>
         <field name="model_id" ref="sale.model_sale_order" />
