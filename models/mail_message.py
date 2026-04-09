@@ -13,6 +13,7 @@ class IrAttachment(models.Model):
     qr_codes = fields.One2many('qr.code','attachment_id')
     qr_scanned = fields.Boolean()
     
+            
     def _prepare_qr_vals(self):
         vals = []
         for record in self:
@@ -54,6 +55,16 @@ class MailMessage(models.Model):
     qr_codes_count = fields.Integer(compute="_compute_qr_codes", store=True)
     trucking_trip_id = fields.Many2one('trucking.trip',_('Related Trucking Trip'))
     partner_ids = fields.Many2many('res.partner', string='Recipients', context={'active_test': False}, compute='_compute_discuss_members', store=True, copy=False)
+    token = fields.Char(compute="_compute_token", store=True)
+    
+    @api.depends('res_id','model')
+    def _compute_token(self):
+        for record in self:
+            if record.model == 'discuss.channel':
+                origin = self.env[record.model].browse(record.res_id)
+                record.token = origin.gateway_channel_token
+            else:
+                record.token = False
     
     @api.depends('res_id')
     def _compute_discuss_members(self):
