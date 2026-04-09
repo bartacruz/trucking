@@ -89,7 +89,7 @@ class SaleOrder(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Trips',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'trucking.trip',
             'domain': [('sale_id', '=', self.id)],
             'context': {

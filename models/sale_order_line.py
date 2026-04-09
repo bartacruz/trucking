@@ -191,7 +191,7 @@ class SaleOrderLine(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Invoices',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'account.move',
             'domain': [('id', 'in', self.invoice_ids.ids)],
             'context': {

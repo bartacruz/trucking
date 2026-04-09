@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="trucking_trip_view_tree" model="ir.ui.view">
-        <field name="name">trucking.trip.view.tree</field>
+    <record id="trucking_trip_view_list" model="ir.ui.view">
+        <field name="name">trucking.trip.view.list</field>
         <field name="model">trucking.trip</field>
         <field name="arch" type="xml">
-            <tree string="" decoration-muted="state=='cancelled'">
+            <list string="" decoration-muted="state=='cancelled'">
                 <field name="name" />
                 <field name="is_active" optional="hide" />
                 <field name="cancelled" optional="hide" />
@@ -38,7 +38,7 @@
                     title="Open Trip" 
                     invisible="not context.get('show_trip_open_button')"
                 />
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -281,7 +281,7 @@
     <record id="action_trucking_trips" model="ir.actions.act_window">
         <field name="name">Trips</field>
         <field name="res_model">trucking.trip</field>
-        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_mode">list,form,kanban</field>
         <field name="search_view_id" ref="view_trucking_trip_search" />
         <field name="context">{'remember_filters': True}</field>
         <field name="help" type="html">

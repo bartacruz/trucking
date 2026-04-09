@@ -22,7 +22,7 @@
         }
         </field>
         <field name="domain">[('trucking_trip','=',True)]</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
     </record>
     
 </odoo>

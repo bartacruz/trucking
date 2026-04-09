@@ -1025,7 +1025,7 @@ msgid "Number of messages with delivery error"
 msgstr ""
 
 #. module: trucking
-#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_tree
+#: model_terms:ir.ui.view,arch_db:trucking.trucking_trip_view_list
 msgid "Open Trip"
 msgstr "Abrir Viaje"
 

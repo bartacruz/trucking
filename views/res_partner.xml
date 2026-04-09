@@ -261,7 +261,7 @@
     <record id="action_truck_drivers_kanban" model="ir.actions.act_window">
         <field name="name">Drivers Board</field>
         <field name="res_model">res.partner</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_res_partner_search_trucking" />
         <field name="domain">[('truck_driver', '=', True)]</field>
         <field name="context">{
@@ -272,7 +272,7 @@
             eval="[
                 (5, 0, 0),
                 (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_res_partner_kanban_trucking')}),
-                (0, 0, {'view_mode': 'tree'}),
+                (0, 0, {'view_mode': 'list'}),
                 (0, 0, {'view_mode': 'form'})
              ]" />
         <field name="help" type="html">
