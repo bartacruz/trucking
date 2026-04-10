@@ -42,7 +42,7 @@ class TruckingTrip(models.Model):
         copy=False,
         readonly=False,
         index="trigram",
-        default=lambda self: _("New"),
+        default=lambda self: "New",
     )
 
     company_id = fields.Many2one(
@@ -54,11 +54,11 @@ class TruckingTrip(models.Model):
         help="Company related to this order",
     )
     sequence = fields.Integer(default=10)
-    partner_id = fields.Many2one("res.partner", _("Partner"), related="sale_id.partner_id", store=True, tracking=True)
-    customer_id = fields.Many2one("res.partner", _("Customer"), related="sale_id.partner_shipping_id", store=True, tracking=True)
+    partner_id = fields.Many2one("res.partner", "Partner", related="sale_id.partner_id", store=True, tracking=True)
+    customer_id = fields.Many2one("res.partner", "Customer", related="sale_id.partner_shipping_id", store=True, tracking=True)
     
     driver_id = fields.Many2one(
-        'res.partner', string=_("Driver"),
+        'res.partner', string="Driver",
         tracking=True, domain=[('truck_driver','=',True)]
     )
     
@@ -90,8 +90,8 @@ class TruckingTrip(models.Model):
     distance = fields.Integer(tracking=True)
     delivered_cpe = fields.Integer(string="Delivered CPE",tracking=True)
     delivered = fields.Integer(tracking=True)
-    delivered_to_invoice =fields.Integer(_("To Invoice"),compute='_compute_delivered', readonly=True, tracking=True)
-    delivered_diff = fields.Integer(_("Difference"), compute='_compute_delivered')
+    delivered_to_invoice =fields.Integer("To Invoice",compute='_compute_delivered', readonly=True, tracking=True)
+    delivered_diff = fields.Integer("Difference", compute='_compute_delivered')
     delivered_total = fields.Integer()
     
     sale_line_id = fields.Many2one(
@@ -106,17 +106,20 @@ class TruckingTrip(models.Model):
     sale_id = fields.Many2one('sale.order', related='sale_line_id.order_id',readonly=True,store=True)
     price_unit = fields.Float(related="sale_line_id.price_unit")
     product_uom = fields.Many2one('uom.uom', related='sale_line_id.product_uom')
-    rate_label = fields.Char(_("Rate"),compute="_compute_rate_label")
+    rate_label = fields.Char("Rate",compute="_compute_rate_label")
     
     cpe_id = fields.Many2one("afip.cpe","Carta de Porte",ondelete="set null", tracking=True)
     cpe_pdf = fields.Many2one('ir.attachment', related='cpe_id.pdf3')
-    cpe_status_date = fields.Datetime(_("CPE Last Update",copy=False))
-    cpe_mismatch = fields.Boolean(_("CPE Driver Mismatch"),copy=False, default=False)
+    cpe_status_date = fields.Datetime("CPE Last Update",copy=False)
+    cpe_mismatch = fields.Boolean("CPE Driver Mismatch",copy=False, default=False)
     
-    driver_response = fields.Selection([ ('confirmed',_('Confirmed')),('rejected',_('Rejected') ) ], tracking=True)
+    driver_response = fields.Selection([
+        ('confirmed','Confirmed'),
+        ('rejected','Rejected') 
+        ], tracking=True)
     
     warnings = fields.Char(compute="_compute_warnings")
-    verified = fields.Boolean(_("Verificado"), tracking=True)
+    verified = fields.Boolean("Verificado", tracking=True)
     
     ### Compute methods
     
@@ -170,8 +173,14 @@ class TruckingTrip(models.Model):
             else:
                 record.state = 'draft'
             if old_state != record.state:
-                self.env['bus.bus']._sendone('trucking','trucking_trip_changed',{'id':record.id,'order_id':record.sale_id.id})
-    
+                self.env['bus.bus']._sendone(
+                    'broadcast',
+                    'trucking',
+                    (
+                        {'id':record.id,'order_id':record.sale_id.id},
+                        "trucking_trip_changed",
+                    )
+                )
             record.cpe_status_date = record.cpe_id.status_date
             
     @api.depends('driver_id.vehicle_id')
@@ -316,7 +325,14 @@ class TruckingTrip(models.Model):
                 
         if any(key in vals for key in ['state','driver_id','tag_ids','cpe_id','warnings']):
             print("sending trip_changed",self.id,self.sale_id)
-            self.env['bus.bus']._sendone('trucking','trucking_trip_changed',{'id':self.id,'order_id':self.sale_id.id})
+            self.env['bus.bus']._sendone(
+                'broadcast',
+                'trucking',
+                (
+                    {'id':self.id,'order_id':self.sale_id.id},
+                    'trucking_trip_changed',
+                )
+            ) 
         if any(key in vals for key in ['state','distance','delivered','delivered_cpe']):
             self._update_sale_line()
             
@@ -578,6 +594,10 @@ class TruckingTrip(models.Model):
         return super()._whatsapp_get_partner()
     
     def _send_whatsapp(self,partner_id,body=False,template_id=False,gateway=1):
+        # MIG 18
+        if self:
+            _logger.warning("Not sending whatsapp to %s with body %s",partner_id,body)
+            return
         gateway_id = self.env['mail.gateway'].browse(gateway)
         context = {'default_res_id':self.id}
         if template_id:

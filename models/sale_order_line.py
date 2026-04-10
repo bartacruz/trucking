@@ -16,11 +16,11 @@ class SaleOrderLine(models.Model):
     distance = fields.Float(string="Distance (km)")
     cpe = fields.Char(string="CPE", related="trucking_trip_id.cpe_id.name")
     order_partner_invoice_id = fields.Many2one('res.partner', related="order_id.partner_invoice_id", store=True, index=True,)
-    verified = fields.Boolean(string=_("Trip Verified"), related="trucking_trip_id.verified")
+    verified = fields.Boolean(string="Trip Verified", related="trucking_trip_id.verified")
     
     
-    invoice_ids = fields.Many2many('account.move', compute="_compute_invoice_ids", string=_("Invoices"), store=True)
-    invoice_ids_count = fields.Integer(string=_("Invoice Count"), compute="_compute_invoice_ids")
+    invoice_ids = fields.Many2many('account.move', compute="_compute_invoice_ids", string="Invoices", store=True)
+    invoice_ids_count = fields.Integer(string="Invoice Count", compute="_compute_invoice_ids")
     
     
     _sql_constraints = [

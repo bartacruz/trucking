@@ -4,7 +4,7 @@ from odoo import _,api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    trip_verified_to_invoice = fields.Boolean(_("Verified to invoice",help="Trips must be verified to be invoiced"),config_parameter="trucking.trip_verified_to_invoice")
+    trip_verified_to_invoice = fields.Boolean("Verified to invoice",help="Trips must be verified to be invoiced",config_parameter="trucking.trip_verified_to_invoice")
     whatsapp_template_driver_confirm_id = fields.Many2one('mail.whatsapp.template', config_parameter="trucking.wat_driver_confirm")
     whatsapp_template_driver_remember_cpe = fields.Many2one('mail.whatsapp.template', config_parameter="trucking.wat_driver_remember_cpe")
     whatsapp_template_customer_notify = fields.Many2one('mail.whatsapp.template', config_parameter="trucking.wat_customer_notify")

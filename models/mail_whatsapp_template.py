@@ -32,7 +32,10 @@ class WhatsappTemplateButton(models.Model):
                 body = 'Cancelación recibida.'
             else:
                 _logger.warning("Unknown button name! %s",self.name)
-            if body:    
+            if body:
+                # MIG 18
+                if self:
+                    return
                 trip._send_whatsapp(author,body=body)
             return
                 

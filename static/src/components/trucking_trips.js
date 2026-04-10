@@ -5,22 +5,13 @@ import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { useBus, useService } from "@web/core/utils/hooks";
 import { useX2ManyCrud } from "@web/views/fields/relational_utils";
-import { _lt, _t } from "@web/core/l10n/translation";
+import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog"
 
 export class TruckingTripsField extends Component {
     static template = "trucking.TruckingTripsField";
     static props = {
         ...standardFieldProps,
-    }
-    static tripStates = {
-        draft: _lt("Draft"),
-        assigned: _lt("Assigned"),
-        confirmed: _lt("Confirmed"),
-        started: _lt("Started"),
-        arrived: _lt("Arrived"),
-        completed: _lt("Completed"),
-        cancelled: _lt("Cancelled"),
     }
     setup() {
         this.orm = useService("orm");
@@ -35,6 +26,18 @@ export class TruckingTripsField extends Component {
         const searchModel = this.env.searchModel;
 
     }
+    get tripStates() {
+        return {
+            draft: _t("Draft"),
+            assigned: _t("Assigned"),
+            confirmed: _t("Confirmed"),
+            started: _t("Started"),
+            arrived: _t("Arrived"),
+            completed: _t("Completed"),
+            cancelled: _t("Cancelled"),
+        }
+    }
+    
     async assignTrip(trip, driver) {
         this.env.services.ui.block();
         const assigned = await this.orm.call('trucking.trip', "assign_driver", [trip, driver], {
@@ -71,7 +74,7 @@ export class TruckingTripsField extends Component {
         var cpe = record.data.cpe_id ? record.data.cpe_id[1] : false;
         var vehicle = record.data.vehicle_id ? record.data.vehicle_id[1] : false;
         var trailer = record.data.trailer_id ? record.data.trailer_id[1] : false;
-        const stateLabel = this.constructor.tripStates[record.data.state] || record.data.state;
+        const stateLabel = this.tripStates[record.data.state] || record.data.state;
         return {
             id: record.id, // datapoint_X
             resId: record.resId,
@@ -90,57 +93,67 @@ export class TruckingTripsField extends Component {
     }
     async onClick(ev) {
         ev.stopPropagation();
-        var target = $(ev.target).closest('.o_trip');
-        const trip = target.data("id");
-        this.action.doAction({
+        const target = ev.target.closest('.o_trip');
+        if (!target) return;
+        const tripId = parseInt(target.dataset.id);
+
+        await this.action.doAction({
             type: 'ir.actions.act_window',
-            name: 'Viaje',
+            name: _t('Viaje'), // Recordá usar _t para que sea traducible
             target: 'current',
-            res_id: trip,
+            res_id: tripId,
             res_model: 'trucking.trip',
             views: [[false, 'form']],
         });
     }
-    async onDragEnter(ev) {
-        var target = $(ev.target);
-        target.closest('.o_trip').addClass('o_sarasa');
+    onDragEnter(ev) {
+        const target = ev.target.closest('.o_trip');
+        if (target) {
+            target.classList.add('o_sarasa');
+        }
     }
 
     onDragLeave(ev) {
-        var target = $(ev.target);
-        target.closest('.o_trip').removeClass('o_sarasa');
-    }
-    onDrop(ev, a, b) {
-        var target = $(ev.target).closest('.o_trip');
-        target.removeClass('o_sarasa');
-        const driver_id = ev.dataTransfer.getData("text");
-        const trip = target.data("id");
-        const data= this.props.record.data[this.props.name];
-        const idx = data._currentIds.indexOf(trip);
-        //console.debug("PAJAR",trip,data,idx);
-        const record = data.records[idx];
-        //console.debug("AGUJA",record);
-        if (record && record.data.driver_id != false){
-            const driverName = record.data.driver_id[1]
-            this.dialogService.add(ConfirmationDialog, {
-                title: "Confirmar reasignación",
-                body: `El viaje ya está asignado a ${driverName}. ¿Estás seguro de que quieres cambiar el conductor?`,
-                confirm: () => {
-                    console.debug("Hay driver. Confirmado");
-                    this.assignTrip(trip, driver_id);
-                },
-                cancel: () => {
-                    console.debug("Hay Driver. Cancelando assign");
-                },
-                confirmLabel: "Reasignar",
-                cancelLabel: "Cancelar",
-            });
-        } else {
-            //console.debug('No hay driver. Asigno');
-            this.assignTrip(trip, driver_id);
+        const target = ev.target.closest('.o_trip');
+        if (target) {
+            target.classList.remove('o_sarasa');
         }
-        
     }
+
+    onDrop(ev, a, b) {
+        const target = ev.target.closest('.o_trip');
+        if (target) {
+            target.classList.remove('o_sarasa');
+            
+            const driver_id = ev.dataTransfer.getData("text");
+            const trip = parseInt(target.dataset.id); // Usamos dataset.id en vez de data("id")
+            
+            const data = this.props.record.data[this.props.name];
+            // En Odoo 18, verifica si records es un array o un objeto de relación
+            const idx = data.records.findIndex(r => r.data.id === trip || r.resId === trip);
+            
+            const record = data.records[idx];
+            
+            if (record && record.data.driver_id) {
+                // record.data.driver_id suele ser un array [id, nombre] o un objeto
+                const driverName = Array.isArray(record.data.driver_id) ? record.data.driver_id[1] : record.data.driver_id.data.display_name;
+                
+                this.dialogService.add(ConfirmationDialog, {
+                    title: _t("Confirmar reasignación"),
+                    body: _t("El viaje ya está asignado a %s. ¿Estás seguro de que quieres cambiar el conductor?", driverName),
+                    confirm: () => {
+                        this.assignTrip(trip, driver_id);
+                    },
+                    cancel: () => {},
+                    confirmLabel: _t("Reasignar"),
+                    cancelLabel: _t("Cancelar"),
+                });
+            } else {
+                this.assignTrip(trip, driver_id);
+            }
+        }
+    }
+
     get trips() {
         //console.debug("get trips",this.props.record);
         return this.props.record.data[this.props.name].records.map((record) =>
@@ -150,7 +163,7 @@ export class TruckingTripsField extends Component {
 }
 export const truckingTripsField = {
     component: TruckingTripsField,
-    displayName: "Trips",
+    displayName: _t("Trips"),
     supportedTypes: ["many2many"],
     relatedFields: (fieldInfo) => {
         return [
@@ -163,13 +176,13 @@ export const truckingTripsField = {
             { name: "verified", type: "bool" },
             {
                 name: "state", type: "selection", selection: [
-                    ["draft", _lt("Draft")],
-                    ["assigned", _lt("Assigned")],
-                    ["confirmed", _lt("Confirmed")],
-                    ["started", _lt("Started")],
-                    ["arrived", _lt("Arrived")],
-                    ["completed", _lt("Completed")],
-                    ["cancelled", _lt("Cancelled")],
+                    ["draft", _t("Draft")],
+                    ["assigned", _t("Assigned")],
+                    ["confirmed", _t("Confirmed")],
+                    ["started", _t("Started")],
+                    ["arrived", _t("Arrived")],
+                    ["completed", _t("Completed")],
+                    ["cancelled", _t("Cancelled")],
                 ]
             },
             { name: "warnings", type: "char" },

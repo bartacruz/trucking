@@ -9,7 +9,7 @@ class AccountMoveLine(models.Model):
 class AccountMoveLineTemplate(models.Model):
     _name='account.move.line.template'
     
-    name = fields.Char(_('Name'))
+    name = fields.Char('Name')
     template_src = fields.Char()
     
     def render(self,record, default=""):

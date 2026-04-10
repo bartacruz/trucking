@@ -15,8 +15,10 @@ export class TruckingKanbanController extends KanbanController {
         this.searchKey = Symbol("isFromTruckingKanban");
     }
     toggleFold() {
-        const el = $(this.rootRef.el).find(".o_trucking_kanban_sidebar");
-        el.toggleClass("folded");
+        const el = this.rootRef.el.querySelector(".o_trucking_kanban_sidebar");
+        if (el) {
+            el.classList.toggle("folded");
+        }
     }
     
     selectDriver(partner_id, partner_name) {

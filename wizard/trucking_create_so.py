@@ -19,13 +19,13 @@ class TruckingCreateSO(models.TransientModel):
     
     product_id = fields.Many2one('product.product', default=lambda self: self._default_product())
     pricelist_id = fields.Many2one('product.pricelist')
-    fixed_price = fields.Monetary(_("Rate"), 'currency_id' )
+    fixed_price = fields.Monetary("Rate", 'currency_id' )
     pricelist_discount = fields.Float(string="Pricelist discount")
     
     origin_locality = fields.Many2one('afip.locality')
     destination_locality = fields.Many2one('afip.locality')
     qty = fields.Integer("Trucks",default=1)
-    distance = fields.Integer(_("Estimated Distance"),default=1)
+    distance = fields.Integer("Estimated Distance",default=1)
     start = fields.Datetime(string="Scheduled start")
     end = fields.Datetime(string="Scheduled end")
     sale_label = fields.Char(compute="_compute_label")

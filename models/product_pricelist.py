@@ -7,10 +7,10 @@ class Pricelist(models.Model):
     _inherit = "product.pricelist"
     
     qty_field = fields.Selection([
-            ('product_uom_qty',_('Order Qty')),
-            ('distance',_('Distance')),
+            ('product_uom_qty','Order Qty'),
+            ('distance','Distance'),
         ],
-        string= _("Qty Field"),
+        string= "Qty Field",
         default="product_uom_qty",
         required=True
     )

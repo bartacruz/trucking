@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 class ResPartner(models.Model):
     _inherit = 'res.partner'
     
-    truck_driver = fields.Boolean(_('Truck driver'))
+    truck_driver = fields.Boolean('Truck driver')
     
     vehicle_id = fields.Many2one(
         'fleet.vehicle',
@@ -59,7 +59,7 @@ class ResPartner(models.Model):
     
     active_trucking_trip_state = fields.Selection(
         related='active_trucking_trip_id.state',
-        string=_("Active Trip State"),
+        string="Active Trip State",
         store=False
     )
     
@@ -234,19 +234,18 @@ class ResPartner(models.Model):
         if self.env.context.get('skip_trucking_notification'):
             return
         partners = self.browse(partner_ids or self)
-        notifications = []
         for partner in partners:
             payload = {
-                'id': partner.id,
+                'id': int(partner.id),
             }
-            notifications.append((
+            self.env['bus.bus']._sendone(
+                'broadcast',
                 'trucking',
-                'trucking_driver_changed',
-                payload
-            ))
-        print("_notify_trucking_update",notifications)
-        self.env['bus.bus']._sendmany(notifications)
-     
+                (payload,
+                'trucking_driver_changed'),
+            )
+            print(f'Sending trucking_driver_changed {payload}')
+        
     @api.depends('trucking_state')
     def _compute_trucking_sequence(self):
         for record in self:

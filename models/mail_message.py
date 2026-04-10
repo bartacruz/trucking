@@ -53,7 +53,7 @@ class MailMessage(models.Model):
     
     qr_code_ids = fields.One2many('qr.code', 'message_id')
     qr_codes_count = fields.Integer(compute="_compute_qr_codes", store=True)
-    trucking_trip_id = fields.Many2one('trucking.trip',_('Related Trucking Trip'))
+    trucking_trip_id = fields.Many2one('trucking.trip','Related Trucking Trip')
     partner_ids = fields.Many2many('res.partner', string='Recipients', context={'active_test': False}, compute='_compute_discuss_members', store=True, copy=False)
     token = fields.Char(compute="_compute_token", store=True)
     
@@ -80,6 +80,9 @@ class MailMessage(models.Model):
             
     def _process_qr_code(self,qr):
         self.ensure_one()
+        # MIG 18
+        if qr:
+            return
         self.env[self.model].browse(self.res_id).message_post(
             author_id=SUPERUSER_ID,
             body=f'QR Code: {qr.code}',

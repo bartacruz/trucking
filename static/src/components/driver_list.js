@@ -44,18 +44,20 @@ export class DriverList extends Component {
         }
     }
     async selectDriver(ev) {
-        const td = $(ev.srcElement).closest('.driver');
-        const driver_id = td.data("driverId");
+        const td = ev.target.closest('.driver');        
+        if (!td) return;
+        const driverId = parseInt(td.dataset.driverId);
         
-        this.action.doAction({
+        await this.action.doAction({
             type: 'ir.actions.act_window',
-            name: 'Driver',
+            name: _t('Driver'), // Recordá el _t para evitar errores de traducción
             target: 'current',
-            res_id: driver_id,
+            res_id: driverId,
             res_model: 'res.partner',
             views: [[false, 'form']],
         });
     }
+
     get displayedPartners() {
         if (this.state.searchString != this.state.lastSearch) {
             this.updateDrivers();
