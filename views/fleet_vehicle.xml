@@ -28,10 +28,10 @@
         <field name="inherit_id" ref="fleet.fleet_vehicle_view_kanban" />
         <field name="arch" type="xml">
             <kanban position="attributes">
-                <attribute name="default_group_by" position="replace" />
+                <attribute name="default_group_by"/>
                 <attribute name="default_groupby_vehicle_type">1</attribute>
             </kanban>
-            <div class="o_kanban_record_bottom" position="before">
+            <footer position="before">
                 <t t-if="record.vehicle_type.raw_value == 'truck' and record.trailer_id.raw_value">
                     <div class="d-flex align-items-baseline">
                         <i class="fa fa-chevron-circle-left me-1"/>
@@ -44,20 +44,20 @@
                         <field name="truck_id" />
                     </div>
                 </t>
-            </div>
-            <field name="id" position="after">
+            </footer>
+            <field name="vehicle_properties" position="after">
                 <field name="vehicle_type" />
                 <field name="truck_driver_id" />
                 <field name="truck_id" />
                 <field name="trailer_id" />
             </field>
-
-            <xpath expr="//t[@t-if='record.driver_id.raw_value']" position="after">
+            <field name="tag_ids" position="after">
                 <t t-if="record.truck_driver_id.raw_value">
                     <field name="truck_driver_id" widget="many2one_avatar" options="{'display_avatar_name': True}" />
                 </t>
-            </xpath>
-
+            </field>
+            
+            
 
         </field>
     </record>
