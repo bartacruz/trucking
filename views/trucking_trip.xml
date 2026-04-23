@@ -47,8 +47,6 @@
         <field name="model">trucking.trip</field>
         <field name="arch" type="xml">
             <form string="">
-                <field name="is_active" invisible="1" />
-                <field name="cpe_mismatch" invisible="1" />
                 <div class="alert alert-warning" role="alert" invisible="not cpe_mismatch" >Warning: Vehicle from CPE mismatches the one in the order.</div>
                 <header>
                     <button
@@ -281,7 +279,7 @@
     <record id="action_trucking_trips" model="ir.actions.act_window">
         <field name="name">Trips</field>
         <field name="res_model">trucking.trip</field>
-        <field name="view_mode">list,form,kanban</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_trucking_trip_search" />
         <field name="context">{'remember_filters': True}</field>
         <field name="help" type="html">
