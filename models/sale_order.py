@@ -27,8 +27,10 @@ class SaleOrder(models.Model):
             record.trucking_trips_to_assign = len(to_assign)
             record.has_trucking_trips = len(lines_with_trips) > 0
             record.trucking_trip_active = len(lines_with_trips.filtered(lambda L: L.trucking_trip_id.state not in ['completed','cancelled']) ) >0
-            print("line_with_trips",lines_with_trips)
             trip_states = record.trucking_trip_ids.mapped('state')
+            print("line_with_trips",lines_with_trips,trip_states)
+            if not record.has_trucking_trips or not trip_states:
+                continue
             if record.state != 'cancel' and all(x == 'cancelled' for x in trip_states):
                 record.state = 'cancel'
             if record.state in  ['draft','sent'] and not any(x in ['draft','assigned'] for x in trip_states):
@@ -40,7 +42,7 @@ class SaleOrder(models.Model):
     def _compute_invoice_status(self):
         super()._compute_invoice_status()
         for order in self:
-            if order.invoice_status == 'invoiced':
+            if not order.has_trucking_trips or order.invoice_status == 'invoiced':
                 continue
             trips_pending = order.order_line.filtered(lambda l: l.invoice_status =='no' and l.trucking_trip_id.state != 'cancelled' )
             print("invoice_status",order.name,trips_pending)
